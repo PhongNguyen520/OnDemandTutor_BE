@@ -33,9 +33,9 @@ namespace DAOs
             return true;
         }
 
-        public List<ConversationAccount> GetConversationAccounts(string id)
+        public List<ConversationAccount> GetConversationAccounts()
         {
-            return dbContext.ConversationAccounts.Where(x => x.ConversationId == id).ToList();
+            return dbContext.ConversationAccounts.ToList();
         }
 
         public bool UpdateConversationAccounts(ConversationAccount conversationAccount)

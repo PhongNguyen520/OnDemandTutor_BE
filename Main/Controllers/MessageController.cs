@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Services;
 using AutoMapper;
 using BusinessObjects.Models;
+using System.Text.RegularExpressions;
+using API.Hubs;
+using Microsoft.AspNet.SignalR;
 
 namespace API.Controllers
 {
@@ -13,11 +16,13 @@ namespace API.Controllers
     {
         private readonly IMessageService messageService;
         private readonly IMapper _mapper;
+        private readonly IHubContext<ChatHub> _hubContext;
 
-        public MessageController(IMapper mapper)
+        public MessageController(IMapper mapper, IHubContext<ChatHub> hubContext)
         {
             messageService = new MessageService();
             _mapper = mapper;
+            _hubContext = hubContext;
         }
 
         [HttpGet("{id}")]
@@ -45,6 +50,28 @@ namespace API.Controllers
 
             var messageVM = _mapper.Map<IEnumerable<Message>, IEnumerable<MessageVM>>(room);
             return Ok(room);
+        }
+
+        [HttpPost]
+        // Send message
+        public async Task<ActionResult<Message>> Create (MessageVM messageVM)
+        {
+            var user = User.Identity.Name;
+            var room = messageVM.Room;
+            var msg = new Message()
+            {
+                Description = Regex.Replace(messageVM.Content, @"<.*?", string.Empty),
+                AccountId = user,
+                ConversationId = room,
+                //Time = DateTime.Now
+            };
+
+            messageService.AddMessage(msg);
+            
+            var createdMessage = _mapper.Map<Message, MessageVM>(msg);
+            //await _hubContext.Clients.Group(room.Id).SendAsync("newMessage", createdMessage);
+
+            return CreatedAtAction(nameof(Get), new {id = msg.AccountId}, createdMessage);
         }
     }
 }

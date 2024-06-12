@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BusinessObjects.Helpers;
+using BusinessObjects;
 using BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.Mappings
+namespace API.Helpers
 {
     public class MessageProfile : Profile
     {

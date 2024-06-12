@@ -2,6 +2,7 @@
 using BusinessObjects;
 using BusinessObjects.Models;
 using DAOs;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System.Data.Common;
 using System.Text.RegularExpressions;
@@ -23,6 +24,8 @@ namespace API.Hubs
             _mapper = mapper;
         }
 
+
+        // send message
         public async Task SendPrivate(string receiverName, string message)
         {
             if (_ConnectionsMap.TryGetValue(receiverName, out string userId))

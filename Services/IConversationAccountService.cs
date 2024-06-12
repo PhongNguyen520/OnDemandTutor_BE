@@ -13,7 +13,7 @@ namespace Services
 
         public bool DelConversationAccounts(int id);
 
-        public List<ConversationAccount> GetConversationAccounts(string id);
+        public List<ConversationAccount> GetConversationAccounts();
 
         public bool UpdateConversationAccounts(ConversationAccount conversationAccount);
     }

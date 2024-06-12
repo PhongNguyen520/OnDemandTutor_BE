@@ -30,9 +30,9 @@ namespace Services
             return iConversationAccountRepository.DelConversationAccounts(id);
         }
 
-        public List<ConversationAccount> GetConversationAccounts(string id)
+        public List<ConversationAccount> GetConversationAccounts()
         {
-            return iConversationAccountRepository.GetConversationAccounts(id);
+            return iConversationAccountRepository.GetConversationAccounts();
         }
 
         public bool UpdateConversationAccounts(ConversationAccount conversationAccount)

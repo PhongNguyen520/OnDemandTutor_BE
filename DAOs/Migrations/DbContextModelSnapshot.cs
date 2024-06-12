@@ -52,6 +52,11 @@ namespace DAOs.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<string>("Avatar")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<bool>("Gender")
                         .HasColumnType("bit");
 
