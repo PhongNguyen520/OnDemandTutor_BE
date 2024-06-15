@@ -9,7 +9,7 @@ public partial class Message
 
     public string Description { get; set; } = null!;
 
-    public DateOnly Time { get; set; }
+    public DateTime Time { get; set; }
 
     public bool IsActive { get; set; }
 

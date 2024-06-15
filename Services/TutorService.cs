@@ -33,10 +33,6 @@ namespace Services
             return _repository.Filter(requestSearchTutorModel);
         }
 
-        public List<Subject> GetTutor(string id)
-        {
-            return _repository.GetTutor(id);
-        }
 
         public List<Tutor> GetTutors()
         {

@@ -11,6 +11,7 @@ using Services;
 using NuGet.Protocol;
 using Repositories;
 using BusinessObjects.Models.TutorModel;
+using System.Net;
 
 namespace API.Controllers
 {
@@ -118,16 +119,37 @@ namespace API.Controllers
             return Ok(query);
         }
 
-        ////// GET: api/Tutors/5
-        //[HttpGet("{id}")]
-        //public IActionResult GetTutor(string id)
-        //{
-        //    var tutor = iTutorService.GetTutor(id);
-        //    return Ok(tutor);
-        //}
+        [HttpGet("{id}")]
+        // get tutor Detail by TutorId
+        public IActionResult GetTutorDetail(string id)
+        {
+            var tbTutor = iTutorService.GetTutors().Where(s => s.TutorId == id);
+            var tbAccount = iAccountService.GetAccounts();
 
-        //// PUT: api/Tutors/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            var query = from tutor in tbTutor
+                        join account in tbAccount
+                        on tutor.AccountId equals account.Id
+                        select new TutorDetail
+                        {
+                            AccountId = account.Id,
+                            TutorId = tutor.TutorId,
+                            Avatar = account.Avatar,
+                            Photo = tutor.Photo,
+                            FullName = account.FullName,
+                            Gender = account.Gender,
+                            Headline = tutor.Headline,
+                            Description = tutor.Description,
+                            TypeOfDegree = tutor.TypeOfDegree,
+                            Education = tutor.Education,
+                            HourlyRate = tutor.HourlyRate,
+                            Address = tutor.Address,
+                            Start = iFeedbackService.TotalStart(tutor.TutorId),
+                            Ratings = iFeedbackService.TotalRate(tutor.TutorId),
+                        };
+            return Ok(query);
+        }
+
+        
         //[HttpPut("{id}")]
         //public async Task<IActionResult> PutTutor(string id, Tutor tutor)
         //{

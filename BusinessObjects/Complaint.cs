@@ -7,7 +7,7 @@ public partial class Complaint
 {
     public string ComplaintId { get; set; } = null!;
 
-    public DateOnly CreateDay { get; set; }
+    public DateTime CreateDay { get; set; }
 
     public string Description { get; set; } = null!;
 

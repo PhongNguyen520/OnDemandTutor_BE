@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObjects;
 using DAOs;
 using Services;
+using BusinessObjects.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace API.Controllers
 {
@@ -16,17 +18,50 @@ namespace API.Controllers
     public class FeedbacksController : ControllerBase
     {
         private readonly IFeedbackService iFeedbackService;
+        private readonly IStudentService iStudentService;
+        private readonly IAccountService _accountService;
+        private readonly IClassService _classService;
+        private readonly ISubjectService _subjectService;
 
-        public FeedbacksController()
+        public FeedbacksController(IAccountService accountService)
         {
             iFeedbackService = new FeedbackService();
+            iStudentService = new StudentService();
+            _accountService = accountService;
+            _classService = new ClassService();
+            _subjectService = new SubjectService();
         }
 
         // GET: api/Feedbacks
         [HttpGet("{id}")]
-        public IActionResult GetFeedbacks(string id)
+        public IActionResult GetFeedbackList(string id, int pageIndex, int pageSize)
         {
-            return Ok(iFeedbackService.GetFeedbacks(id));
+            var tbFB = iFeedbackService.GetFeedbacks(id).OrderBy(s => s.CreateDay);
+            var tbStudent = iStudentService.GetStudents();
+            var tbUser = _accountService.GetAccounts();
+
+            var query = from st in tbStudent
+                         join us in tbUser
+                         on st.AccountId equals us.Id
+                         join fb in tbFB
+                         on st.StudentId equals fb.StudentId
+                         select new FeedbackVM
+                         {
+                             FeedbackId = fb.FeedbackId,
+                             FullName = us.FullName,
+                             CreateDay = fb.CreateDay,
+                             Description = fb.Description,
+                             SubjectName = fb.ClassId,// NOICE
+                             Start = fb.Rate,
+                         };
+
+            //---------------------PAGING-------------------------
+            int validPageIndex = pageIndex > 0 ? pageIndex - 1 : 0;
+            int validPageSize = pageSize > 0 ? pageSize : 10;
+
+            query = query.Skip(validPageIndex * validPageSize).Take(validPageSize);
+
+            return Ok(query);
         }
 
         // GET: api/Feedbacks/5

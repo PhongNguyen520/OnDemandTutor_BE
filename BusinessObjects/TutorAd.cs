@@ -7,11 +7,15 @@ public partial class TutorAd
 {
     public string AdsId { get; set; } = null!;
 
-    public DateOnly CreateDay { get; set; }
+    public DateTime CreateDay { get; set; }
+
+    public string Tillte { get; set; }
 
     public string Video { get; set; } = null!;
 
     public string Image { get; set; } = null!;
+
+    public bool IsActive { get; set; }
 
     public string TutorId { get; set; } = null!;
 
