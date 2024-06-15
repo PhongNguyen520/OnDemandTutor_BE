@@ -1,9 +1,12 @@
-﻿using AutoMapper;
+﻿using API.Services;
+using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.Models;
 using DAOs;
+using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR.Protocol;
 using System.Data.Common;
 using System.Text.RegularExpressions;
 
@@ -13,65 +16,39 @@ namespace API.Hubs
     {
         public readonly static List<UserChatVM> _Connection = new List<UserChatVM>();
 
-        private readonly static Dictionary<string, string> _ConnectionsMap = new Dictionary<string, string>();
+        //private readonly static Dictionary<string, string> _ConnectionsMap = new Dictionary<string, string>();
 
         private readonly DbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly ShareDBService _shareDBService;
 
-        private ChatHub(DbContext dbContext, IMapper mapper)
+        public ChatHub(DbContext dbContext, ICurrentUserService currentUserService, ShareDBService shareDBService)
         {
             _dbContext = dbContext;
-            _mapper = mapper;
+            _currentUserService = currentUserService;
+            _shareDBService = shareDBService;
+
         }
 
 
-        // send message
-        public async Task SendPrivate(string receiverName, string message)
+        public async Task JoinChat(UserConnection conn)
         {
-            if (_ConnectionsMap.TryGetValue(receiverName, out string userId))
-            {
-                var sender = _Connection.Where(u => u.Id == IdentityName).First();
-
-                if (!string.IsNullOrEmpty(message.Trim()))
-                {
-                    var messageViewModel = new MessageVM()
-                    {
-                        Content = Regex.Replace(message, @"<.*?>", string.Empty),
-                        From = sender.FullName,
-                        Avatar = sender.Avatar,
-                        Room = "",
-                        Time = DateTime.Now.ToLongTimeString(),
-                    };
-
-                    await Clients.Client(userId).SendAsync("newMessage", messageViewModel);
-                    await Clients.Caller.SendAsync("newMessage", messageViewModel);
-                }
-            }
+            await Clients.All.SendAsync("ReceiveMessage", "Admin", $"{conn.UserName} has join");
         }
 
-        public async Task Join(string roomName)
+        public async Task JoinSpecificChatRoom(UserChatVM conn)
         {
             try
             {
-                var user = _Connection.Where(u => u.Id == IdentityName).FirstOrDefault();
+                var user = _Connection.Where(u => u.Id == _currentUserService.GetUserId().ToString()).FirstOrDefault();
 
-                //Remove user from others list
-                if (user != null && user.CurrentRoom != roomName)
-                {
-                    if (!string.IsNullOrEmpty(user.CurrentRoom))
+                await Groups.AddToGroupAsync(Context.ConnectionId, conn.Id);
 
-                        await Clients.OthersInGroup(user.CurrentRoom).SendAsync("removeUser", user);
+                _shareDBService.connection[Context.ConnectionId] = conn;
 
-                    //Join to new chat room
-                    await Leave(user.CurrentRoom);
-                    await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
-                    user.CurrentRoom = roomName;
+                //Tell others to update the list of users
+                await Clients.All.SendAsync("JoinSpecificChatRoom", "admin", $"{user.FullName} has join");
 
-                    //Tell others to update the list of users
-                    await Clients.OthersInGroup(roomName).SendAsync("addUser", user);
-
-
-                }
             }
             catch (Exception ex)
             {
@@ -79,51 +56,65 @@ namespace API.Hubs
             }
         }
 
-        public async Task Leave(string roomName)
+
+
+        // send message
+        public async Task SendMessage(string message)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
+            if (_shareDBService.connection.TryGetValue(Context.ConnectionId, out UserChatVM conn))
+            {
+                var sender = _Connection.Where(u => u.Id == _currentUserService.GetUserId().ToString()).First();
+
+                if (!string.IsNullOrEmpty(message.Trim()))
+                {
+                    var messageViewModel = new MessageVM()
+                    {
+                        From = sender.FullName,
+                        Content = Regex.Replace(message, @"<.*?>", string.Empty),
+                        Avatar = sender.Avatar,
+                        //RoomId = "",
+                        //Time = DateTime.Now.ToLongTimeString(),
+                    };
+
+                    //await Clients.All.SendAsync("ReceiveSpecificMessage", messageViewModel);
+                    //await Clients.Caller.SendAsync("ReceiveMessage", message);
+                    // Show message in chat box
+                    await Clients.Group(conn.Id).SendAsync("ReceiveSpecificMessage", messageViewModel);
+                }
+            }
         }
 
         private string IdentityName
         {
-            get { return Context.User.Identity.Name; }
+            get { return _currentUserService.GetUserId().ToString(); }
         }
 
-        public override Task OnConnectedAsync()
-        {
-            try
-            {
-                var user = _dbContext.Users.Where(u => u.UserName == IdentityName).FirstOrDefault();
-                var userViewModel = _mapper.Map<Account, UserChatVM>(user);
-                userViewModel.Device = GetDevice();
-                userViewModel.CurrentRoom = "";
+        //public override Task OnConnectedAsync()
+        //{
+        //    try
+        //    {
+        //        var user = _dbContext.Users.Where(u => u.UserName == IdentityName).FirstOrDefault();
+        //        var userViewModel = _mapper.Map<Account, UserChatVM>(user);
+        //        userViewModel.CurrentRoom = "";
 
-                if (!_Connection.Any(u => u.Id == IdentityName))
-                {
-                    _Connection.Add(userViewModel);
-                    _ConnectionsMap.Add(IdentityName, Context.ConnectionId);
-                }
+        //        if (!_Connection.Any(u => u.Id == IdentityName))
+        //        {
+        //            _Connection.Add(userViewModel);
+        //            _ConnectionsMap.Add(IdentityName, Context.ConnectionId);
+        //        }
 
-                Clients.Caller.SendAsync("getProfileInfo", user.FullName, user.Avatar);
-            }
-            catch (Exception ex)
-            {
-                Clients.Caller.SendAsync("onError", "OnConnected" + ex.Message);
-            }
-            return base.OnConnectedAsync();
-        }
+        //        Clients.Caller.SendAsync("getProfileInfo", user.FullName, user.Avatar);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Clients.Caller.SendAsync("onError", "OnConnected" + ex.Message);
+        //    }
+        //    return base.OnConnectedAsync();
+        //}
 
         public IEnumerable<UserChatVM> GetUsers(string roomName)
         {
             return _Connection.Where(u => u.CurrentRoom == roomName).ToList();
-        }
-
-        private string GetDevice()
-        {
-            var device = Context.GetHttpContext().Request.Headers["Device"].ToString();
-            if (!string.IsNullOrEmpty(device) && (device.Equals("Desktop") || device.Equals("Mobile")))
-                return device;
-            return "Web";
         }
     }
 }

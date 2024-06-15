@@ -1,10 +1,12 @@
 ﻿using API.Hubs;
+using API.Services;
 using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.IdentityModel.Tokens;
 using Services;
 
 namespace API.Controllers
@@ -14,62 +16,101 @@ namespace API.Controllers
     public class ConversationAccountController : ControllerBase
     {
         private readonly IConversationAccountService _conversationAccountService;
+        private readonly IConversationService _conversationService;
+        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
         private readonly IHubContext<ChatHub> _hubContext;
+        private readonly ICurrentUserService _currentUserService;
 
-        public ConversationAccountController(IMapper mapper, IHubContext<ChatHub> hubContext)
+        public ConversationAccountController(IMapper mapper, IHubContext<ChatHub> hubContext, ICurrentUserService currentUserService, IAccountService accountService)
         {
             _conversationAccountService = new ConversationAccountService();
             _mapper = mapper;
             _hubContext = hubContext;
+            _currentUserService = currentUserService;
+            _accountService = accountService;
+            _conversationService = new ConversationService();
         }
 
         [HttpGet]
         // Lấy danh sách chat box của người dùng
-        public async Task<ActionResult<IEnumerable<RoomVM>>> Get(string Id)
+        public IActionResult Get()
         {
-            var rooms = _conversationAccountService.GetConversationAccounts().Where(x => x.AccountId == Id);
+            var rawRooms =  _conversationAccountService.GetConversationAccounts().Where(x => x.AccountId == _currentUserService.GetUserId().ToString());
 
-            var roomsVM = _conversationAccountService.GetConversationAccounts();
+            var rooms = _conversationAccountService.GetConversationAccounts();
 
-            var query = from r in rooms
-                        join rvm in roomsVM
-                        on r.ConversationId equals rvm.ConversationId
-                        where r.AccountId != rvm.AccountId
-                        select rvm;
+            var resultRooms = from s in rawRooms
+                              join x in rooms
+                              on s.ConversationId equals x.ConversationId
+                              where s.AccountId != x.AccountId
+                              select x;
+
+            var users = _accountService.GetAccounts();
+
+            var query = from r in resultRooms
+                        join u in users
+                        on r.AccountId equals u.Id
+                        select new RoomVM
+                        {
+                            ConversationId = r.ConversationId,
+                            AccountId = r.AccountId,
+                            Name = u.FullName,
+                            Avatar = u.Avatar,
+                        };
+
 
             return Ok(query);
         }
 
-        //[HttpPost]
-        //// Tạo chat box
-        //public async Task<ActionResult<ConversationAccount>> Create(RoomVM roomVM)
-        //{
-        //    if (_conversationAccountService.GetConversationAccounts(roomVM.Id) != null)
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpPost]
+        // Tạo chat box
+        public async Task<IActionResult> CreateAsync(string userId)
+        {
+            var currentUser = _conversationAccountService.GetConversationAccounts().Where(x => x.AccountId == _currentUserService.GetUserId().ToString());
 
-        //    // Get user logging
-        //    var user = _accountService.GetAccounts().FirstOrDefault(u => u.Id == User.Identity.Name);
-        //    var room = new Conversation()
-        //    {
-        //        ConversationId = roomVM.Id,
-        //        CreateDay = DateOnly.MinValue,
-        //    };
+            var check = _conversationAccountService.GetConversationAccounts().Where(x => x.AccountId == userId);
 
-        //    var roomMember = new ConversationAccount()
-        //    {
-        //        ConversationId = roomVM.Id,
-        //        AccountId = roomVM.Id,
-        //        IsActive = true,
-        //    };
+            var list = from r in currentUser
+                       join u in check
+                       on r.ConversationId equals u.ConversationId
+                       select r;
 
-        //    _conversationAccountService.AddConversationAccount(roomMember);
-        //    //Send events
-        //    await _hubContext.Clients.All.SendAsync("addChatRoom", new { id = room.ConversationId, date = room.CreateDay });
+            if (!list.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
 
-        //    return CreatedAtAction(nameof(Get), new { id = room.ConversationId}, new { id = room.ConversationId, date = room.CreateDay});
-        //}
+            // Get user logging
+            
+
+            // Chỉnh Id
+            var room = new Conversation()
+            {
+                ConversationId = "C0005",
+                CreateDay = DateTime.Now,
+            };
+
+            var roomMember1 = new ConversationAccount()
+            {
+                ConversationId = room.ConversationId,
+                AccountId = _currentUserService.GetUserId().ToString(),
+                IsActive = true,
+            };
+            var roomMember2 = new ConversationAccount()
+            {
+                ConversationId = room.ConversationId,
+                AccountId = userId,
+                IsActive = true,
+            };
+
+            _conversationService.AddConversation(room);
+            _conversationAccountService.AddConversationAccount(roomMember1);
+            _conversationAccountService.AddConversationAccount(roomMember2);
+            //Send events
+            //await _hubContext.Clients.All.SendAsync("JoinSpecific");
+
+            return CreatedAtAction(nameof(Get), new { id = room.ConversationId }, new { id = room.ConversationId, date =  room.CreateDay});
+        }
     }
 }

@@ -30,6 +30,19 @@ namespace Main
 
             builder.Services.AddSignalR();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("reactApp", builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowCredentials();
+                });
+            });
+
+            builder.Services.AddSingleton<ShareDBService> ();
+
             builder.Services.AddControllers();
 
             builder.Services.AddDbContext<DAOs.DbContext>(options =>
@@ -111,6 +124,7 @@ namespace Main
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseDeveloperExceptionPage();
             }
 
             app.UseHttpsRedirection();
@@ -120,6 +134,8 @@ namespace Main
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.UseCors("reactApp");
 
             app.MapHub<ChatHub>("/chatHub");
 

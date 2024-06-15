@@ -15,8 +15,8 @@ namespace API.Helpers
         {
             CreateMap<Message, MessageVM>()
                 .ForMember(dst => dst.From, opt => opt.MapFrom(x => x.AccountId))
-                .ForMember(dst => dst.Room, opt => opt.MapFrom(x => x.ConversationId))
-                .ForMember(dst => dst.Avatar, opt => opt.MapFrom(x => x.AccountId))
+                .ForMember(dst => dst.RoomId, opt => opt.MapFrom(x => x.ConversationId))
+                .ForMember(dst => dst.Avatar, opt => opt.MapFrom(x => x.Account.Avatar))
                 .ForMember(dst => dst.Time, opt => opt.MapFrom(x => x.Time))
                 .ForMember(dst => dst.Content, opt => opt.MapFrom(x => BasicEmijis.ParseEmojis(x.Description)));
         }
