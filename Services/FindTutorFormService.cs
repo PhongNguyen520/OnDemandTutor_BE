@@ -12,7 +12,7 @@ namespace Services
     {
         private readonly IFindTutorFormRepository iFindTutorFormRepository = null;
         
-        public FindTutorFormService(FindTutorFormRepository repository)
+        public FindTutorFormService()
         {
             if (iFindTutorFormRepository == null)
             {
