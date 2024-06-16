@@ -8,18 +8,19 @@ namespace BusinessObjects.Models.TutorModel
 {
     public class TutorDetail
     {
-        public string AccountId { get; set; }
-        public string TutorId { get; set; }
-        public string Avatar { get; set; }
-        public string Photo { get; set; }
-        public string FullName { get; set; }
+        public string AccountId { get; set; } = string.Empty;
+        public string TutorId { get; set; } = string.Empty;
+        public string Avatar { get; set; } = string.Empty;
+        public string? Photo { get; set; }
+        public string FullName { get; set; } = string.Empty;
         public bool Gender { get; set; }
-        public string Headline { get; set; }
-        public string Description { get; set; }
-        public string TypeOfDegree { get; set; }
-        public string Education { get; set; }
+        public string? Headline { get; set; }
+        public string? Description { get; set; }
+        public List<string> SubjectTutors { get; set; } = new List<string>();
+        public string TypeOfDegree { get; set; } = string.Empty;
+        public string Education { get; set; } = string.Empty;
         public double HourlyRate { get; set; }
-        public string Address { get; set; }
+        public string? Address { get; set; }
         public double Start { get; set; }
         public double Ratings { get; set; }
 

@@ -8,11 +8,12 @@ namespace BusinessObjects.Models
 {
     public class FeedbackVM
     {
-        public string FeedbackId { get; set; }
-        public string FullName { get; set;}
+        public string FeedbackId { get; set; } = string.Empty;
+        public string StudentId { get; set; } = string.Empty;
+        public string FullName { get; set;} = string.Empty;
         public DateTime CreateDay { get; set; }
-        public string Description { get; set;}
-        public string SubjectName { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string? SubjectName { get; set; }
         public double Start { get; set; }
 
     }

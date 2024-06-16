@@ -34,125 +34,45 @@ namespace API.Controllers
 
         // GET: api/Feedbacks
         [HttpGet("{id}")]
-        public IActionResult GetFeedbackList(string id, int pageIndex, int pageSize)
+        public IActionResult GetFeedbackList(string id, int pageIndex)
         {
-            var tbFB = iFeedbackService.GetFeedbacks(id).OrderBy(s => s.CreateDay);
+            var tbFB = iFeedbackService.GetFeedbacks(id);
             var tbStudent = iStudentService.GetStudents();
             var tbUser = _accountService.GetAccounts();
+            var tbSubjects = _subjectService.GetSubjects();
+            var tbClasses = _classService.GetClasses();
 
             var query = from st in tbStudent
-                         join us in tbUser
-                         on st.AccountId equals us.Id
-                         join fb in tbFB
-                         on st.StudentId equals fb.StudentId
-                         select new FeedbackVM
-                         {
-                             FeedbackId = fb.FeedbackId,
-                             FullName = us.FullName,
-                             CreateDay = fb.CreateDay,
-                             Description = fb.Description,
-                             SubjectName = fb.ClassId,// NOICE
-                             Start = fb.Rate,
-                         };
+                        join us in tbUser on st.AccountId equals us.Id
+                        join fb in tbFB on st.StudentId equals fb.StudentId
+                        orderby fb.CreateDay descending
+                        select new FeedbackVM
+                        {
+                            FeedbackId = fb.FeedbackId,
+                            StudentId = st.StudentId,
+                            FullName = us.FullName,
+                            CreateDay = fb.CreateDay,
+                            Description = fb.Description,
+                            SubjectName = tbSubjects
+                                .Join(tbClasses, s => s.SubjectId, c => c.SubjectId, (s, c) => new { s.Description, c.StudentId })
+                                .Where(sc => sc.StudentId == st.StudentId)
+                                .Select(sc => sc.Description)
+                                .FirstOrDefault(), // Lấy tên môn học đầu tiên khớp với StudentId
+                            Start = fb.Rate,
+                        };
 
-            //---------------------PAGING-------------------------
+            // --------------------- PAGING -------------------------
             int validPageIndex = pageIndex > 0 ? pageIndex - 1 : 0;
-            int validPageSize = pageSize > 0 ? pageSize : 10;
+            int validPageSize = 5;
 
-            query = query.Skip(validPageIndex * validPageSize).Take(validPageSize);
+            if (query.Count() < 5)
+            {
+                validPageSize = query.Count();
+            }
+
+            query = query.Skip(validPageIndex * validPageSize).Take(validPageSize).ToList();
 
             return Ok(query);
         }
-
-        // GET: api/Feedbacks/5
-        //[HttpGet]
-        //public async Task<ActionResult<Feedback>> GetFeedback(string id)
-        //{
-        //    var feedback = await _context.Feedbacks.FindAsync(id);
-
-        //    if (feedback == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return feedback;
-        //}
-
-        //// PUT: api/Feedbacks/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutFeedback(string id, Feedback feedback)
-        //{
-        //    if (id != feedback.FeedbackId)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(feedback).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!FeedbackExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-        //// POST: api/Feedbacks
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public async Task<ActionResult<Feedback>> PostFeedback(Feedback feedback)
-        //{
-        //    _context.Feedbacks.Add(feedback);
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        if (FeedbackExists(feedback.FeedbackId))
-        //        {
-        //            return Conflict();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return CreatedAtAction("GetFeedback", new { id = feedback.FeedbackId }, feedback);
-        //}
-
-        //// DELETE: api/Feedbacks/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteFeedback(string id)
-        //{
-        //    var feedback = await _context.Feedbacks.FindAsync(id);
-        //    if (feedback == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.Feedbacks.Remove(feedback);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
-        //private bool FeedbackExists(string id)
-        //{
-        //    return _context.Feedbacks.Any(e => e.FeedbackId == id);
-        //}
     }
 }

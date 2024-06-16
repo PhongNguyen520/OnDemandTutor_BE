@@ -120,36 +120,61 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        // get tutor Detail by TutorId
         public IActionResult GetTutorDetail(string id)
         {
-            var tbTutor = iTutorService.GetTutors().Where(s => s.TutorId == id);
-            var tbAccount = iAccountService.GetAccounts();
+            // Lấy thông tin tutor dựa trên id
+            var tbTutor = iTutorService.GetTutors().FirstOrDefault(s => s.TutorId == id);
+            if (tbTutor == null)
+            {
+                return NotFound("Tutor not found.");
+            }
 
-            var query = from tutor in tbTutor
-                        join account in tbAccount
-                        on tutor.AccountId equals account.Id
-                        select new TutorDetail
-                        {
-                            AccountId = account.Id,
-                            TutorId = tutor.TutorId,
-                            Avatar = account.Avatar,
-                            Photo = tutor.Photo,
-                            FullName = account.FullName,
-                            Gender = account.Gender,
-                            Headline = tutor.Headline,
-                            Description = tutor.Description,
-                            TypeOfDegree = tutor.TypeOfDegree,
-                            Education = tutor.Education,
-                            HourlyRate = tutor.HourlyRate,
-                            Address = tutor.Address,
-                            Start = iFeedbackService.TotalStart(tutor.TutorId),
-                            Ratings = iFeedbackService.TotalRate(tutor.TutorId),
-                        };
-            return Ok(query);
+            // Lấy thông tin tài khoản dựa trên AccountId từ tutor
+            var tbAccount = iAccountService.GetAccounts().FirstOrDefault(a => a.Id == tbTutor.AccountId);
+            if (tbAccount == null)
+            {
+                return NotFound("Account not found.");
+            }
+
+            // Lấy danh sách SubjectTutor dựa trên TutorId
+            var subjectTutors = iSubjectTutorService.GetSubjectTutors(tbTutor.TutorId)
+                                    .ToList();
+
+            // Lấy danh sách SubjectId từ SubjectTutor
+            var subjectIds = subjectTutors.Select(st => st.SubjectId).ToList();
+
+            // Lấy danh sách Subject dựa trên SubjectId
+            var subjects = iSubjectService.GetSubjects()
+                                .Where(s => subjectIds.Contains(s.SubjectId))
+                                .ToList();
+
+            // Lấy danh sách Description từ Subject
+            var subjectDescriptions = subjects.Select(s => s.Description).ToList();
+
+            // Tạo đối tượng TutorDetail
+            var tutorDetail = new TutorDetail
+            {
+                AccountId = tbAccount.Id,
+                TutorId = tbTutor.TutorId,
+                Avatar = tbAccount.Avatar,
+                Photo = tbTutor.Photo,
+                FullName = tbAccount.FullName,
+                Gender = tbAccount.Gender,
+                Headline = tbTutor.Headline,
+                Description = tbTutor.Description,
+                SubjectTutors = subjectDescriptions,
+                TypeOfDegree = tbTutor.TypeOfDegree,
+                Education = tbTutor.Education,
+                HourlyRate = tbTutor.HourlyRate,
+                Address = tbTutor.Address,
+                Start = iFeedbackService.TotalStart(tbTutor.TutorId),
+                Ratings = iFeedbackService.TotalRate(tbTutor.TutorId),
+            };
+
+            return Ok(tutorDetail);
         }
 
-        
+
         //[HttpPut("{id}")]
         //public async Task<IActionResult> PutTutor(string id, Tutor tutor)
         //{

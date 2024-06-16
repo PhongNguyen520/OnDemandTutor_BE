@@ -9,7 +9,7 @@ public partial class TutorAd
 
     public DateTime CreateDay { get; set; }
 
-    public string Tillte { get; set; }
+    public string Tittle { get; set; }
 
     public string Video { get; set; } = null!;
 

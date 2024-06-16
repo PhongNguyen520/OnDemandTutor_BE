@@ -528,8 +528,8 @@ public partial class DbContext : IdentityDbContext<Account>
                 .HasMaxLength(5)
                 .IsUnicode(false)
                 .HasColumnName("AdsID");
-            entity.Property(e => e.Tillte)
-                .HasMaxLength(255)
+            entity.Property(e => e.Tittle)
+                .HasMaxLength(256)
                 .IsUnicode(false);
             entity.Property(e => e.Image)
                 .HasMaxLength(200)
