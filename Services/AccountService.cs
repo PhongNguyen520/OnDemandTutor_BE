@@ -1,5 +1,8 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Repositories;
 using System;
 using System.Collections.Generic;
@@ -11,14 +14,13 @@ namespace Services
 {
     public class AccountService : IAccountService
     {
-        private readonly IAccountRepository iAccountRepository = null;
+        private readonly IAccountRepository iAccountRepository;
 
-        public AccountService()
+
+
+        public AccountService(IAccountRepository _iAccountRepository)
         {
-            if (iAccountRepository == null)
-            {
-                iAccountRepository = new AccountRepository();
-            }
+            iAccountRepository = _iAccountRepository;
         }
 
         public bool AddAccount(Account account)
@@ -36,9 +38,39 @@ namespace Services
             return iAccountRepository.GetAccounts();
         }
 
+        public async Task<Account> GetAccountById(string id)
+        {
+            return await iAccountRepository.GetAccountById(id);
+        }
+
+        public Task<IList<string>> GetRolesAsync(Account user)
+        {
+            return iAccountRepository.GetRolesAsync(user);
+        }
+
+        public Task<Account> SignInAsync(UserSignIn model)
+        {
+            return iAccountRepository.SignInAsync(model);
+        }
+
+        public async Task<IdentityResult> SignUpAsync(AccountDTO model)
+        {
+            return await iAccountRepository.SignUpAsync(model);
+        }
+
         public bool UpdateAccounts(Account account)
         {
             return iAccountRepository.UpdateAccounts(account);
+        }
+
+        public Task<bool> ConfirmAccount(string email)
+        {
+            return iAccountRepository.ConfirmAccount(email);    
+        }
+
+        public async Task<int> EnalbleUser(string userId)
+        {
+            return await iAccountRepository.EnalbleUser(userId);
         }
     }
 }
