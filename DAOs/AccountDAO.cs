@@ -37,7 +37,7 @@ namespace DAOs
 
         public List<Account> GetAccounts()
         {
-            return dbContext.Accounts.OrderByDescending(x => x.AccountId).ToList();
+            return dbContext.Accounts.OrderByDescending(x => x.Email).ToList();
         }
 
         public bool UpdateAccounts(Account account)

@@ -1,4 +1,6 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
+using Microsoft.AspNetCore.Identity;
 using Repositories;
 using System;
 using System.Collections.Generic;
@@ -12,31 +14,67 @@ namespace Services
     {
         private readonly IRoleRepository iRoleRepository = null;
 
-        public RoleService()
+        public RoleService(IRoleRepository roleRepository)
         {
-            if (iRoleRepository == null)
-            {
-                iRoleRepository = new RoleRepository();
-            }
+            iRoleRepository = roleRepository;
         }
-        public bool AddRole(Role role)
+        //public bool AddRole(Role role)
+        //{
+        //    return iRoleRepository.AddRole(role);
+        //}
+
+        //public bool DelRoles(int id)
+        //{
+        //    return iRoleRepository.DelRoles(id);
+        //}
+
+        //public List<Role> GetRoles()
+        //{
+        //    return iRoleRepository.GetRoles();
+        //}
+
+        //public bool UpdateAccounts(Role role)
+        //{
+        //    return iRoleRepository.UpdateAccounts(role);
+        //}
+        public async Task<List<IdentityRole>> GetRole()
         {
-            return iRoleRepository.AddRole(role);
+            return await iRoleRepository.GetRole();
         }
 
-        public bool DelRoles(int id)
+        public async Task<IdentityRole> GetRoleById(string id)
         {
-            return iRoleRepository.DelRoles(id);
+            return await iRoleRepository.GetRoleById(id);
         }
 
-        public List<Role> GetRoles()
+        public async Task<IdentityResult> CreateRole(string roleName)
         {
-            return iRoleRepository.GetRoles();
+            return await iRoleRepository.CreateRole(roleName);
         }
 
-        public bool UpdateAccounts(Role role)
+        public async Task<int> UpdateRole(string roleName, string id)
         {
-            return iRoleRepository.UpdateAccounts(role);
+            return await iRoleRepository.UpdateRole(roleName, id);
+        }
+
+        public async Task<IdentityResult> DeleteRole(string roleId)
+        {
+            return await iRoleRepository.DeleteRole(roleId);
+        }
+
+        public async Task<String[]> GetUserRole(string userId)
+        {
+            return await iRoleRepository.GetUserRole(userId);
+        }
+
+        public async Task<IdentityResult> AddRoleUser(List<string> roleNames, string userId)
+        {
+            return await iRoleRepository.AddRoleUser(roleNames, userId);
+        }
+
+        public async Task<List<UserRolesVM>> GetListUsers()
+        {
+            return await iRoleRepository.GetListUsers();
         }
     }
 }

@@ -9,11 +9,14 @@ using BusinessObjects;
 using DAOs;
 using Services;
 using NuGet.Protocol;
+using BusinessObjects.Constrant;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = AppRole.Tutor)]
     public class TutorsController : ControllerBase
     {
         private readonly ITutorService iTutorService;

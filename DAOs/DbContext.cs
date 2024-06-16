@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using BusinessObjects;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAOs;
 
-public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
+public partial class DbContext : IdentityDbContext<Account>
 {
     public DbContext()
     {
@@ -36,8 +37,6 @@ public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
 
     public virtual DbSet<Notification> Notifications { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
-
     public virtual DbSet<Student> Students { get; set; }
 
     public virtual DbSet<Subject> Subjects { get; set; }
@@ -54,20 +53,13 @@ public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
 
     public virtual DbSet<Wallet> Wallets { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlServer("Server=localhost;uid=sa;pwd=12345;database=OnDemandTutor;TrustServerCertificate=True");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlServer("Server=localhost;uid=sa;pwd=123;database=OnDemandTutor;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.AccountId).HasName("PK__Account__349DA586F055EC12");
-
             entity.ToTable("Account");
-
-            entity.Property(e => e.AccountId)
-                .HasMaxLength(5)
-                .IsUnicode(false)
-                .HasColumnName("AccountID");
             entity.Property(e => e.Email)
                 .HasMaxLength(20)
                 .IsUnicode(false);
@@ -75,21 +67,7 @@ public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.IsActive).HasColumnName("isActive");
-            entity.Property(e => e.Password)
-                .HasMaxLength(20)
-                .IsUnicode(false);
-            entity.Property(e => e.RoleId)
-                .HasMaxLength(5)
-                .IsUnicode(false)
-                .HasColumnName("RoleID");
-            entity.Property(e => e.Username)
-                .HasMaxLength(50)
-                .IsUnicode(false);
 
-            entity.HasOne(d => d.Role).WithMany(p => p.Accounts)
-                .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKAccount757266");
         });
 
         modelBuilder.Entity<Class>(entity =>
@@ -193,8 +171,8 @@ public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
                 .IsUnicode(false)
                 .HasColumnName("ConversationID");
             entity.Property(e => e.AccountId)
-                .HasMaxLength(5)
-                .IsUnicode(false)
+                .HasMaxLength(450)
+                .IsUnicode(true)
                 .HasColumnName("AccountID");
 
             entity.HasOne(d => d.Account).WithMany(p => p.ConversationAccounts)
@@ -312,8 +290,8 @@ public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
                 .IsUnicode(false)
                 .HasColumnName("MessageID");
             entity.Property(e => e.AccountId)
-                .HasMaxLength(5)
-                .IsUnicode(false)
+                .HasMaxLength(450)
+                .IsUnicode(true)
                 .HasColumnName("AccountID");
             entity.Property(e => e.ConversationId)
                 .HasMaxLength(5)
@@ -345,8 +323,8 @@ public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
                 .IsUnicode(false)
                 .HasColumnName("NotificationID");
             entity.Property(e => e.AccountId)
-                .HasMaxLength(5)
-                .IsUnicode(false)
+                .HasMaxLength(450)
+                .IsUnicode(true)
                 .HasColumnName("AccountID");
             entity.Property(e => e.Description)
                 .HasMaxLength(255)
@@ -384,8 +362,8 @@ public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
                 .IsUnicode(false)
                 .HasColumnName("StudentID");
             entity.Property(e => e.AccountId)
-                .HasMaxLength(5)
-                .IsUnicode(false)
+                .HasMaxLength(450)
+                .IsUnicode(true)
                 .HasColumnName("AccountID");
             entity.Property(e => e.SchoolName)
                 .HasMaxLength(50)
@@ -506,8 +484,8 @@ public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
                 .IsUnicode(false)
                 .HasColumnName("TutorID");
             entity.Property(e => e.AccountId)
-                .HasMaxLength(5)
-                .IsUnicode(false)
+                .HasMaxLength(450)
+                .IsUnicode(true)
                 .HasColumnName("AccountID");
             entity.Property(e => e.Address)
                 .HasMaxLength(50)
@@ -573,8 +551,8 @@ public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
                 .IsUnicode(false)
                 .HasColumnName("WalletID");
             entity.Property(e => e.AccountId)
-                .HasMaxLength(5)
-                .IsUnicode(false)
+                .HasMaxLength(450)
+                .IsUnicode(true)
                 .HasColumnName("AccountID");
             entity.Property(e => e.BankName)
                 .HasMaxLength(255)
@@ -585,6 +563,17 @@ public partial class DbContext : Microsoft.EntityFrameworkCore.DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKWallet115696");
         });
+
+        base.OnModelCreating(modelBuilder);
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            var tableName = entityType.GetTableName();
+            if (tableName.StartsWith("AspNet"))
+            {
+                entityType.SetTableName(tableName.Substring(6));
+            }
+        }
+        OnModelCreatingPartial(modelBuilder);
 
         OnModelCreatingPartial(modelBuilder);
     }

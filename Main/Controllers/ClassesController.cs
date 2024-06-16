@@ -8,11 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObjects;
 using DAOs;
 using Services;
+using Microsoft.AspNetCore.Authorization;
+using BusinessObjects.Constrant;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = AppRole.Admin)]
     public class ClassesController : ControllerBase
     {
         private readonly IClassService iClassService;

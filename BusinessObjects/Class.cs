@@ -6,6 +6,7 @@ namespace BusinessObjects;
 public partial class Class
 {
     public string ClassId { get; set; } = null!;
+    public string ClassName { get; set; } = null!;
 
     public int Quantity { get; set; }
 
