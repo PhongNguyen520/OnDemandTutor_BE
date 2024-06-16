@@ -18,7 +18,7 @@ namespace API.Controller
         {
             iRoleService = _iRoleService;
             iAccountService = _iAccountService;
-        }
+    }
 
         [HttpGet("getRole")]
         public async Task<IActionResult> GetAccounts()
@@ -30,7 +30,7 @@ namespace API.Controller
                 _.Name
             });
             return Ok(listRoles);
-        }
+}
 
         [HttpGet("getRoleBy/{id}")]
         public async Task<IActionResult> GetRoleById(String id)
