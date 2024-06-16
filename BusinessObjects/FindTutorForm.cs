@@ -9,6 +9,17 @@ public partial class FindTutorForm
 
     public DateTime CreateDay { get; set; }
 
+    // ----Chỉnh sửa-----
+
+    public string Tittle { get; set; } = string.Empty;
+
+    public double MinHourlyRate { get; set; }
+
+    public double MaxHourlyRate { get; set; }
+
+    public bool IsActive { get; set; }
+
+    //-------------------
     public string SubjectName { get; set; } = null!;
 
     public bool TutorGender { get; set; }
