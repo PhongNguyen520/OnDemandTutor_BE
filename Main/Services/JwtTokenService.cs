@@ -35,6 +35,7 @@ namespace API.Services
         {
             var authClaims = new List<Claim>
             {
+                // C# guiD => Base64 => String
 				 new Claim("UserId", user.Id.ToString()),
 				new Claim(ClaimTypes.UserData, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),

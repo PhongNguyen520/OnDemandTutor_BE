@@ -22,6 +22,7 @@ namespace Main
             builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
+            builder.Services.AddScoped<IMailService, MailService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -57,13 +58,14 @@ namespace Main
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-
+                    
 
                     ValidAudience = builder.Configuration["JWT:ValidAudience"],
                     ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
                 };
             });
+
 
 
 

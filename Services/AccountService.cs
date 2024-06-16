@@ -2,6 +2,7 @@
 using BusinessObjects.Models;
 using DAOs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Repositories;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace Services
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository iAccountRepository;
+
 
 
         public AccountService(IAccountRepository _iAccountRepository)
@@ -59,6 +61,16 @@ namespace Services
         public bool UpdateAccounts(Account account)
         {
             return iAccountRepository.UpdateAccounts(account);
+        }
+
+        public Task<bool> ConfirmAccount(string email)
+        {
+            return iAccountRepository.ConfirmAccount(email);    
+        }
+
+        public async Task<int> EnalbleUser(string userId)
+        {
+            return await iAccountRepository.EnalbleUser(userId);
         }
     }
 }
