@@ -7,7 +7,7 @@ public partial class Transaction
 {
     public string TransactionId { get; set; } = null!;
 
-    public DateOnly CreateDay { get; set; }
+    public DateTime CreateDay { get; set; }
 
     public float TransactionMoney { get; set; }
 

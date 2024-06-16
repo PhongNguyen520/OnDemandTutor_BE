@@ -18,7 +18,6 @@ namespace Services
 
         public bool UpdateTutors(Tutor tutor);
 
-        public List<Subject> GetTutor(string id);
 
         public IEnumerable<Tutor> Filter(RequestSearchTutorModel requestSearchTutorModel);
 

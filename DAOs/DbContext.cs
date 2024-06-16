@@ -59,7 +59,7 @@ public partial class DbContext : IdentityDbContext<Account>
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.ToTable("Account");
+            entity.ToTable("Users");
             entity.Property(e => e.Email)
                 .HasMaxLength(20)
                 .IsUnicode(false);
@@ -393,6 +393,9 @@ public partial class DbContext : IdentityDbContext<Account>
                 .HasMaxLength(5)
                 .IsUnicode(false)
                 .HasColumnName("SubjectGroupID");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.Grade).WithMany(p => p.Subjects)
                 .HasForeignKey(d => d.GradeId)
@@ -523,6 +526,9 @@ public partial class DbContext : IdentityDbContext<Account>
                 .HasMaxLength(5)
                 .IsUnicode(false)
                 .HasColumnName("AdsID");
+            entity.Property(e => e.Tittle)
+                .HasMaxLength(256)
+                .IsUnicode(false);
             entity.Property(e => e.Image)
                 .HasMaxLength(200)
                 .IsUnicode(false);

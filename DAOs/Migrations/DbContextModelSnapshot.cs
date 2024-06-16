@@ -37,6 +37,9 @@ namespace DAOs.Migrations
                     b.Property<DateTime?>("DateExpireRefreshToken")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)

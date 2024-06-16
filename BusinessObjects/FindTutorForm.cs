@@ -7,7 +7,7 @@ public partial class FindTutorForm
 {
     public string FormId { get; set; } = null!;
 
-    public DateOnly CreateDay { get; set; }
+    public DateTime CreateDay { get; set; }
 
     public string SubjectName { get; set; } = null!;
 
