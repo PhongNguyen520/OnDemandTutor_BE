@@ -43,16 +43,19 @@ namespace Services
         public double TotalStart(string id)
         {
             var query = iFeedbackRepository.GetFeedbacks(id);
-            double start = 0.00;
+
             if (query.Count() <= 0)
             {
-                return 0;
+                return 0.00; // Trả về 0.00 nếu không có đánh giá nào
             }
-            else
-            {
-                start = query.Sum(x => x.Rate) / query.Count();
-            }
-            return start;
+
+            double totalRate = query.Sum(x => x.Rate);
+            double averageRate = totalRate / query.Count();
+
+            // Làm tròn đến hai chữ số thập phân
+            double rate = Math.Round(averageRate, 2);
+
+            return rate;
         }
 
         public int TotalRate(string id)

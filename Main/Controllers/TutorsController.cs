@@ -45,26 +45,28 @@ namespace API.Controllers
         {
             var sortBy = requestSearchTutorModel.SortContent != null ? requestSearchTutorModel.SortContent?.sortTutorBy.ToString() : null;
             var sortType = requestSearchTutorModel.SortContent != null ? requestSearchTutorModel.SortContent?.sortTutorType.ToString() : null;
+            var searchQuery = requestSearchTutorModel.Search.ToLower();
 
             //List tutors active 
             var allTutor = iTutorService.Filter(requestSearchTutorModel);
 
-            // ----------------------TÌM KIẾM THEO TÊN GIẢNG VIÊN----------------------- 
-            var allAccount = iAccountService.GetAccounts().Where(ac => ac.FullName.Contains(requestSearchTutorModel.Search) && ac.IsActive == true);
+            // TÌM KIẾM THEO TÊN GIẢNG VIÊN
+            var allAccount = iAccountService.GetAccounts()
+                .Where(ac => ac.FullName.ToLower().Contains(searchQuery) && ac.IsActive == true);
 
-            // ---------------------TÌM KIẾM THEO TÊN NHÓM MÔN HỌC------------------------ 
+            
+            // TÌM KIẾM THEO TÊN NHÓM MÔN HỌC
+            var allSubjectGroup = iSubjectGroupService.GetSubjectGroups().Where(su => su.SubjectName.ToLower().Contains(searchQuery));
 
-            var allSubjectGroup = iSubjectGroupService.GetSubjectGroups().Where(su => su.SubjectName.Contains(requestSearchTutorModel.Search));
-
-            if (allSubjectGroup.Count() <= 0)
+            if (!allSubjectGroup.Any())
             {
                 allSubjectGroup = iSubjectGroupService.GetSubjectGroups();
             }
-            else if (allAccount.Count() <= 0)
+            else if (!allAccount.Any())
             {
                 allAccount = iAccountService.GetAccounts();
             }
-            else if (allAccount.Count() <= 0 && allSubjectGroup.Count() <= 0)
+            else if (!allSubjectGroup.Any() && !allAccount.Any())
             {
                 allAccount = null;
                 allSubjectGroup = null;
@@ -72,10 +74,16 @@ namespace API.Controllers
 
             IEnumerable<Subject> allSubject = iSubjectService.GetSubjects();
 
-            // Trường hợp chọn grade
+            // Trường hợp chọn Grade
             if (!string.IsNullOrEmpty(requestSearchTutorModel.GradeId))
             {
                 allSubject = allSubject.Where(s => s.GradeId == requestSearchTutorModel.GradeId);
+            }// kết thúc
+
+            // Trường hợp chọn Gender
+            if (requestSearchTutorModel.Gender is not null)
+            {
+                allAccount = allAccount.Where(s => s.Gender == requestSearchTutorModel.Gender);
             }// kết thúc
 
 
@@ -105,7 +113,7 @@ namespace API.Controllers
                          {
                              TutorID = t.TutorId,
                              FullName = a.FullName,
-                             Photo = t.Photo,
+                             Avatar = a.Avatar,
                              HourlyRate = t.HourlyRate,
                              Start = iFeedbackService.TotalStart(t.TutorId),
                              Ratings = iFeedbackService.TotalRate(t.TutorId),
@@ -114,12 +122,12 @@ namespace API.Controllers
                              TopFeedback = iFeedbackService.GetFeedbacks(t.TutorId).Select(s => s.Description).LastOrDefault(),
                          });
 
-            query = iTutorService.Sorting(query, sortBy, sortType, requestSearchTutorModel.pageIndex, requestSearchTutorModel.pageSize);
+            query = iTutorService.Sorting(query, sortBy, sortType, requestSearchTutorModel.pageIndex);
 
             return Ok(query);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("Id/{id}")]
         public IActionResult GetTutorDetail(string id)
         {
             // Lấy thông tin tutor dựa trên id

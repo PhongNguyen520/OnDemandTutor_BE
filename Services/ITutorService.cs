@@ -25,7 +25,6 @@ namespace Services
             (IEnumerable<ResponseSearchTutorModel> query,
             string? sortBy,
             string? sortType,
-            int pageIndex,
-            int pageSize);
+            int pageIndex);
     }
 }

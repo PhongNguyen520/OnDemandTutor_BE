@@ -79,8 +79,7 @@ namespace Repositories
             (IEnumerable<ResponseSearchTutorModel> query, 
             string? sortBy, 
             string? sortType,
-            int pageIndex,
-            int pageSize)
+            int pageIndex)
         {
             //_____SORT_____
             if (!string.IsNullOrEmpty(sortBy))
@@ -109,7 +108,12 @@ namespace Repositories
 
             //_____PAGING_____
             int validPageIndex = pageIndex > 0 ? pageIndex - 1 : 0;
-            int validPageSize = pageSize > 0 ? pageSize : 10;
+            int validPageSize = 10;
+
+            if (query.Count() < 10)
+            {
+                validPageSize = query.Count();
+            }
 
             query = query.Skip(validPageIndex * validPageSize).Take(validPageSize);
 
