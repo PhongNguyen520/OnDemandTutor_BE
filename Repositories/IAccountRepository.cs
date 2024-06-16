@@ -23,5 +23,7 @@ namespace Repositories
         Task<IdentityResult> SignUpAsync(AccountDTO model);
         Task<Account> SignInAsync(UserSignIn model);
         Task<IList<String>> GetRolesAsync(Account user);
+        Task<bool> ConfirmAccount(string email);
+        Task<int> EnalbleUser(String userId);
     }
 }

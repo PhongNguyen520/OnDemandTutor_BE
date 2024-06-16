@@ -10,8 +10,6 @@ public partial class Account : IdentityUser
 
     public bool Gender { get; set; }
 
-    public string Email { get; set; } = null!;
-
     public int PhoneNumber { get; set; }
 
     public bool IsActive { get; set; }

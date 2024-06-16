@@ -6,19 +6,24 @@ using Microsoft.AspNetCore.Mvc;
 using Services;
 using API.Services;
 using Repositories;
+using Microsoft.Extensions.Hosting;
 
 namespace API.Controller
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class AuthenticateController : ControllerBase
     {
+        private IMailService _mailService;
         private IAccountService _accountService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IJwtTokenService _jwtTokenService;
 
-        public AuthenticateController(IJwtTokenService jwtTokenService, IAccountService accountService, ICurrentUserService currentUserService)
+        public AuthenticateController(IJwtTokenService jwtTokenService, IAccountService accountService, 
+            ICurrentUserService currentUserService, IMailService mailService)
         {
+            _mailService = mailService;
             _accountService = accountService;
             _jwtTokenService = jwtTokenService;
             _currentUserService = currentUserService;
@@ -35,6 +40,10 @@ namespace API.Controller
             }
             if (result.Succeeded)
             {
+                var scheme = HttpContext.Request.Scheme;
+                var host = HttpContext.Request.Host.Value;
+                var url = $"{scheme}://{host}/api/auth/confirm-email?email={signUpModel.Email}";
+                await _mailService.SendEmailAsync(signUpModel.Email, "Xác thực tài khoản của bạn", url);
                 return Ok(result.Succeeded);
             }
 
@@ -49,6 +58,9 @@ namespace API.Controller
             if (user == null || !(user.IsActive))
             {
                 return Unauthorized();
+            } else if (!user.EmailConfirmed)
+            {
+                return BadRequest("Cần phải xác thực tài khoản của bạn qua email đăng kí");
             }
             var userRoles = await _accountService.GetRolesAsync(user);
             var accessToken = _jwtTokenService.CreateToken(user, userRoles);
@@ -93,5 +105,15 @@ namespace API.Controller
             _accountService.UpdateAccounts(user);
             return Ok(new { token = token, refreshToken = newRefreshToken });
         }
+
+        [AllowAnonymous]
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmAccount(string email)
+        {
+            var result = await _accountService.ConfirmAccount(email);
+            if (result) return Ok(result);
+            else return BadRequest("Cannot confirm your email");
+        }
+
     }
 }
