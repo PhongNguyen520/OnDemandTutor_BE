@@ -38,6 +38,11 @@ namespace DAOs
             return dbContext.SubjectTutors.Where(x => x.TutorId == id).ToList();
         }
 
+        public List<SubjectTutor> GetAllSubjectTutors()
+        {
+            return dbContext.SubjectTutors.ToList();
+        }
+
         public bool UpdateSubjectTutors(SubjectTutor subjectTutor)
         {
             dbContext.SubjectTutors.Update(subjectTutor);

@@ -29,6 +29,11 @@ namespace Services
             return iSubjectTutorRepository.DelSubjectTutors(id);
         }
 
+        public List<SubjectTutor> GetAllSubjectTutors()
+        {
+            return iSubjectTutorRepository.GetAllSubjectTutors();
+        }
+
         public List<SubjectTutor> GetSubjectTutors(string id)
         {
             return iSubjectTutorRepository.GetSubjectTutors(id);

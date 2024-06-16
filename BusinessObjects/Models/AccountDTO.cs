@@ -23,7 +23,7 @@ namespace BusinessObjects.Models
         public int isActive { get; set; } = 1;
         public bool isAdmin { get; set; }
     
-}
+    }
 
     public class UserRoles : Account
     {

@@ -38,6 +38,20 @@ namespace Repositories
             _dbContext = dbContext;
         }
 
+        public AccountRepository(UserManager<Account> userManager,
+            SignInManager<Account> signInManager, IConfiguration configuration,
+            RoleManager<IdentityRole> roleManager, IMapper mapper)
+        {
+            if (accountDAO == null)
+            {
+                accountDAO = new AccountDAO();
+            }
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
+            _mapper = mapper;
+        }
+
         public bool AddAccount(Account account)
         {
             return accountDAO.AddAccount(account);
