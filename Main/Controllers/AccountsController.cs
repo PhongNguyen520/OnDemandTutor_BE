@@ -17,9 +17,9 @@ namespace API.Controllers
     {
         private readonly IAccountService iAccountService;
 
-        public AccountsController()
+        public AccountsController(IAccountService accountService)
         {
-            iAccountService = new AccountService();
+            iAccountService = accountService;
         }
 
         // GET: api/Accounts

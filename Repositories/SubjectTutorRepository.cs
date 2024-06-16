@@ -30,6 +30,11 @@ namespace Repositories
             return subjectTutorDAO.DelSubjectTutors(id);
         }
 
+        public List<SubjectTutor> GetAllSubjectTutors()
+        {
+            return subjectTutorDAO.GetAllSubjectTutors();
+        }
+
         public List<SubjectTutor> GetSubjectTutors(string id)
         {
             return subjectTutorDAO.GetSubjectTutors(id);

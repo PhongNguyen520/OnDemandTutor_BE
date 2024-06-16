@@ -9,34 +9,123 @@ using BusinessObjects;
 using DAOs;
 using Services;
 using NuGet.Protocol;
+using BusinessObjects.Constrant;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = AppRole.Tutor)]
     public class TutorsController : ControllerBase
     {
         private readonly ITutorService iTutorService;
+        private readonly IAccountService iAccountService;
+        private readonly IFeedbackService iFeedbackService;
+        private readonly IGradeService iGradeService;
+        private readonly ISubjectGroupService iSubjectGroupService;
+        private readonly ISubjectService iSubjectService;
+        private readonly ISubjectTutorService iSubjectTutorService;
 
-        public TutorsController()
+
+        public TutorsController(IAccountService accountService)
         {
             iTutorService = new TutorService();
+            iAccountService = accountService;
+            iFeedbackService = new FeedbackService();
+            iGradeService = new GradeService();
+            iSubjectGroupService = new SubjectGroupService();
+            iSubjectService = new SubjectService();
+            iSubjectTutorService = new SubjectTutorService();
         }
 
         // GET: api/Tutors
         [HttpGet]
-        public IActionResult GetTutors()
+        public IActionResult FilterTutor([FromQuery] RequestSearchTutorModel requestSearchTutorModel)
         {
-            return Ok(iTutorService.GetTutors());
+            var sortBy = requestSearchTutorModel.SortContent != null ? requestSearchTutorModel.SortContent?.sortTutorBy.ToString() : null;
+            var sortType = requestSearchTutorModel.SortContent != null ? requestSearchTutorModel.SortContent?.sortTutorType.ToString() : null;
+
+            //List tutors active 
+            var allTutor = iTutorService.Filter(requestSearchTutorModel);
+
+            // ----------------------TÌM KIẾM THEO TÊN GIẢNG VIÊN----------------------- 
+            var allAccount = iAccountService.GetAccounts().Where(ac => ac.FullName.Contains(requestSearchTutorModel.Search) && ac.IsActive == true);
+
+            // ---------------------TÌM KIẾM THEO TÊN NHÓM MÔN HỌC------------------------ 
+
+            var allSubjectGroup = iSubjectGroupService.GetSubjectGroups().Where(su => su.SubjectName.Contains(requestSearchTutorModel.Search));
+
+            if (allSubjectGroup.Count() <= 0)
+            {
+                allSubjectGroup = iSubjectGroupService.GetSubjectGroups();
+            }
+            else if (allAccount.Count() <= 0)
+            {
+                allAccount = iAccountService.GetAccounts();
+            }
+            else if (allAccount.Count() <= 0 && allSubjectGroup.Count() <= 0)
+            {
+                allAccount = null;
+                allSubjectGroup = null;
+            }
+
+            IEnumerable<Subject> allSubject = iSubjectService.GetSubjects();
+
+            // Trường hợp chọn grade
+            if (!string.IsNullOrEmpty(requestSearchTutorModel.GradeId))
+            {
+                allSubject = allSubject.Where(s => s.GradeId == requestSearchTutorModel.GradeId);
+            }// kết thúc
+
+
+            IEnumerable<Subject> subjects = from sg in allSubjectGroup
+                                            join s in allSubject
+                                            on sg.SubjectGroupId equals s.SubjectGroupId
+                                            select s;
+
+            var allSubjectTutor = iSubjectTutorService.GetAllSubjectTutors();
+
+            //Lấy danh sách giảng viên dạy môn học tìm kiếm
+            IEnumerable<Tutor> list = from st in allSubjectTutor
+                                      join s in subjects
+                                      on st.SubjectId equals s.SubjectId
+                                      join t in allTutor
+                                      on st.TutorId equals t.TutorId
+                                      select t;
+
+            list = list.Distinct();
+
+
+            //_____TẠO DANH SÁCH KẾT QUẢ_____
+            var query = (from a in allAccount
+                         join t in list
+                         on a.Id equals t.AccountId
+                         select new ResponseSearchTutorModel
+                         {
+                             TutorID = t.TutorId,
+                             FullName = a.FullName,
+                             Photo = t.Photo,
+                             HourlyRate = t.HourlyRate,
+                             Start = iFeedbackService.TotalStart(t.TutorId),
+                             Ratings = iFeedbackService.TotalRate(t.TutorId),
+                             Headline = t.Headline,
+                             Description = t.Description,
+                             TopFeedback = iFeedbackService.GetFeedbacks(t.TutorId).Select(s => s.Description).LastOrDefault(),
+                         });
+
+            query = iTutorService.Sorting(query, sortBy, sortType, requestSearchTutorModel.pageIndex, requestSearchTutorModel.pageSize);
+
+            return Ok(query);
         }
 
-        //// GET: api/Tutors/5
-        [HttpGet("{id}")]
-        public IActionResult GetTutor(string id)
-        {
-            var tutor = iTutorService.GetTutor(id);
-            return Ok(tutor);
-        }
+        ////// GET: api/Tutors/5
+        //[HttpGet("{id}")]
+        //public IActionResult GetTutor(string id)
+        //{
+        //    var tutor = iTutorService.GetTutor(id);
+        //    return Ok(tutor);
+        //}
 
         //// PUT: api/Tutors/5
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

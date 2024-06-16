@@ -16,5 +16,9 @@ namespace Services
         public List<Feedback> GetFeedbacks(string id);
 
         public bool UpdateFeedbacks(Feedback feedback);
+
+        public double TotalStart(string id);
+
+        public int TotalRate(string id);
     }
 }

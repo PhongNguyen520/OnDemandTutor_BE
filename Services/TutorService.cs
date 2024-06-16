@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models.TutorModel;
 using Repositories;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,11 @@ namespace Services
             return _repository.DelTutors(id);
         }
 
+        public IEnumerable<Tutor> Filter(RequestSearchTutorModel requestSearchTutorModel)
+        {
+            return _repository.Filter(requestSearchTutorModel);
+        }
+
         public List<Subject> GetTutor(string id)
         {
             return _repository.GetTutor(id);
@@ -35,6 +41,11 @@ namespace Services
         public List<Tutor> GetTutors()
         {
             return _repository.GetTutors();
+        }
+
+        public IEnumerable<ResponseSearchTutorModel> Sorting(IEnumerable<ResponseSearchTutorModel> query, string? sortBy, string? sortType, int pageIndex, int pageSize)
+        {
+            return _repository.Sorting(query, sortBy, sortType, pageIndex, pageSize);
         }
 
         public bool UpdateTutors(Tutor tutor)

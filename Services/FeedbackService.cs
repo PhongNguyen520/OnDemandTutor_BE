@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using DAOs;
 using Repositories;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,33 @@ namespace Services
         public bool UpdateFeedbacks(Feedback feedback)
         {
             return iFeedbackRepository.UpdateFeedbacks(feedback);
+        }
+
+        public double TotalStart(string id)
+        {
+            var query = iFeedbackRepository.GetFeedbacks(id);
+            double start = 0.00;
+            if (query.Count() <= 0)
+            {
+                return 0;
+            }
+            else
+            {
+                start = query.Sum(x => x.Rate) / query.Count();
+            }
+            return start;
+        }
+
+        public int TotalRate(string id)
+        {
+            var query = iFeedbackRepository.GetFeedbacks(id);
+            int rate = 0;
+            if (query == null)
+            {
+                return 0;
+            }
+            rate = query.Count();
+            return rate;
         }
     }
 }
