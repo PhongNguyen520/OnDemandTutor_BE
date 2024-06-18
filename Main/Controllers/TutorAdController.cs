@@ -20,7 +20,7 @@ namespace API.Controllers
         public IActionResult GetAds(string id) 
         {
 
-            var tbAds = iTutorService.GetTutorAds().Where(s => s.TutorId == id && s.IsActive == true);
+            var tbAds = iTutorService.GetTutorAds().Where(s => s.TutorId == id && s.IsActived == true);
 
             return Ok(tbAds);
         }

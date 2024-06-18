@@ -26,4 +26,12 @@ public partial class FindTutorForm
     public virtual Student Student { get; set; } = null!;
 
     public virtual Subject Subject { get; set; } = null!;
+
+    public double? MinHourlyRate { get; set; }
+
+    public double? MaxHourlyRate { get; set; }
+
+    public string? Title { get; set; }
+
+    public bool IsActived { get; set; }
 }

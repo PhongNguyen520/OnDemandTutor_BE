@@ -15,6 +15,7 @@ namespace BusinessObjects.Models
         public string Description { get; set; } = string.Empty;
         public string? SubjectName { get; set; }
         public double Start { get; set; }
+        public string? Title { get; set; }
 
     }
 }

@@ -59,6 +59,7 @@ namespace API.Controllers
                                 .Select(sc => sc.Description)
                                 .FirstOrDefault(), // Lấy tên môn học đầu tiên khớp với StudentId
                             Start = fb.Rate,
+                            Title = fb.Title,
                         };
 
             // --------------------- PAGING -------------------------

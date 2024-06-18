@@ -120,6 +120,7 @@ namespace API.Controllers
                              Headline = t.Headline,
                              Description = t.Description,
                              TopFeedback = iFeedbackService.GetFeedbacks(t.TutorId).Select(s => s.Description).LastOrDefault(),
+                             TitleFeedback = iFeedbackService.GetFeedbacks(t.TutorId).Select(s => s.Title).LastOrDefault(),
                          });
 
             query = iTutorService.Sorting(query, sortBy, sortType, requestSearchTutorModel.pageIndex);

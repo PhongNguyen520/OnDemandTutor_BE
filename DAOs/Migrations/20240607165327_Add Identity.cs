@@ -15,8 +15,8 @@ namespace DAOs.Migrations
                 name: "Conversation",
                 columns: table => new
                 {
-                    ConversationID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    CreateDay = table.Column<DateTime>(type: "date", nullable: false),
+                    ConversationID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    CreateDay = table.Column<DateOnly>(type: "date", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -28,7 +28,7 @@ namespace DAOs.Migrations
                 name: "Grade",
                 columns: table => new
                 {
-                    GradeID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
+                    GradeID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
                     Number = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -40,7 +40,7 @@ namespace DAOs.Migrations
                 name: "Role",
                 columns: table => new
                 {
-                    RoleID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
+                    RoleID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
                     RoleName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false)
                 },
                 constraints: table =>
@@ -66,7 +66,7 @@ namespace DAOs.Migrations
                 name: "SubjectGroup",
                 columns: table => new
                 {
-                    SubjectGroupID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
+                    SubjectGroupID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
                     SubjectName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false)
                 },
@@ -81,14 +81,13 @@ namespace DAOs.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FullName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    Avatar = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 256, nullable: true),
                     Gender = table.Column<bool>(type: "bit", nullable: false),
                     Email = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 256, nullable: false),
                     PhoneNumber = table.Column<int>(type: "int", nullable: false),
                     isActive = table.Column<bool>(type: "bit", nullable: false),
                     RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateExpireRefreshToken = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    RoleId = table.Column<string>(type: "varchar(256)", nullable: true),
+                    RoleId = table.Column<string>(type: "varchar(5)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -137,10 +136,9 @@ namespace DAOs.Migrations
                 name: "Subject",
                 columns: table => new
                 {
-                    SubjectID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    GradeID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    SubjectGroupID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    Description = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false)
+                    SubjectID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    GradeID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    SubjectGroupID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -161,7 +159,7 @@ namespace DAOs.Migrations
                 name: "Conversation_Account",
                 columns: table => new
                 {
-                    ConversationID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
+                    ConversationID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
                     AccountID = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -184,12 +182,12 @@ namespace DAOs.Migrations
                 name: "Message",
                 columns: table => new
                 {
-                    MessageID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
+                    MessageID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
-                    Time = table.Column<DateTime>(type: "date", nullable: false),
+                    Time = table.Column<DateOnly>(type: "date", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     AccountID = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ConversationID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false)
+                    ConversationID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -210,8 +208,8 @@ namespace DAOs.Migrations
                 name: "Notification",
                 columns: table => new
                 {
-                    NotificationID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    CreateDay = table.Column<DateTime>(type: "date", nullable: false),
+                    NotificationID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    CreateDay = table.Column<DateOnly>(type: "date", nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
@@ -231,7 +229,7 @@ namespace DAOs.Migrations
                 name: "Student",
                 columns: table => new
                 {
-                    StudentID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
+                    StudentID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
                     SchoolName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     AccountID = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false)
                 },
@@ -249,8 +247,8 @@ namespace DAOs.Migrations
                 name: "Tutor",
                 columns: table => new
                 {
-                    TutorID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    Dob = table.Column<DateTime>(type: "date", nullable: false),
+                    TutorID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    Dob = table.Column<DateOnly>(type: "date", nullable: false),
                     Education = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     TypeOfDegree = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     CardID = table.Column<int>(type: "int", nullable: false),
@@ -361,8 +359,8 @@ namespace DAOs.Migrations
                 name: "Wallet",
                 columns: table => new
                 {
-                    WalletID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    CreateDay = table.Column<DateTime>(type: "date", nullable: false),
+                    WalletID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    CreateDay = table.Column<DateOnly>(type: "date", nullable: false),
                     Balance = table.Column<float>(type: "real", nullable: false),
                     BankName = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     BankNumber = table.Column<int>(type: "int", nullable: false),
@@ -382,15 +380,15 @@ namespace DAOs.Migrations
                 name: "FindTutorForm",
                 columns: table => new
                 {
-                    FormID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    CreateDay = table.Column<DateTime>(type: "date", nullable: false),
+                    FormID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    CreateDay = table.Column<DateOnly>(type: "date", nullable: false),
                     SubjectName = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     TutorGender = table.Column<bool>(type: "bit", nullable: false),
                     TypeOfDegree = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     DescribeTutor = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
                     Status = table.Column<bool>(type: "bit", nullable: false),
-                    StudentID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    SubjectID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false)
+                    StudentID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    SubjectID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -411,14 +409,14 @@ namespace DAOs.Migrations
                 name: "Class",
                 columns: table => new
                 {
-                    ClassID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
+                    ClassID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<float>(type: "real", nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     Status = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
-                    TutorID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    StudentID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    SubjectID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false)
+                    TutorID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    StudentID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    SubjectID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -444,12 +442,12 @@ namespace DAOs.Migrations
                 name: "Complaint",
                 columns: table => new
                 {
-                    ComplaintID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    CreateDay = table.Column<DateTime>(type: "date", nullable: false),
+                    ComplaintID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    CreateDay = table.Column<DateOnly>(type: "date", nullable: false),
                     Description = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
-                    TutorID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    StudentID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false)
+                    TutorID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    StudentID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -470,8 +468,8 @@ namespace DAOs.Migrations
                 name: "Subject_Tutor",
                 columns: table => new
                 {
-                    SubjectID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    TutorID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
+                    SubjectID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    TutorID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -493,13 +491,11 @@ namespace DAOs.Migrations
                 name: "Tutor_Ads",
                 columns: table => new
                 {
-                    AdsID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    CreateDay = table.Column<DateTime>(type: "date", nullable: false),
-                    Tittle = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: true),
+                    AdsID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    CreateDay = table.Column<DateOnly>(type: "date", nullable: false),
                     Video = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
                     Image = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    TutorID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false)
+                    TutorID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -515,12 +511,12 @@ namespace DAOs.Migrations
                 name: "Transaction",
                 columns: table => new
                 {
-                    TransactionID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    CreateDay = table.Column<DateTime>(type: "date", nullable: false),
+                    TransactionID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    CreateDay = table.Column<DateOnly>(type: "date", nullable: false),
                     TransactionMoney = table.Column<float>(type: "real", nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
-                    WalletID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false)
+                    WalletID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -536,14 +532,14 @@ namespace DAOs.Migrations
                 name: "Feedback",
                 columns: table => new
                 {
-                    FeedbackID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    CreateDay = table.Column<DateTime>(type: "date", nullable: false),
+                    FeedbackID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    CreateDay = table.Column<DateOnly>(type: "date", nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     Rate = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    StudentID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    TutorID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false),
-                    ClassID = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 5, nullable: false)
+                    StudentID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    TutorID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    ClassID = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
