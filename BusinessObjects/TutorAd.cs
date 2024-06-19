@@ -9,15 +9,16 @@ public partial class TutorAd
 
     public DateTime CreateDay { get; set; }
 
-    public string Tittle { get; set; }
-
     public string Video { get; set; } = null!;
 
     public string Image { get; set; } = null!;
 
-    public bool IsActive { get; set; }
-
     public string TutorId { get; set; } = null!;
 
     public virtual Tutor Tutor { get; set; } = null!;
+
+    public string? Title { get; set; }
+
+    public bool? IsActived { get; set; }
+
 }

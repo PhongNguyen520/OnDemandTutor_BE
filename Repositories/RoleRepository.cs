@@ -15,7 +15,6 @@ namespace Repositories
 {
     public class RoleRepository : IRoleRepository
     {
-        private readonly RoleDAO roleDAO = null;
         private UserManager<Account> _userManager;
         private SignInManager<Account> _signInManager;
         private RoleManager<IdentityRole> _roleManager;
@@ -25,10 +24,6 @@ namespace Repositories
             SignInManager<Account> signInManager, IConfiguration configuration,
             RoleManager<IdentityRole> roleManager, IMapper mapper, DAOs.DbContext dbContext)
         {
-            if (roleDAO == null)
-            {
-                roleDAO = new RoleDAO();
-            }
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;

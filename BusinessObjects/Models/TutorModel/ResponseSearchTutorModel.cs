@@ -17,7 +17,7 @@ namespace BusinessObjects.Models.TutorModel
         public int Ratings { get; set; }
         public string? Headline { get; set; }
         public string? Description { get; set; }
-
         public string? TopFeedback { get; set; }
+        public string? TitleFeedback { get; set; }
     }
 }

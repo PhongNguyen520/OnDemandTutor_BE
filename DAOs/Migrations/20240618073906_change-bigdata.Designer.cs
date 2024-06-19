@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240618073906_change-bigdata")]
+    partial class changebigdata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,12 +26,12 @@ namespace DAOs.Migrations
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("BusinessObjects.Account", b =>
-            {
-                b.Property<string>("Id")
-                    .HasColumnType("nvarchar(450)");
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                b.Property<int>("AccessFailedCount")
-                    .HasColumnType("int");
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
@@ -37,16 +40,16 @@ namespace DAOs.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                b.Property<DateTime?>("DateExpireRefreshToken")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime?>("DateExpireRefreshToken")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(256)");
 
-                b.Property<bool>("EmailConfirmed")
-                    .HasColumnType("bit");
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -54,58 +57,58 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(50)");
 
-                b.Property<bool>("Gender")
-                    .HasColumnType("bit");
+                    b.Property<bool>("Gender")
+                        .HasColumnType("bit");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit")
-                    .HasColumnName("isActive");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("isActive");
 
-                b.Property<bool>("LockoutEnabled")
-                    .HasColumnType("bit");
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
 
-                b.Property<DateTimeOffset?>("LockoutEnd")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("NormalizedEmail")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.Property<string>("NormalizedUserName")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.Property<string>("PasswordHash")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<int>("PhoneNumber")
-                    .HasColumnType("int");
+                    b.Property<int>("PhoneNumber")
+                        .HasColumnType("int");
 
-                b.Property<bool>("PhoneNumberConfirmed")
-                    .HasColumnType("bit");
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
 
-                b.Property<string>("RefreshToken")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                b.Property<bool>("TwoFactorEnabled")
-                    .HasColumnType("bit");
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
 
-                b.Property<string>("UserName")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("NormalizedEmail")
-                    .HasDatabaseName("EmailIndex");
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
 
-                b.HasIndex("NormalizedUserName")
-                    .IsUnique()
-                    .HasDatabaseName("UserNameIndex")
-                    .HasFilter("[NormalizedUserName] IS NOT NULL");
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -190,8 +193,8 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
 
-                b.Property<bool>("Status")
-                    .HasColumnType("bit");
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
 
                     b.Property<string>("StudentId")
                         .IsRequired()
@@ -210,12 +213,12 @@ namespace DAOs.Migrations
                     b.HasKey("ComplaintId")
                         .HasName("PK__Complain__740D89AFCEF50736D");
 
-                b.HasIndex("StudentId");
+                    b.HasIndex("StudentId");
 
-                b.HasIndex("TutorId");
+                    b.HasIndex("TutorId");
 
-                b.ToTable("Complaint", (string)null);
-            });
+                    b.ToTable("Complaint", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.Conversation", b =>
                 {
@@ -228,14 +231,14 @@ namespace DAOs.Migrations
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.HasKey("ConversationId")
                         .HasName("PK__Conversa__C050D897C401235FD");
 
-                b.ToTable("Conversation", (string)null);
-            });
+                    b.ToTable("Conversation", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.ConversationAccount", b =>
                 {
@@ -245,22 +248,22 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("ConversationID");
 
-                b.Property<string>("AccountId")
-                    .HasMaxLength(450)
-                    .IsUnicode(true)
-                    .HasColumnType("nvarchar(450)")
-                    .HasColumnName("AccountID");
+                    b.Property<string>("AccountId")
+                        .HasMaxLength(450)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("AccountID");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.HasKey("ConversationId", "AccountId")
                         .HasName("PK__Conversa__B31902CF056C16DAD");
 
-                b.HasIndex("AccountId");
+                    b.HasIndex("AccountId");
 
-                b.ToTable("Conversation_Account", (string)null);
-            });
+                    b.ToTable("Conversation_Account", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.Feedback", b =>
                 {
@@ -286,11 +289,11 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<int>("Rate")
-                    .HasColumnType("int");
+                    b.Property<int>("Rate")
+                        .HasColumnType("int");
 
                     b.Property<string>("StudentId")
                         .IsRequired()
@@ -312,14 +315,14 @@ namespace DAOs.Migrations
                     b.HasKey("FeedbackId")
                         .HasName("PK__Feedback__6A4BEDF65E258262D");
 
-                b.HasIndex("ClassId");
+                    b.HasIndex("ClassId");
 
-                b.HasIndex("StudentId");
+                    b.HasIndex("StudentId");
 
-                b.HasIndex("TutorId");
+                    b.HasIndex("TutorId");
 
-                b.ToTable("Feedback", (string)null);
-            });
+                    b.ToTable("Feedback", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.FindTutorForm", b =>
                 {
@@ -399,14 +402,14 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("GradeID");
 
-                b.Property<int>("Number")
-                    .HasColumnType("int");
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
 
                     b.HasKey("GradeId")
                         .HasName("PK__Grade__54F87A37CC152DE4D");
 
-                b.ToTable("Grade", (string)null);
-            });
+                    b.ToTable("Grade", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.Message", b =>
                 {
@@ -416,12 +419,12 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("MessageID");
 
-                b.Property<string>("AccountId")
-                    .IsRequired()
-                    .HasMaxLength(450)
-                    .IsUnicode(true)
-                    .HasColumnType("nvarchar(450)")
-                    .HasColumnName("AccountID");
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("AccountID");
 
                     b.Property<string>("ConversationId")
                         .IsRequired()
@@ -436,8 +439,8 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("Time")
                         .HasColumnType("datetime2");
@@ -445,12 +448,12 @@ namespace DAOs.Migrations
                     b.HasKey("MessageId")
                         .HasName("PK__Message__C87C037C2D324FDFD");
 
-                b.HasIndex("AccountId");
+                    b.HasIndex("AccountId");
 
-                b.HasIndex("ConversationId");
+                    b.HasIndex("ConversationId");
 
-                b.ToTable("Message", (string)null);
-            });
+                    b.ToTable("Message", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.Notification", b =>
                 {
@@ -460,12 +463,12 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("NotificationID");
 
-                b.Property<string>("AccountId")
-                    .IsRequired()
-                    .HasMaxLength(450)
-                    .IsUnicode(true)
-                    .HasColumnType("nvarchar(450)")
-                    .HasColumnName("AccountID");
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("AccountID");
 
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
@@ -476,19 +479,19 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<bool>("Status")
-                    .HasColumnType("bit");
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
 
                     b.HasKey("NotificationId")
                         .HasName("PK__Notifica__20CF2E32FFBD5FC4D");
 
-                b.HasIndex("AccountId");
+                    b.HasIndex("AccountId");
 
-                b.ToTable("Notification", (string)null);
-            });
+                    b.ToTable("Notification", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.Student", b =>
                 {
@@ -498,12 +501,12 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("StudentID");
 
-                b.Property<string>("AccountId")
-                    .IsRequired()
-                    .HasMaxLength(450)
-                    .IsUnicode(true)
-                    .HasColumnType("nvarchar(450)")
-                    .HasColumnName("AccountID");
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("AccountID");
 
                     b.Property<string>("SchoolName")
                         .HasMaxLength(255)
@@ -513,10 +516,10 @@ namespace DAOs.Migrations
                     b.HasKey("StudentId")
                         .HasName("PK__Student__32C52A79D012377FD");
 
-                b.HasIndex("AccountId");
+                    b.HasIndex("AccountId");
 
-                b.ToTable("Student", (string)null);
-            });
+                    b.ToTable("Student", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.Subject", b =>
                 {
@@ -547,12 +550,12 @@ namespace DAOs.Migrations
                     b.HasKey("SubjectId")
                         .HasName("PK__Subject__AC1BA388537DD7A1D");
 
-                b.HasIndex("GradeId");
+                    b.HasIndex("GradeId");
 
-                b.HasIndex("SubjectGroupId");
+                    b.HasIndex("SubjectGroupId");
 
-                b.ToTable("Subject", (string)null);
-            });
+                    b.ToTable("Subject", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.SubjectGroup", b =>
                 {
@@ -594,16 +597,16 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("TutorID");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.HasKey("SubjectId", "TutorId")
                         .HasName("PK__Subject___9B67D374BBB4AFD2D");
 
-                b.HasIndex("TutorId");
+                    b.HasIndex("TutorId");
 
-                b.ToTable("Subject_Tutor", (string)null);
-            });
+                    b.ToTable("Subject_Tutor", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.Transaction", b =>
                 {
@@ -622,11 +625,11 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
 
-                b.Property<bool>("Status")
-                    .HasColumnType("bit");
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
 
-                b.Property<float>("TransactionMoney")
-                    .HasColumnType("real");
+                    b.Property<float>("TransactionMoney")
+                        .HasColumnType("real");
 
                     b.Property<string>("WalletId")
                         .IsRequired()
@@ -638,10 +641,10 @@ namespace DAOs.Migrations
                     b.HasKey("TransactionId")
                         .HasName("PK__Transact__55433A4B61451DBED");
 
-                b.HasIndex("WalletId");
+                    b.HasIndex("WalletId");
 
-                b.ToTable("Transaction", (string)null);
-            });
+                    b.ToTable("Transaction", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.Tutor", b =>
                 {
@@ -763,15 +766,15 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("WalletID");
 
-                b.Property<string>("AccountId")
-                    .IsRequired()
-                    .HasMaxLength(450)
-                    .IsUnicode(true)
-                    .HasColumnType("nvarchar(450)")
-                    .HasColumnName("AccountID");
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("AccountID");
 
-                b.Property<float>("Balance")
-                    .HasColumnType("real");
+                    b.Property<float>("Balance")
+                        .HasColumnType("real");
 
                     b.Property<string>("BankName")
                         .IsRequired()
@@ -779,8 +782,8 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(255)");
 
-                b.Property<int>("BankNumber")
-                    .HasColumnType("int");
+                    b.Property<int>("BankNumber")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
@@ -788,143 +791,143 @@ namespace DAOs.Migrations
                     b.HasKey("WalletId")
                         .HasName("PK__Wallet__84D4F92E9F63180BD");
 
-                b.HasIndex("AccountId");
+                    b.HasIndex("AccountId");
 
-                b.ToTable("Wallet", (string)null);
-            });
+                    b.ToTable("Wallet", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-            {
-                b.Property<string>("Id")
-                    .HasColumnType("nvarchar(450)");
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                b.Property<string>("ConcurrencyStamp")
-                    .IsConcurrencyToken()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("Name")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.Property<string>("NormalizedName")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("NormalizedName")
-                    .IsUnique()
-                    .HasDatabaseName("RoleNameIndex")
-                    .HasFilter("[NormalizedName] IS NOT NULL");
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
 
-                b.ToTable("Roles", (string)null);
-            });
+                    b.ToTable("Roles", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("ClaimType")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("ClaimValue")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("RoleId")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("RoleId");
+                    b.HasIndex("RoleId");
 
-                b.ToTable("RoleClaims", (string)null);
-            });
+                    b.ToTable("RoleClaims", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("ClaimType")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("ClaimValue")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("UserId")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("UserId");
+                    b.HasIndex("UserId");
 
-                b.ToTable("UserClaims", (string)null);
-            });
+                    b.ToTable("UserClaims", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-            {
-                b.Property<string>("LoginProvider")
-                    .HasColumnType("nvarchar(450)");
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
 
-                b.Property<string>("ProviderKey")
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
 
-                b.Property<string>("ProviderDisplayName")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("UserId")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                b.HasKey("LoginProvider", "ProviderKey");
+                    b.HasKey("LoginProvider", "ProviderKey");
 
-                b.HasIndex("UserId");
+                    b.HasIndex("UserId");
 
-                b.ToTable("UserLogins", (string)null);
-            });
+                    b.ToTable("UserLogins", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-            {
-                b.Property<string>("UserId")
-                    .HasColumnType("nvarchar(450)");
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                b.Property<string>("RoleId")
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
 
-                b.HasKey("UserId", "RoleId");
+                    b.HasKey("UserId", "RoleId");
 
-                b.HasIndex("RoleId");
+                    b.HasIndex("RoleId");
 
-                b.ToTable("UserRoles", (string)null);
-            });
+                    b.ToTable("UserRoles", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-            {
-                b.Property<string>("UserId")
-                    .HasColumnType("nvarchar(450)");
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                b.Property<string>("LoginProvider")
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
 
-                b.Property<string>("Name")
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
 
-                b.Property<string>("Value")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
 
-                b.HasKey("UserId", "LoginProvider", "Name");
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
-                b.ToTable("UserTokens", (string)null);
-            });
+                    b.ToTable("UserTokens", (string)null);
+                });
 
             modelBuilder.Entity("BusinessObjects.Class", b =>
                 {
@@ -946,12 +949,12 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKClass4794522");
 
-                b.Navigation("Student");
+                    b.Navigation("Student");
 
-                b.Navigation("Subject");
+                    b.Navigation("Subject");
 
-                b.Navigation("Tutor");
-            });
+                    b.Navigation("Tutor");
+                });
 
             modelBuilder.Entity("BusinessObjects.Complaint", b =>
                 {
@@ -967,10 +970,10 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKComplaint1966472");
 
-                b.Navigation("Student");
+                    b.Navigation("Student");
 
-                b.Navigation("Tutor");
-            });
+                    b.Navigation("Tutor");
+                });
 
             modelBuilder.Entity("BusinessObjects.ConversationAccount", b =>
                 {
@@ -986,10 +989,10 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKConversati8723802");
 
-                b.Navigation("Account");
+                    b.Navigation("Account");
 
-                b.Navigation("Conversation");
-            });
+                    b.Navigation("Conversation");
+                });
 
             modelBuilder.Entity("BusinessObjects.Feedback", b =>
                 {
@@ -1011,12 +1014,12 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKFeedback4317212");
 
-                b.Navigation("Class");
+                    b.Navigation("Class");
 
-                b.Navigation("Student");
+                    b.Navigation("Student");
 
-                b.Navigation("Tutor");
-            });
+                    b.Navigation("Tutor");
+                });
 
             modelBuilder.Entity("BusinessObjects.FindTutorForm", b =>
                 {
@@ -1032,10 +1035,10 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKFindTutorF7272632");
 
-                b.Navigation("Student");
+                    b.Navigation("Student");
 
-                b.Navigation("Subject");
-            });
+                    b.Navigation("Subject");
+                });
 
             modelBuilder.Entity("BusinessObjects.Message", b =>
                 {
@@ -1051,10 +1054,10 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKMessage1256022");
 
-                b.Navigation("Account");
+                    b.Navigation("Account");
 
-                b.Navigation("Conversation");
-            });
+                    b.Navigation("Conversation");
+                });
 
             modelBuilder.Entity("BusinessObjects.Notification", b =>
                 {
@@ -1064,8 +1067,8 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKNotificati7652242");
 
-                b.Navigation("Account");
-            });
+                    b.Navigation("Account");
+                });
 
             modelBuilder.Entity("BusinessObjects.Student", b =>
                 {
@@ -1075,8 +1078,8 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKStudent7183142");
 
-                b.Navigation("Account");
-            });
+                    b.Navigation("Account");
+                });
 
             modelBuilder.Entity("BusinessObjects.Subject", b =>
                 {
@@ -1092,10 +1095,10 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKSubject3409472");
 
-                b.Navigation("Grade");
+                    b.Navigation("Grade");
 
-                b.Navigation("SubjectGroup");
-            });
+                    b.Navigation("SubjectGroup");
+                });
 
             modelBuilder.Entity("BusinessObjects.SubjectTutor", b =>
                 {
@@ -1111,10 +1114,10 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKSubject_Tu31882");
 
-                b.Navigation("Subject");
+                    b.Navigation("Subject");
 
-                b.Navigation("Tutor");
-            });
+                    b.Navigation("Tutor");
+                });
 
             modelBuilder.Entity("BusinessObjects.Transaction", b =>
                 {
@@ -1124,8 +1127,8 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKTransactio1812602");
 
-                b.Navigation("Wallet");
-            });
+                    b.Navigation("Wallet");
+                });
 
             modelBuilder.Entity("BusinessObjects.Tutor", b =>
                 {
@@ -1135,8 +1138,8 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKTutor3875972");
 
-                b.Navigation("Account");
-            });
+                    b.Navigation("Account");
+                });
 
             modelBuilder.Entity("BusinessObjects.TutorAd", b =>
                 {
@@ -1146,8 +1149,8 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKTutor_Ads5728872");
 
-                b.Navigation("Tutor");
-            });
+                    b.Navigation("Tutor");
+                });
 
             modelBuilder.Entity("BusinessObjects.Wallet", b =>
                 {
@@ -1157,134 +1160,134 @@ namespace DAOs.Migrations
                         .IsRequired()
                         .HasConstraintName("FKWallet1156962");
 
-                b.Navigation("Account");
-            });
+                    b.Navigation("Account");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-            {
-                b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                    .WithMany()
-                    .HasForeignKey("RoleId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-            {
-                b.HasOne("BusinessObjects.Account", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                {
+                    b.HasOne("BusinessObjects.Account", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-            {
-                b.HasOne("BusinessObjects.Account", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                {
+                    b.HasOne("BusinessObjects.Account", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-            {
-                b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                    .WithMany()
-                    .HasForeignKey("RoleId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.HasOne("BusinessObjects.Account", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                    b.HasOne("BusinessObjects.Account", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-            {
-                b.HasOne("BusinessObjects.Account", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                {
+                    b.HasOne("BusinessObjects.Account", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("BusinessObjects.Account", b =>
-            {
-                b.Navigation("ConversationAccounts");
+                {
+                    b.Navigation("ConversationAccounts");
 
-                b.Navigation("Messages");
+                    b.Navigation("Messages");
 
-                b.Navigation("Notifications");
+                    b.Navigation("Notifications");
 
-                b.Navigation("Students");
+                    b.Navigation("Students");
 
-                b.Navigation("Tutors");
+                    b.Navigation("Tutors");
 
-                b.Navigation("Wallets");
-            });
+                    b.Navigation("Wallets");
+                });
 
             modelBuilder.Entity("BusinessObjects.Class", b =>
-            {
-                b.Navigation("Feedbacks");
-            });
+                {
+                    b.Navigation("Feedbacks");
+                });
 
             modelBuilder.Entity("BusinessObjects.Conversation", b =>
-            {
-                b.Navigation("ConversationAccounts");
+                {
+                    b.Navigation("ConversationAccounts");
 
-                b.Navigation("Messages");
-            });
+                    b.Navigation("Messages");
+                });
 
             modelBuilder.Entity("BusinessObjects.Grade", b =>
-            {
-                b.Navigation("Subjects");
-            });
+                {
+                    b.Navigation("Subjects");
+                });
 
             modelBuilder.Entity("BusinessObjects.Student", b =>
-            {
-                b.Navigation("Classes");
+                {
+                    b.Navigation("Classes");
 
-                b.Navigation("Complaints");
+                    b.Navigation("Complaints");
 
-                b.Navigation("Feedbacks");
+                    b.Navigation("Feedbacks");
 
-                b.Navigation("FindTutorForms");
-            });
+                    b.Navigation("FindTutorForms");
+                });
 
             modelBuilder.Entity("BusinessObjects.Subject", b =>
-            {
-                b.Navigation("Classes");
+                {
+                    b.Navigation("Classes");
 
-                b.Navigation("FindTutorForms");
+                    b.Navigation("FindTutorForms");
 
-                b.Navigation("SubjectTutors");
-            });
+                    b.Navigation("SubjectTutors");
+                });
 
             modelBuilder.Entity("BusinessObjects.SubjectGroup", b =>
-            {
-                b.Navigation("Subjects");
-            });
+                {
+                    b.Navigation("Subjects");
+                });
 
             modelBuilder.Entity("BusinessObjects.Tutor", b =>
-            {
-                b.Navigation("Classes");
+                {
+                    b.Navigation("Classes");
 
-                b.Navigation("Complaints");
+                    b.Navigation("Complaints");
 
-                b.Navigation("Feedbacks");
+                    b.Navigation("Feedbacks");
 
-                b.Navigation("SubjectTutors");
+                    b.Navigation("SubjectTutors");
 
-                b.Navigation("TutorAds");
-            });
+                    b.Navigation("TutorAds");
+                });
 
             modelBuilder.Entity("BusinessObjects.Wallet", b =>
-            {
-                b.Navigation("Transactions");
-            });
+                {
+                    b.Navigation("Transactions");
+                });
 #pragma warning restore 612, 618
         }
     }

@@ -18,6 +18,20 @@ namespace Main
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Set up CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod()
+                               .AllowCredentials();
+                    });
+            });
+
+
             // Add services to the container.
             builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -111,7 +125,11 @@ namespace Main
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
+
+            // Set up CORS
+            app.UseCors("AllowReactApp");
 
             app.UseHttpsRedirection();
 
