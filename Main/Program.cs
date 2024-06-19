@@ -26,7 +26,8 @@ namespace Main
                     {
                         builder.WithOrigins("http://localhost:3000")
                                .AllowAnyHeader()
-                               .AllowAnyMethod();
+                               .AllowAnyMethod()
+                               .AllowCredentials();
                     });
             });
 
@@ -124,6 +125,7 @@ namespace Main
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
 
             // Set up CORS
