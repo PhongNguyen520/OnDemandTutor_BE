@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models.FormModel;
 using Repositories;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Services
     public class FindTutorFormService : IFindTutorFormService
     {
         private readonly IFindTutorFormRepository iFindTutorFormRepository = null;
-        
+
         public FindTutorFormService()
         {
             if (iFindTutorFormRepository == null)
@@ -37,6 +38,16 @@ namespace Services
         public bool UpdateFindTutorForms(FindTutorForm form)
         {
             return iFindTutorFormRepository.UpdateFindTutorForms(form);
+        }
+
+        public IEnumerable<FindTutorForm> Filter(RequestSearchPostModel requestSearchPostModel)
+        {
+            return iFindTutorFormRepository.Filter(requestSearchPostModel);
+        }
+
+        public IEnumerable<FormVM> Sorting(IEnumerable<FormVM> query, string? sortBy, string? sortType, int pageIndex)
+        {
+            return iFindTutorFormRepository.Sorting(query, sortBy, sortType, pageIndex);
         }
     }
 }

@@ -9,17 +9,6 @@ public partial class FindTutorForm
 
     public DateTime CreateDay { get; set; }
 
-    // ----Chỉnh sửa-----
-
-    public string Tittle { get; set; } = string.Empty;
-
-    public double MinHourlyRate { get; set; }
-
-    public double MaxHourlyRate { get; set; }
-
-    public bool IsActive { get; set; }
-
-    //-------------------
     public string SubjectName { get; set; } = null!;
 
     public bool TutorGender { get; set; }
@@ -28,7 +17,7 @@ public partial class FindTutorForm
 
     public string? DescribeTutor { get; set; }
 
-    public bool Status { get; set; }
+    public bool? Status { get; set; }
 
     public string StudentId { get; set; } = null!;
 
@@ -37,4 +26,12 @@ public partial class FindTutorForm
     public virtual Student Student { get; set; } = null!;
 
     public virtual Subject Subject { get; set; } = null!;
+
+    public double? MinHourlyRate { get; set; }
+
+    public double? MaxHourlyRate { get; set; }
+
+    public string? Title { get; set; }
+
+    public bool? IsActived { get; set; }
 }

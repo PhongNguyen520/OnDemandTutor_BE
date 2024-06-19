@@ -20,17 +20,17 @@ namespace BusinessObjects.Models.FormModel
     }
         public class SortContent
         {
-            public SortTutorByEnum sortTutorBy { get; set; }
-            public SortTutorTypeEnum sortTutorType { get; set; }
+            public SortPostByEnum sortPostBy { get; set; }
+            public SortPostTypeEnum sortPostType { get; set; }
         }
 
-        public enum SortTutorByEnum
-        {
+        public enum SortPostByEnum
+    {
             HourlyRate = 1,
-            Start = 2,
+            CreateDay = 2,
         }
-        public enum SortTutorTypeEnum
-        {
+        public enum SortPostTypeEnum
+    {
             Ascending = 1,
             Descending = 2,
         }

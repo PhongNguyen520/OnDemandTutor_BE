@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Services;
 using System;
+using System.Linq;
 
 namespace API.Controllers
 {
@@ -34,22 +35,25 @@ namespace API.Controllers
         }
 
         // MODERATER XEM DANH SÁCH FORM CHX DUYỆT
-        [HttpGet("moderator/findtutorform")]
+        [HttpGet("moderator/viewformlist")]
         public IActionResult GetRequestList()
         {
-            return Ok(_findTutorFormService.GetFindTutorForms().Where(s => s.IsActive == false && s.Status == false));
+            var result = _findTutorFormService.GetFindTutorForms()
+                                              .Where(s => s.IsActived == null && s.Status == null)
+                                              .OrderBy(s => s.CreateDay);
+            return Ok(result);
         }
 
         // TUTOR FILTER DANH SÁCH FORM
         [HttpGet("tutor/searchpost")]
-        public IActionResult Get(RequestSearchPostModel requestSearchPostModel)
+        public IActionResult Get([FromQuery] RequestSearchPostModel requestSearchPostModel)
         {
-            var sortBy = requestSearchPostModel.SortContent != null ? requestSearchPostModel.SortContent?.sortTutorBy.ToString() : null;
-            var sortType = requestSearchPostModel.SortContent != null ? requestSearchPostModel.SortContent?.sortTutorType.ToString() : null;
+            var sortBy = requestSearchPostModel.SortContent != null ? requestSearchPostModel.SortContent?.sortPostBy.ToString() : null;
+            var sortType = requestSearchPostModel.SortContent != null ? requestSearchPostModel.SortContent?.sortPostType.ToString() : null;
             var searchQuery = requestSearchPostModel.Search.ToLower();
 
             //List post active 
-            var allPost = _findTutorFormService.GetFindTutorForms().Where(s => s.IsActive == true && s.Status == false);
+            var allPost = _findTutorFormService.Filter(requestSearchPostModel);
 
             var allStudents = _studentService.GetStudents();
             var allAccounts = _accountService.GetAccounts();
@@ -104,7 +108,7 @@ namespace API.Controllers
                             FormId = post.FormId,
                             CreateDay = post.CreateDay,
                             FullName = account.FullName,
-                            Tittle = post.Tittle,
+                            Title = post.Title,
                             MinHourlyRate = post.MinHourlyRate,
                             MaxHourlyRate = post.MaxHourlyRate,
                             SubjectName = post.SubjectName,
@@ -115,13 +119,13 @@ namespace API.Controllers
                         };
 
 
-            //query = iTutorService.Sorting(query, sortBy, sortType, requestSearchPostModel.pageIndex);
+            query = _findTutorFormService.Sorting(query, sortBy, sortType, requestSearchPostModel.pageIndex);
 
             return Ok(query);
         }
 
         // STUDENT XEM DANH SÁCH FORM ĐÃ ĐĂNG KÍ
-        [HttpGet("student/form/")]
+        [HttpGet("student/viewformlist")]
         // Show Student's post list
         public IActionResult GetList()
         {
@@ -143,7 +147,7 @@ namespace API.Controllers
             }
 
             // Lấy danh sách các form tìm gia sư của học sinh
-            var forms = _findTutorFormService.GetFindTutorForms().Where(s => s.StudentId == student.StudentId);
+            var forms = _findTutorFormService.GetFindTutorForms().Where(s => s.StudentId == student.StudentId && s.IsActived == null || s.IsActived == true);
 
             // Tạo danh sách các FormVM để trả về
             var query = from post in forms
@@ -152,7 +156,7 @@ namespace API.Controllers
                             FormId = post.FormId,
                             CreateDay = post.CreateDay,
                             FullName = user.FullName,
-                            Tittle = post.Tittle,
+                            Title = post.Title,
                             MinHourlyRate = post.MinHourlyRate,
                             MaxHourlyRate = post.MaxHourlyRate,
                             SubjectName = post.SubjectName,
@@ -167,7 +171,7 @@ namespace API.Controllers
 
 
         // STUDENT TẠO FORM
-        [HttpPost("student/createform/")]
+        [HttpPost("student/createform")]
         public IActionResult CreateForm(RequestCreateForm form)
         {
             if (form == null)
@@ -198,9 +202,10 @@ namespace API.Controllers
                 MinHourlyRate = form.MinHourlyRate,
                 TutorGender = form.TutorGender,
                 TypeOfDegree = form.TypeOfDegree,
-                Tittle = form.Tittle,
+                Title = form.Tittle,
                 DescribeTutor = form.DescribeTutor,
-                Status = false,
+                Status = null,
+                IsActived = null,
                 StudentId = stId.StudentId,
                 SubjectId = subject.SubjectId,
             };
@@ -218,47 +223,54 @@ namespace API.Controllers
 
 
         // MODERATER DUYỆT FORM
-        [HttpPut("moderator/browserform/{id}")]
+        [HttpPut("moderator/browserform")]
         public IActionResult BrowserForm(string id, bool action)
         {
             FindTutorForm form = (FindTutorForm)_findTutorFormService.GetFindTutorForms().Where(s => s.FormId == id);
-            if (action)
-            {
-                form.IsActive = true;
-            }
-            else
-            {
-                form.IsActive = false;
-            }
+            form.Status = action;
 
             return Ok(_findTutorFormService.UpdateFindTutorForms(form));
         }
 
 
         // STUDENT UPDATE FORM
-        [HttpPut("student/updateform/{id}")]
-        public IActionResult UpdateForm(string id)
+        [HttpPut("student/updateform")]
+        public IActionResult UpdateForm([FromBody] FindTutorForm form)
         {
-            var result = new FindTutorForm
+            if (form == null)
             {
-                //MaxHourlyRate = form.MaxHourlyRate,
-                //MinHourlyRate = form.MinHourlyRate,
-                //TutorGender = form.TutorGender,
-                //TypeOfDegree = form.TypeOfDegree,
-                //Tittle = form.Tittle,
-                //DescribeTutor = form.DescribeTutor,
-                //SubjectId = subject.SubjectId,
-            };
-            return Ok();
+                return BadRequest("Form data is null");
+            }
+
+            var updatedForm = _findTutorFormService.UpdateFindTutorForms(form);
+
+            if (updatedForm == null)
+            {
+                return NotFound("Form not found");
+            }
+
+            return Ok(updatedForm);
         }
 
         // STUDENT XÁC NHẬN ĐÃ TÌM ĐC TUTOR
-        [HttpPut("student/submitform/{id}")]
-        public IActionResult SubmitForm(string id)
+        [HttpPut("student/submitform")]
+        public IActionResult SubmitForm([FromBody] string id)
         {
-            FindTutorForm form = (FindTutorForm)_findTutorFormService.GetFindTutorForms().Where(s => s.FormId == id);
+            var form = (FindTutorForm)_findTutorFormService.GetFindTutorForms().Where(s => s.FormId == id);
 
-            form.Status = true;
+            form.IsActived = true;
+
+            return Ok(_findTutorFormService.UpdateFindTutorForms(form));
+        }
+
+
+        // STUDENT DELETE FORM
+        [HttpDelete("student/deleteform")]
+        public IActionResult DeleteForm([FromBody] string id)
+        {
+            var form = (FindTutorForm)_findTutorFormService.GetFindTutorForms().Where(s => s.FormId == id);
+
+            form.IsActived = false;
 
             return Ok(_findTutorFormService.UpdateFindTutorForms(form));
         }

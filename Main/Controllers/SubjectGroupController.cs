@@ -6,19 +6,19 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GradeController : ControllerBase
+    public class SubjectGroupController : ControllerBase
     {
-        private readonly IGradeService _gradeService;
+        private readonly ISubjectGroupService _subjectGroupService;
 
-        public GradeController()
+        public SubjectGroupController()
         {
-            _gradeService = new GradeService();
+            _subjectGroupService = new SubjectGroupService();
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            var result = _gradeService.GetGrades();
+            var result = _subjectGroupService.GetSubjectGroups();
 
             if (!result.Any())
             {
@@ -26,7 +26,6 @@ namespace API.Controllers
             }
 
             return Ok(result);
-
         }
     }
 }

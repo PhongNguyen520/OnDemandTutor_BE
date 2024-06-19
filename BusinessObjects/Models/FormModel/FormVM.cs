@@ -8,16 +8,16 @@ namespace BusinessObjects.Models.FormModel
 {
     public class FormVM
     {
-        public string FormId { get; set; }
+        public required string FormId { get; set; }
         public DateTime CreateDay { get; set; }
-        public string FullName { get; set; }
-        public string Tittle { get; set; } = string.Empty;
-        public double MinHourlyRate { get; set; }
-        public double MaxHourlyRate { get; set; }
-        public string SubjectName { get; set; }
-        public string Description { get; set; }
-        public bool TutorGender { get; set; }
-        public string SubjectId { get; set; }
-        public string StudentId { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string? Title { get; set; }
+        public double? MinHourlyRate { get; set; }
+        public double? MaxHourlyRate { get; set; }
+        public string SubjectName { get; set; } = string.Empty ;
+        public string? Description { get; set; }
+        public bool? TutorGender { get; set; }
+        public string SubjectId { get; set; } = string.Empty;
+        public string StudentId { get; set; } = string.Empty;
     }
 }
