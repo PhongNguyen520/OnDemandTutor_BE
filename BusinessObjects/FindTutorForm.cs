@@ -17,7 +17,7 @@ public partial class FindTutorForm
 
     public string? DescribeTutor { get; set; }
 
-    public bool Status { get; set; }
+    public bool? Status { get; set; }
 
     public string StudentId { get; set; } = null!;
 
@@ -33,5 +33,5 @@ public partial class FindTutorForm
 
     public string? Title { get; set; }
 
-    public bool IsActived { get; set; }
+    public bool? IsActived { get; set; }
 }
