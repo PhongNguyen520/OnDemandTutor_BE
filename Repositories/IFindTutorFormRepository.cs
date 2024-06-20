@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models.FormModel;
 using DAOs;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,13 @@ namespace Repositories
         public List<FindTutorForm> GetFindTutorForms();
 
         public bool UpdateFindTutorForms(FindTutorForm form);
+        public IEnumerable<FindTutorForm> Filter(RequestSearchPostModel requestSearchPostModel);
+
+        public IEnumerable<FormVM> Sorting
+           (IEnumerable<FormVM> query,
+           string? sortBy,
+           string? sortType,
+           int pageIndex);
+
     }
 }

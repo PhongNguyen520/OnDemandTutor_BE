@@ -26,7 +26,7 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult GetSubjects()
         {
-            return Ok(iSubjectService.GetSubjects());
+            return Ok();
         }
 
         // GET: api/Subjects/5

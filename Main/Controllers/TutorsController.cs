@@ -113,7 +113,7 @@ namespace API.Controllers
                          {
                              TutorID = t.TutorId,
                              FullName = a.FullName,
-                             Avatar = a.Avatar,
+                             //Avatar = a.Avatar,
                              HourlyRate = t.HourlyRate,
                              Start = iFeedbackService.TotalStart(t.TutorId),
                              Ratings = iFeedbackService.TotalRate(t.TutorId),
