@@ -87,7 +87,7 @@ namespace Repositories
             }
             return null;
         }
-        public async Task<IdentityResult> SignUpAsync(AccountDTO model)
+        public async Task<String> SignUpAsync(AccountDTO model)
         {
             var isDupplicate = await _userManager.FindByEmailAsync(model.Email);
             if (isDupplicate != null)
@@ -136,7 +136,7 @@ namespace Repositories
                 }
 
             }
-            return result;
+            return user.Id;
 
         }
 
@@ -186,5 +186,24 @@ namespace Repositories
             }
             return 0;
         }
+
+        public async Task<int> TutorSignUpAsync(TutorDTO model)
+        {
+            var userId = Guid.NewGuid().ToString();
+            var tutor = _mapper.Map<Tutor>(model);
+            tutor.TutorId = userId; 
+            _dbContext.Add(tutor);
+            return await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> StudentSignUpAsync(StudentDTO model)
+        {
+            var userId = Guid.NewGuid().ToString();
+            var student = _mapper.Map<Student>(model);
+            student.StudentId = userId;
+            _dbContext.Add(student);
+            return await _dbContext.SaveChangesAsync();
+        }
+ 
     }
 }

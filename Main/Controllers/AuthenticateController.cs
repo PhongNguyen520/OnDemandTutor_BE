@@ -12,7 +12,7 @@ namespace API.Controller
 {
     [Route("api/auth")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+
     public class AuthenticateController : ControllerBase
     {
         private IMailService _mailService;
@@ -30,25 +30,45 @@ namespace API.Controller
         }
 
         [AllowAnonymous]
+        [HttpPost("student-signUp")]
+        public async Task<IActionResult> StudentSignUp(StudentDTO signUpModel)
+        {
+            var result = await _accountService.StudentSignUpAsync(signUpModel);
+            if (result > 0) return Ok();
+            return BadRequest();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("tutor-signUp")]
+        public async Task<IActionResult> TutorSignUp(TutorDTO signUpModel)
+        {
+            var result = await _accountService.TutorSignUpAsync(signUpModel);
+            if (result > 0) return Ok();
+            return BadRequest();
+        }
+
+        [AllowAnonymous]
         [HttpPost("signUp")]
         public async Task<IActionResult> SignUp(AccountDTO signUpModel)
         {
-            var result = await _accountService.SignUpAsync(signUpModel);
-            if (result == null)
+            var userIdSignUpId = await _accountService.SignUpAsync(signUpModel);
+            if (userIdSignUpId == null)
             {
                 return BadRequest("Email is existed");
             }
-            if (result.Succeeded)
+            if (userIdSignUpId != null)
             {
                 var scheme = HttpContext.Request.Scheme;
                 var host = HttpContext.Request.Host.Value;
                 var url = $"{scheme}://{host}/api/auth/confirm-email?email={signUpModel.Email}";
                 await _mailService.SendEmailAsync(signUpModel.Email, "Xác thực tài khoản của bạn", url);
-                return Ok(result.Succeeded);
+                return Ok(new { userId = userIdSignUpId });
             }
 
             return StatusCode(500);
         }
+
+
 
         [AllowAnonymous]
         [HttpPost("signIn")]
@@ -87,9 +107,9 @@ namespace API.Controller
             return Ok();
         }
 
-
+        [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> refeshToken(string refreshToken)
+        public async Task<IActionResult> refeshToken([FromBody] string refreshToken)
         {
             var userId = _currentUserService.GetUserId();
             var user = await _accountService.GetAccountById(userId.ToString());

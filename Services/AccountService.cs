@@ -53,7 +53,7 @@ namespace Services
             return iAccountRepository.SignInAsync(model);
         }
 
-        public async Task<IdentityResult> SignUpAsync(AccountDTO model)
+        public async Task<String> SignUpAsync(AccountDTO model)
         {
             return await iAccountRepository.SignUpAsync(model);
         }
@@ -71,6 +71,16 @@ namespace Services
         public async Task<int> EnalbleUser(string userId)
         {
             return await iAccountRepository.EnalbleUser(userId);
+        }
+
+        public async Task<int> TutorSignUpAsync(TutorDTO model)
+        {
+            return await iAccountRepository.TutorSignUpAsync(model);
+        }
+
+        public async Task<int> StudentSignUpAsync(StudentDTO model)
+        {
+            return await iAccountRepository.StudentSignUpAsync(model);
         }
     }
 }

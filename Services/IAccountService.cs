@@ -20,8 +20,9 @@ namespace Services
 
         public Task<Account> GetAccountById(string id);
         public bool UpdateAccounts(Account account);
-
-        Task<IdentityResult> SignUpAsync(AccountDTO model);
+        Task<int> TutorSignUpAsync(TutorDTO model);
+        Task<int> StudentSignUpAsync(StudentDTO model);
+        Task<String> SignUpAsync(AccountDTO model);
         Task<Account> SignInAsync(UserSignIn model);
         Task<IList<String>> GetRolesAsync(Account user);
         Task<bool> ConfirmAccount(string email);

@@ -14,6 +14,9 @@ namespace API.Helper
 
             CreateMap<Account, UserRoles>().ReverseMap();
             CreateMap<UserRoles, UserRolesVM>().ReverseMap();
+
+            CreateMap<Tutor, TutorDTO>().ReverseMap();
+            CreateMap<Student, StudentDTO>().ReverseMap();
             #endregion
         }
     }
