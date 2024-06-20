@@ -44,7 +44,7 @@ namespace Repositories
 
         public IEnumerable<FindTutorForm> Filter(RequestSearchPostModel requestSearchPostModel)
         {
-            var result = findTutorFormDAO.GetFindTutorForms().Where(s => s.IsActived == true && s.Status == false);
+            var result = findTutorFormDAO.GetFindTutorForms().Where(s => s.IsActived == null && s.Status == true);
 
             // ĐK Gender
             if (requestSearchPostModel.Gender != null)
@@ -53,13 +53,10 @@ namespace Repositories
             }
 
             // ĐK HourlyRate
-            if (requestSearchPostModel.MaxRate != null)
+            if (requestSearchPostModel.HourlyRate != null)
             {
-                result = result.Where(s => s.MaxHourlyRate <= requestSearchPostModel.MaxRate);
-            }
-            if (requestSearchPostModel.MinRate != null)
-            {
-                result = result.Where(s => s.MinHourlyRate >= requestSearchPostModel.MinRate);
+                result = result.Where(s => s.MaxHourlyRate >= requestSearchPostModel.HourlyRate 
+                                        && s.MinHourlyRate <= requestSearchPostModel.HourlyRate);
             }
 
             // ĐK TypeOfDegree
@@ -78,17 +75,9 @@ namespace Repositories
             int pageIndex)
         {
             //_____SORT_____
-            if (!string.IsNullOrEmpty(sortBy))
+            if (!string.IsNullOrEmpty(sortType))
             {
-                if (sortType == SortPostTypeEnum.Ascending.ToString() && sortBy == SortPostByEnum.HourlyRate.ToString())
-                {
-                    query = query.OrderBy(t => t.MaxHourlyRate);
-                }
-                else if (sortType == SortPostTypeEnum.Descending.ToString() && sortBy == SortPostByEnum.HourlyRate.ToString())
-                {
-                    query = query.OrderByDescending(t => t.MaxHourlyRate);
-                }
-                else if (sortType == SortPostTypeEnum.Ascending.ToString() && sortBy == SortPostByEnum.CreateDay.ToString())
+                if (sortType == SortPostTypeEnum.Ascending.ToString() && sortBy == SortPostByEnum.CreateDay.ToString())
                 {
                     query = query.OrderBy(t => t.CreateDay);
                 }

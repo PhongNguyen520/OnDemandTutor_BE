@@ -11,9 +11,9 @@ public partial class FindTutorForm
 
     public string SubjectName { get; set; } = null!;
 
-    public bool TutorGender { get; set; }
+    public bool? TutorGender { get; set; }
 
-    public string TypeOfDegree { get; set; } = null!;
+    public string? TypeOfDegree { get; set; }
 
     public string? DescribeTutor { get; set; }
 
