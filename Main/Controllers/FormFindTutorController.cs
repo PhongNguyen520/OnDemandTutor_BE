@@ -50,7 +50,12 @@ namespace API.Controllers
         {
             var sortBy = requestSearchPostModel.SortContent != null ? requestSearchPostModel.SortContent?.sortPostBy.ToString() : null;
             var sortType = requestSearchPostModel.SortContent != null ? requestSearchPostModel.SortContent?.sortPostType.ToString() : null;
-            var searchQuery = requestSearchPostModel.Search.ToLower();
+            string searchQuery = null;
+
+            if (requestSearchPostModel.Search != null)
+            {
+                searchQuery = requestSearchPostModel.Search.ToLower();
+            }
 
             //List post active 
             var allPost = _findTutorFormService.Filter(requestSearchPostModel);
@@ -66,11 +71,11 @@ namespace API.Controllers
 
                 if (!allSubjectGroup.Any())
                 {
-                    allSubjectGroup = _subjectGroupService.GetSubjectGroups();
+                    allSubjectGroup = null; 
                 }
                 else
                 {
-                    allSubjectGroup = null;
+                    allSubjectGroup = _subjectGroupService.GetSubjectGroups();
                 }
 
                 IEnumerable<Subject> allSubject = _subjectService.GetSubjects();
@@ -202,6 +207,7 @@ namespace API.Controllers
                 MinHourlyRate = form.MinHourlyRate,
                 TutorGender = form.TutorGender,
                 TypeOfDegree = form.TypeOfDegree,
+                SubjectName = subject.Description,
                 Title = form.Tittle,
                 DescribeTutor = form.DescribeTutor,
                 Status = null,
@@ -226,7 +232,12 @@ namespace API.Controllers
         [HttpPut("moderator/browserform")]
         public IActionResult BrowserForm(string id, bool action)
         {
-            FindTutorForm form = (FindTutorForm)_findTutorFormService.GetFindTutorForms().Where(s => s.FormId == id);
+            var form = _findTutorFormService.GetFindTutorForms().FirstOrDefault(s => s.FormId == id);
+            if (form == null)
+            {
+                return NotFound();
+            }
+
             form.Status = action;
 
             return Ok(_findTutorFormService.UpdateFindTutorForms(form));
@@ -235,7 +246,7 @@ namespace API.Controllers
 
         // STUDENT UPDATE FORM
         [HttpPut("student/updateform")]
-        public IActionResult UpdateForm([FromBody] FindTutorForm form)
+        public IActionResult UpdateForm(FindTutorForm form)
         {
             if (form == null)
             {
@@ -254,10 +265,13 @@ namespace API.Controllers
 
         // STUDENT XÁC NHẬN ĐÃ TÌM ĐC TUTOR
         [HttpPut("student/submitform")]
-        public IActionResult SubmitForm([FromBody] string id)
+        public IActionResult SubmitForm(string id)
         {
-            var form = (FindTutorForm)_findTutorFormService.GetFindTutorForms().Where(s => s.FormId == id);
-
+            var form = _findTutorFormService.GetFindTutorForms().FirstOrDefault(s => s.FormId == id);
+            if (form == null)
+            {
+                return NotFound();
+            }
             form.IsActived = true;
 
             return Ok(_findTutorFormService.UpdateFindTutorForms(form));
@@ -266,10 +280,13 @@ namespace API.Controllers
 
         // STUDENT DELETE FORM
         [HttpDelete("student/deleteform")]
-        public IActionResult DeleteForm([FromBody] string id)
+        public IActionResult DeleteForm(string id)
         {
-            var form = (FindTutorForm)_findTutorFormService.GetFindTutorForms().Where(s => s.FormId == id);
-
+            var form = _findTutorFormService.GetFindTutorForms().FirstOrDefault(s => s.FormId == id);
+            if (form == null)
+            {
+                return NotFound();
+            }
             form.IsActived = false;
 
             return Ok(_findTutorFormService.UpdateFindTutorForms(form));
