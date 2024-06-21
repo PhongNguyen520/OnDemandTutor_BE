@@ -40,9 +40,9 @@ namespace API.Hubs
         {
             try
             {
-                var user = _Connection.Where(u => u.Id == _currentUserService.GetUserId().ToString()).FirstOrDefault();
+                var user = _Connection.Where(u => u.RoomId == _currentUserService.GetUserId().ToString()).FirstOrDefault();
 
-                await Groups.AddToGroupAsync(Context.ConnectionId, conn.Id);
+                await Groups.AddToGroupAsync(Context.ConnectionId, conn.RoomId);
 
                 _shareDBService.connection[Context.ConnectionId] = conn;
 
@@ -63,7 +63,7 @@ namespace API.Hubs
         {
             if (_shareDBService.connection.TryGetValue(Context.ConnectionId, out UserChatVM conn))
             {
-                var sender = _Connection.Where(u => u.Id == _currentUserService.GetUserId().ToString()).First();
+                var sender = _Connection.Where(u => u.RoomId == _currentUserService.GetUserId().ToString()).First();
 
                 if (!string.IsNullOrEmpty(message.Trim()))
                 {
@@ -79,7 +79,7 @@ namespace API.Hubs
                     //await Clients.All.SendAsync("ReceiveSpecificMessage", messageViewModel);
                     //await Clients.Caller.SendAsync("ReceiveMessage", message);
                     // Show message in chat box
-                    await Clients.Group(conn.Id).SendAsync("ReceiveSpecificMessage", messageViewModel);
+                    await Clients.Group(conn.RoomId).SendAsync("ReceiveSpecificMessage", messageViewModel);
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace API.Hubs
 
         public IEnumerable<UserChatVM> GetUsers(string roomName)
         {
-            return _Connection.Where(u => u.CurrentRoom == roomName).ToList();
+            return _Connection.Where(u => u.RoomId == roomName).ToList();
         }
     }
 }

@@ -39,12 +39,12 @@ namespace BusinessObjects.Models
 
     public class UserChatVM
     {
-        public string Id { get; set; }
+        public string UserId { get; set; }
         public string FullName { get; set; }
         public string Content { get; set; }
         public string Avatar { get; set; }
-        public string CurrentRoom { get; set; }
-        public string Device { get; set; }
+        public DateTime Time { get; set; }
+        public string RoomId { get; set; }
     }
 
     public class UserConnection

@@ -20,4 +20,9 @@ public partial class Message
     public virtual Account Account { get; set; } = null!;
 
     public virtual Conversation Conversation { get; set; } = null!;
+
+    public static implicit operator Message(Message v)
+    {
+        throw new NotImplementedException();
+    }
 }
