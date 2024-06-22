@@ -34,12 +34,14 @@ namespace API.Controllers
 
         [HttpGet]
         // Lấy danh sách chat box của người dùng
-        public IActionResult Get()
+        public async Task<ActionResult<IEnumerable<RoomVM>>> Get()
         {
+            // Lấy ConversationAccount chat của User
             var rawRooms =  _conversationAccountService.GetConversationAccounts().Where(x => x.AccountId == _currentUserService.GetUserId().ToString());
 
             var rooms = _conversationAccountService.GetConversationAccounts();
 
+            // Lấy ConversationAccount của người khác trong hộp chat 
             var resultRooms = from s in rawRooms
                               join x in rooms
                               on s.ConversationId equals x.ConversationId
@@ -48,6 +50,7 @@ namespace API.Controllers
 
             var users = _accountService.GetAccounts();
 
+            // Lấy thông tin cần show của danh sách chat
             var query = from r in resultRooms
                         join u in users
                         on r.AccountId equals u.Id

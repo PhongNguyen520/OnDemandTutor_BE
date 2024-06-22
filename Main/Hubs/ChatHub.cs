@@ -70,10 +70,10 @@ namespace API.Hubs
                     var messageViewModel = new MessageVM()
                     {
                         From = sender.FullName,
-                        Content = Regex.Replace(message, @"<.*?>", string.Empty),
+                        Content = message,
                         Avatar = sender.Avatar,
                         //RoomId = "",
-                        //Time = DateTime.Now.ToLongTimeString(),
+                        //Time = ,
                     };
 
                     //await Clients.All.SendAsync("ReceiveSpecificMessage", messageViewModel);
