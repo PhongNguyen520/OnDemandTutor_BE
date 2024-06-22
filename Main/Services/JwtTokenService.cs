@@ -1,5 +1,6 @@
 ﻿using BusinessObjects;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Crypto.Parameters;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -35,9 +36,8 @@ namespace API.Services
         {
             var authClaims = new List<Claim>
             {
-                // C# guiD => Base64 => String
-				 new Claim("UserId", user.Id.ToString()),
-				new Claim(ClaimTypes.UserData, user.Id.ToString()),
+
+                new Claim(ClaimTypes.UserData, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
@@ -47,6 +47,7 @@ namespace API.Services
                 foreach (var role in roles)
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                    authClaims.Add(new Claim("UserRole", role.ToString()));
                 }
             }
 
@@ -55,7 +56,7 @@ namespace API.Services
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddMinutes(20),
+                expires: DateTime.Now.AddSeconds(60),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
             );
@@ -67,13 +68,14 @@ namespace API.Services
         {
             var validation = new TokenValidationParameters
             {
-                ValidateLifetime = false,
+                ValidateLifetime = true,
                 ValidAudience = _configuration["JWT:ValidAudience"],
                 ValidIssuer = _configuration["JWT:ValidIssuer"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]))
             };
 
             return new JwtSecurityTokenHandler().ValidateToken(token, validation, out _);
+            
 
         }
     }

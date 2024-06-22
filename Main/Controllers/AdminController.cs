@@ -1,4 +1,6 @@
-﻿using BusinessObjects.Models;
+﻿using BusinessObjects.Constrant;
+using BusinessObjects.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,8 +8,10 @@ using Services;
 
 namespace API.Controller
 {
+
     [Route("api/[controller]")]
     [ApiController]
+    
     public class AdminController : ControllerBase
     {
 
@@ -19,7 +23,7 @@ namespace API.Controller
             iRoleService = _iRoleService;
             iAccountService = _iAccountService;
     }
-
+        [Authorize(Roles = AppRole.Tutor)]
         [HttpGet("getRole")]
         public async Task<IActionResult> GetAccounts()
         {
