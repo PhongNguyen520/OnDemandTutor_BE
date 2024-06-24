@@ -6,40 +6,69 @@ using Microsoft.AspNetCore.Mvc;
 using Services;
 using API.Services;
 using Repositories;
+using Microsoft.Extensions.Hosting;
 
 namespace API.Controller
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
+
     public class AuthenticateController : ControllerBase
     {
+        private IMailService _mailService;
         private IAccountService _accountService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IJwtTokenService _jwtTokenService;
 
-        public AuthenticateController(IJwtTokenService jwtTokenService, IAccountService accountService, ICurrentUserService currentUserService)
+        public AuthenticateController(IJwtTokenService jwtTokenService, IAccountService accountService, 
+            ICurrentUserService currentUserService, IMailService mailService)
         {
+            _mailService = mailService;
             _accountService = accountService;
             _jwtTokenService = jwtTokenService;
             _currentUserService = currentUserService;
         }
 
         [AllowAnonymous]
+        [HttpPost("student-signUp")]
+        public async Task<IActionResult> StudentSignUp(StudentDTO signUpModel)
+        {
+            var result = await _accountService.StudentSignUpAsync(signUpModel);
+            if (result > 0) return Ok();
+            return BadRequest();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("tutor-signUp")]
+        public async Task<IActionResult> TutorSignUp(TutorDTO signUpModel)
+        {
+            var result = await _accountService.TutorSignUpAsync(signUpModel);
+            if (result > 0) return Ok();
+            return BadRequest();
+        }
+
+        [AllowAnonymous]
         [HttpPost("signUp")]
         public async Task<IActionResult> SignUp(AccountDTO signUpModel)
         {
-            var result = await _accountService.SignUpAsync(signUpModel);
-            if (result == null)
+            var userIdSignUpId = await _accountService.SignUpAsync(signUpModel);
+            if (userIdSignUpId == null)
             {
                 return BadRequest("Email is existed");
             }
-            if (result.Succeeded)
+            if (userIdSignUpId != null)
             {
-                return Ok(result.Succeeded);
+                var scheme = HttpContext.Request.Scheme;
+                var host = HttpContext.Request.Host.Value;
+                var url = $"{scheme}://{host}/api/auth/confirm-email?email={signUpModel.Email}";
+                await _mailService.SendEmailAsync(signUpModel.Email, "Xác thực tài khoản của bạn", url);
+                return Ok(new { userId = userIdSignUpId });
             }
 
             return StatusCode(500);
         }
+
+
 
         [AllowAnonymous]
         [HttpPost("signIn")]
@@ -49,6 +78,9 @@ namespace API.Controller
             if (user == null || !(user.IsActive))
             {
                 return Unauthorized();
+            } else if (!user.EmailConfirmed)
+            {
+                return BadRequest("Cần phải xác thực tài khoản của bạn qua email đăng kí");
             }
             var userRoles = await _accountService.GetRolesAsync(user);
             var accessToken = _jwtTokenService.CreateToken(user, userRoles);
@@ -75,13 +107,12 @@ namespace API.Controller
             return Ok();
         }
 
-
+        [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> refeshToken(string refreshToken)
+        public async Task<IActionResult> refeshToken(RefreshTokenVM refreshToken)
         {
-            var userId = _currentUserService.GetUserId();
-            var user = await _accountService.GetAccountById(userId.ToString());
-            if (user == null || !(user.IsActive) || user.RefreshToken != refreshToken || user.DateExpireRefreshToken < DateTime.UtcNow)
+            var user = await _accountService.GetAccountById(refreshToken.userId);
+            if (user == null || !(user.IsActive) || user.RefreshToken != refreshToken.refreshToken || user.DateExpireRefreshToken < DateTime.UtcNow)
             {
                 return BadRequest("Not permission");
             }
@@ -93,5 +124,15 @@ namespace API.Controller
             _accountService.UpdateAccounts(user);
             return Ok(new { token = token, refreshToken = newRefreshToken });
         }
+
+        [AllowAnonymous]
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmAccount(string email)
+        {
+            var result = await _accountService.ConfirmAccount(email);
+            if (result) return Ok(result);
+            else return BadRequest("Cannot confirm your email");
+        }
+
     }
 }

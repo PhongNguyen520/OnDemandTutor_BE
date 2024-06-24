@@ -33,19 +33,15 @@ namespace Services
             return _repository.Filter(requestSearchTutorModel);
         }
 
-        public List<Subject> GetTutor(string id)
-        {
-            return _repository.GetTutor(id);
-        }
 
         public List<Tutor> GetTutors()
         {
             return _repository.GetTutors();
         }
 
-        public IEnumerable<ResponseSearchTutorModel> Sorting(IEnumerable<ResponseSearchTutorModel> query, string? sortBy, string? sortType, int pageIndex, int pageSize)
+        public IEnumerable<ResponseSearchTutorModel> Sorting(IEnumerable<ResponseSearchTutorModel> query, string? sortBy, string? sortType, int pageIndex)
         {
-            return _repository.Sorting(query, sortBy, sortType, pageIndex, pageSize);
+            return _repository.Sorting(query, sortBy, sortType, pageIndex);
         }
 
         public bool UpdateTutors(Tutor tutor)

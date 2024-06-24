@@ -30,7 +30,7 @@ namespace API.Services
         }
         public Guid GetUserId()
         {
-            return Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value);
+            return Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData)?.Value); 
         }
         public String getUserEmail()
         {

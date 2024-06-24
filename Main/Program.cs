@@ -1,4 +1,3 @@
-
 using API.Hubs;
 using API.Services;
 using BusinessObjects;
@@ -19,27 +18,31 @@ namespace Main
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Set up CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod()
+                               .AllowCredentials();
+                    });
+            });
+
+
             // Add services to the container.
             builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
+            builder.Services.AddScoped<IMailService, MailService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             builder.Services.AddSignalR();
-
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("reactApp", builder =>
-                {
-                    builder.WithOrigins("http://localhost:3000")
-                           .AllowAnyHeader()
-                           .AllowAnyMethod()
-                           .AllowCredentials();
-                });
-            });
 
             builder.Services.AddSingleton<ShareDBService> ();
 
@@ -57,28 +60,27 @@ namespace Main
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-
-            builder.Services.AddAuthentication(options =>
-            {
+            // Cấu hình đồng bộ LifeTime
+            builder.Services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
+            }).AddJwtBearer(options => {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateLifetime = true,
-
+                    ClockSkew = TimeSpan.Zero,
 
                     ValidAudience = builder.Configuration["JWT:ValidAudience"],
                     ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
                 };
             });
+
 
 
 
@@ -125,7 +127,11 @@ namespace Main
                 app.UseSwagger();
                 app.UseSwaggerUI();
                 app.UseDeveloperExceptionPage();
-            }
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+
+
+            // Set up CORS
+            app.UseCors("AllowReactApp");
 
             app.UseHttpsRedirection();
 
@@ -134,8 +140,6 @@ namespace Main
             app.UseAuthorization();
 
             app.MapControllers();
-
-            app.UseCors("reactApp");
 
             app.MapHub<ChatHub>("/chatHub");
 

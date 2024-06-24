@@ -7,7 +7,7 @@ public partial class Tutor
 {
     public string TutorId { get; set; } = null!;
 
-    public DateOnly Dob { get; set; }
+    public DateTime Dob { get; set; }
 
     public string Education { get; set; } = null!;
 

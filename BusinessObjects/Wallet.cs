@@ -7,7 +7,7 @@ public partial class Wallet
 {
     public string WalletId { get; set; } = null!;
 
-    public DateOnly CreateDay { get; set; }
+    public DateTime CreateDay { get; set; }
 
     public float Balance { get; set; }
 

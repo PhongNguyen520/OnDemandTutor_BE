@@ -40,12 +40,6 @@ namespace DAOs
             return dbContext.Tutors.OrderByDescending(x => x.TutorId).ToList();
         }
 
-        public List<Subject> GetTutors(string id)
-        {
-            
-
-            return null;
-        }
             
         public bool UpdateTutors(Tutor tutor)
         {

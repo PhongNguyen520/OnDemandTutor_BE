@@ -18,7 +18,6 @@ namespace Services
 
         public bool UpdateTutors(Tutor tutor);
 
-        public List<Subject> GetTutor(string id);
 
         public IEnumerable<Tutor> Filter(RequestSearchTutorModel requestSearchTutorModel);
 
@@ -26,7 +25,6 @@ namespace Services
             (IEnumerable<ResponseSearchTutorModel> query,
             string? sortBy,
             string? sortType,
-            int pageIndex,
-            int pageSize);
+            int pageIndex);
     }
 }

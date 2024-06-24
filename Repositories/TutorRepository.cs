@@ -1,6 +1,10 @@
-﻿using BusinessObjects;
+﻿using AutoMapper;
+using BusinessObjects;
+using BusinessObjects.Models;
 using BusinessObjects.Models.TutorModel;
 using DAOs;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,6 +18,9 @@ namespace Repositories
     public class TutorRepository : ITutorRepository
     {
         private readonly TutorDAO tutorDAO = null;
+        private readonly DAOs.DbContext _dbContext;
+        private readonly UserManager<Account> _userManager;
+        private readonly IMapper _mapper;
 
         public TutorRepository()
         {
@@ -39,10 +46,6 @@ namespace Repositories
             return tutorDAO.GetTutors();
         }
 
-        public List<Subject> GetTutor(string id)
-        {
-            return tutorDAO.GetTutors(id);
-        }
 
         public bool UpdateTutors(Tutor tutor)
         {
@@ -83,8 +86,7 @@ namespace Repositories
             (IEnumerable<ResponseSearchTutorModel> query, 
             string? sortBy, 
             string? sortType,
-            int pageIndex,
-            int pageSize)
+            int pageIndex)
         {
             //_____SORT_____
             if (!string.IsNullOrEmpty(sortBy))
@@ -113,11 +115,46 @@ namespace Repositories
 
             //_____PAGING_____
             int validPageIndex = pageIndex > 0 ? pageIndex - 1 : 0;
-            int validPageSize = pageSize > 0 ? pageSize : 10;
+            int validPageSize = 10;
+
+            if (query.Count() < 10)
+            {
+                validPageSize = query.Count();
+            }
 
             query = query.Skip(validPageIndex * validPageSize).Take(validPageSize);
 
             return query;
         }
+
+        public async Task<TutorVM> UpdateTutor(string idAccount, TutorVM tutorVM)
+        {
+            var tutorDb = await _dbContext.Tutors
+                                          .Include(t => t.Account)
+                                          .FirstOrDefaultAsync(t => t.AccountId == idAccount);
+            var accountDb = await _userManager.FindByIdAsync(idAccount);
+            var norEmail = accountDb.NormalizedEmail;
+
+            if (tutorDb == null)
+            {
+                return null;
+            }
+            else
+            {
+                _mapper.Map(tutorVM, tutorDb);
+                tutorDAO.UpdateTutors(tutorDb);
+
+                _mapper.Map(tutorVM, accountDb);
+                accountDb.NormalizedEmail = _userManager.NormalizeEmail(accountDb.Email);
+                if (accountDb.NormalizedEmail != norEmail)
+                {
+                    accountDb.EmailConfirmed = false;
+                }
+                _dbContext.Update(accountDb);
+                _dbContext.SaveChanges();
+                return tutorVM;
+            }
+        }
+
     }
 }

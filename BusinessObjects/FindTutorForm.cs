@@ -7,17 +7,17 @@ public partial class FindTutorForm
 {
     public string FormId { get; set; } = null!;
 
-    public DateOnly CreateDay { get; set; }
+    public DateTime CreateDay { get; set; }
 
     public string SubjectName { get; set; } = null!;
 
-    public bool TutorGender { get; set; }
+    public bool? TutorGender { get; set; }
 
-    public string TypeOfDegree { get; set; } = null!;
+    public string? TypeOfDegree { get; set; }
 
     public string? DescribeTutor { get; set; }
 
-    public bool Status { get; set; }
+    public bool? Status { get; set; }
 
     public string StudentId { get; set; } = null!;
 
@@ -26,4 +26,12 @@ public partial class FindTutorForm
     public virtual Student Student { get; set; } = null!;
 
     public virtual Subject Subject { get; set; } = null!;
+
+    public double? MinHourlyRate { get; set; }
+
+    public double? MaxHourlyRate { get; set; }
+
+    public string? Title { get; set; }
+
+    public bool? IsActived { get; set; }
 }

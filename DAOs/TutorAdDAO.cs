@@ -35,7 +35,7 @@ namespace DAOs
 
         public List<TutorAd> GetTutorAds()
         {
-            return dbContext.TutorAds.OrderByDescending(x => x.AdsId).ToList();
+            return dbContext.TutorAds.OrderByDescending(x => x.CreateDay).ToList();
         }
 
         public bool UpdateTutorAds(TutorAd ad)

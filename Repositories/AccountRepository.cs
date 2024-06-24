@@ -4,6 +4,8 @@ using BusinessObjects.Constrant;
 using BusinessObjects.Models;
 using DAOs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -20,13 +22,22 @@ namespace Repositories
         private SignInManager<Account> _signInManager;
         private RoleManager<IdentityRole> _roleManager;
         private IMapper _mapper;
+        private readonly DAOs.DbContext _dbContext;
 
-        public AccountRepository()
+        public AccountRepository(UserManager<Account> userManager,
+            SignInManager<Account> signInManager, IConfiguration configuration,
+            RoleManager<IdentityRole> roleManager, IMapper mapper, DAOs.DbContext dbContext)
         {
+            
             if (accountDAO == null)
             {
                 accountDAO = new AccountDAO();
             }
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
+            _mapper = mapper;
+            _dbContext = dbContext;
         }
 
         public AccountRepository(UserManager<Account> userManager,
@@ -78,7 +89,7 @@ namespace Repositories
             }
             return null;
         }
-        public async Task<IdentityResult> SignUpAsync(AccountDTO model)
+        public async Task<String> SignUpAsync(AccountDTO model)
         {
             var isDupplicate = await _userManager.FindByEmailAsync(model.Email);
             if (isDupplicate != null)
@@ -119,16 +130,15 @@ namespace Repositories
                 // role init is student
                 if (model.isAdmin)
                 {
-                    await _userManager.AddToRoleAsync(user, AppRole.Admin);
+                    await _userManager.AddToRoleAsync(user, AppRole.Tutor);
                 }
                 else
                 {
                     await _userManager.AddToRoleAsync(user, AppRole.Student);
                 }
 
-                //await _userManager.AddToRoleAsync(user, AppRole.Customer);
             }
-            return result;
+            return user.Id;
 
         }
 
@@ -157,5 +167,45 @@ namespace Repositories
         {
             return await _userManager.FindByIdAsync(id);
         }
+
+        public async Task<bool> ConfirmAccount(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) return false;
+            user.EmailConfirmed = true;
+            var result = accountDAO.UpdateAccounts(user);
+            return result;
+        }
+
+        public async Task<int> EnalbleUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                user.IsActive = !(user.IsActive);
+                _dbContext.Update(user);
+                return await _dbContext.SaveChangesAsync();
+            }
+            return 0;
+        }
+
+        public async Task<int> TutorSignUpAsync(TutorDTO model)
+        {
+            var userId = Guid.NewGuid().ToString();
+            var tutor = _mapper.Map<Tutor>(model);
+            tutor.TutorId = userId; 
+            _dbContext.Add(tutor);
+            return await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> StudentSignUpAsync(StudentDTO model)
+        {
+            var userId = Guid.NewGuid().ToString();
+            var student = _mapper.Map<Student>(model);
+            student.StudentId = userId;
+            _dbContext.Add(student);
+            return await _dbContext.SaveChangesAsync();
+        }
+ 
     }
 }

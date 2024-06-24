@@ -20,8 +20,12 @@ namespace Repositories
         
         public bool UpdateAccounts(Account account);
         Task<Account> GetAccountById(string id);
-        Task<IdentityResult> SignUpAsync(AccountDTO model);
+        Task<String> SignUpAsync(AccountDTO model);
+        Task<int> TutorSignUpAsync(TutorDTO model);
+        Task<int> StudentSignUpAsync(StudentDTO model);
         Task<Account> SignInAsync(UserSignIn model);
         Task<IList<String>> GetRolesAsync(Account user);
+        Task<bool> ConfirmAccount(string email);
+        Task<int> EnalbleUser(String userId);
     }
 }
