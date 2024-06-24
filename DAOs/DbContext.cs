@@ -68,7 +68,7 @@ public partial class DbContext : IdentityDbContext<Account>
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.ToTable("Account");
+            entity.ToTable("Users");
             entity.Property(e => e.Email)
                 .HasMaxLength(200)
                 .IsUnicode(true);

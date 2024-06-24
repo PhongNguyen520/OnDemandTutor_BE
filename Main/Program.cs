@@ -1,4 +1,4 @@
-﻿
+using API.Hubs;
 using API.Services;
 using BusinessObjects;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,6 +42,9 @@ namespace Main
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
+            builder.Services.AddSignalR();
+
+            builder.Services.AddSingleton<ShareDBService> ();
 
             builder.Services.AddControllers();
 
@@ -123,8 +126,9 @@ namespace Main
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseDeveloperExceptionPage();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
-            }
+
 
             // Set up CORS
             app.UseCors("AllowReactApp");
@@ -136,6 +140,8 @@ namespace Main
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.MapHub<ChatHub>("/chatHub");
 
             app.Run();
         }

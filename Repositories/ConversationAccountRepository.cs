@@ -29,9 +29,9 @@ namespace Repositories
             return conversationAccountDAO.DelConversationAccounts(id);
         }
 
-        public List<ConversationAccount> GetConversationAccounts(string id)
+        public List<ConversationAccount> GetConversationAccounts()
         {
-            return conversationAccountDAO.GetConversationAccounts(id);
+            return conversationAccountDAO.GetConversationAccounts();
         }
 
         public bool UpdateConversationAccounts(ConversationAccount conversationAccount)
