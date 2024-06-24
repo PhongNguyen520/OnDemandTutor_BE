@@ -37,7 +37,7 @@ namespace API.Controllers
         public async Task<ActionResult<IEnumerable<RoomVM>>> Get()
         {
             // Lấy ConversationAccount chat của User
-            var rawRooms =  _conversationAccountService.GetConversationAccounts().Where(x => x.AccountId == _currentUserService.GetUserId().ToString());
+            var rawRooms = _conversationAccountService.GetConversationAccounts().Where(x => x.AccountId == _currentUserService.GetUserId().ToString());
 
             var rooms = _conversationAccountService.GetConversationAccounts();
 
@@ -85,12 +85,12 @@ namespace API.Controllers
             }
 
             // Get user logging
-            
+
 
             // Chỉnh Id
             var room = new Conversation()
             {
-                ConversationId = "C0005",
+                ConversationId = Guid.NewGuid().ToString(),
                 CreateDay = DateTime.Now,
             };
 
@@ -113,7 +113,7 @@ namespace API.Controllers
             //Send events
             //await _hubContext.Clients.All.SendAsync("JoinSpecific");
 
-            return CreatedAtAction(nameof(Get), new { id = room.ConversationId }, new { id = room.ConversationId, date =  room.CreateDay});
+            return CreatedAtAction(nameof(Get), new { id = room.ConversationId }, new { id = room.ConversationId, date = room.CreateDay });
         }
     }
 }

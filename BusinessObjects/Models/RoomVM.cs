@@ -21,13 +21,13 @@ namespace BusinessObjects.Models
 
     public class MessageVM
     {
-        [Required]
+        public string MessageId { get; set; }
+        public string UserId { get; set; }
+        public string FullName { get; set; }
         public string Content { get; set; }
-        public DateTime Time { get; set; }
-        public string From { get; set; }
-        [Required]
-        public string RoomId { get; set; }
         public string Avatar { get; set; }
+        public DateTime Time { get; set; }
+        public string RoomId { get; set; }
     }
 
     public class UploadViewModel
@@ -35,16 +35,6 @@ namespace BusinessObjects.Models
 
         public int Id { get; set; }
         public string Name { get; set; }
-    }
-
-    public class UserChatVM
-    {
-        public string UserId { get; set; }
-        public string FullName { get; set; }
-        public string Content { get; set; }
-        public string Avatar { get; set; }
-        public DateTime Time { get; set; }
-        public string RoomId { get; set; }
     }
 
     public class UserConnection

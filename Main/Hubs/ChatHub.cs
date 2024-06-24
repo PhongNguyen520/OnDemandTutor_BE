@@ -7,6 +7,7 @@ using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Protocol;
+using Services;
 using System.Data.Common;
 using System.Text.RegularExpressions;
 
@@ -14,20 +15,21 @@ namespace API.Hubs
 {
     public class ChatHub : Hub
     {
-        public readonly static List<UserChatVM> _Connection = new List<UserChatVM>();
+        public readonly static List<UserConnection> _Connection = new List<UserConnection>();
 
         //private readonly static Dictionary<string, string> _ConnectionsMap = new Dictionary<string, string>();
 
         private readonly DbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
         private readonly ShareDBService _shareDBService;
+        private readonly IMessageService _messageService;
 
         public ChatHub(DbContext dbContext, ICurrentUserService currentUserService, ShareDBService shareDBService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
             _shareDBService = shareDBService;
-
+            _messageService = new MessageService();
         }
 
 
@@ -36,19 +38,14 @@ namespace API.Hubs
             await Clients.All.SendAsync("ReceiveMessage", "Admin", $"{conn.UserName} has join");
         }
 
-        public async Task JoinSpecificChatRoom(UserChatVM conn)
+        public async Task JoinSpecificChatRoom(UserConnection conn)
         {
             try
             {
-                var user = _Connection.Where(u => u.RoomId == _currentUserService.GetUserId().ToString()).FirstOrDefault();
 
-                await Groups.AddToGroupAsync(Context.ConnectionId, conn.RoomId);
+                await Groups.AddToGroupAsync(Context.ConnectionId, conn.ChatRoom);
 
-                _shareDBService.connection[Context.ConnectionId] = conn;
-
-                //Tell others to update the list of users
-                await Clients.All.SendAsync("JoinSpecificChatRoom", "admin", $"{user.FullName} has join");
-
+                await Clients.Group(conn.ChatRoom).SendAsync("JoinSpecificChatRoom", "admin", $"{conn.UserName} has joined");
             }
             catch (Exception ex)
             {
@@ -59,35 +56,19 @@ namespace API.Hubs
 
 
         // send message
-        public async Task SendMessage(string message)
+        public async Task SendMessage(string messageId)
         {
-            if (_shareDBService.connection.TryGetValue(Context.ConnectionId, out UserChatVM conn))
+            if (_shareDBService.connection.TryGetValue(Context.ConnectionId, out UserConnection conn))
             {
-                var sender = _Connection.Where(u => u.RoomId == _currentUserService.GetUserId().ToString()).First();
-
-                if (!string.IsNullOrEmpty(message.Trim()))
-                {
-                    var messageViewModel = new MessageVM()
-                    {
-                        From = sender.FullName,
-                        Content = message,
-                        Avatar = sender.Avatar,
-                        //RoomId = "",
-                        //Time = ,
-                    };
-
-                    //await Clients.All.SendAsync("ReceiveSpecificMessage", messageViewModel);
-                    //await Clients.Caller.SendAsync("ReceiveMessage", message);
-                    // Show message in chat box
-                    await Clients.Group(conn.RoomId).SendAsync("ReceiveSpecificMessage", messageViewModel);
-                }
+                var message = _messageService.GetMessages().Where(s => s.MessageId == messageId);
+                await Clients.Group(conn.ChatRoom).SendAsync("ReceiveSpecificMessage", conn.UserName, messageId);
             }
         }
 
-        private string IdentityName
-        {
-            get { return _currentUserService.GetUserId().ToString(); }
-        }
+        //private string IdentityName
+        //{
+        //    get { return _currentUserService.GetUserId().ToString(); }
+        //}
 
         //public override Task OnConnectedAsync()
         //{
@@ -112,9 +93,9 @@ namespace API.Hubs
         //    return base.OnConnectedAsync();
         //}
 
-        public IEnumerable<UserChatVM> GetUsers(string roomName)
-        {
-            return _Connection.Where(u => u.RoomId == roomName).ToList();
-        }
+        //public IEnumerable<UserChatVM> GetUsers(string roomName)
+        //{
+        //    return _Connection.Where(u => u.RoomId == roomName).ToList();
+        //}
     }
 }

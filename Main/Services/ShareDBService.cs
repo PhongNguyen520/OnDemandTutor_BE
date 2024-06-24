@@ -5,8 +5,8 @@ namespace API.Services
 {
     public class ShareDBService
     {
-        private readonly ConcurrentDictionary<string, UserChatVM> _connection = new();
+        private readonly ConcurrentDictionary<string, UserConnection> _connection = new();
 
-        public ConcurrentDictionary<string, UserChatVM> connection => _connection;
+        public ConcurrentDictionary<string, UserConnection> connection => _connection;
     }
 }

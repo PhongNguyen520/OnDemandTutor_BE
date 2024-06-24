@@ -36,7 +36,7 @@ namespace API.Controllers
 
 
         [HttpGet("{roomID}")]
-        public async Task<ActionResult<UserChatVM>> GetMessages(string roomID)
+        public async Task<ActionResult<MessageVM>> GetMessages(string roomID)
         {
             var listMessages = messageService.GetMessages()
                 .Where(r => r.ConversationId == roomID)
@@ -46,18 +46,19 @@ namespace API.Controllers
                 .Reverse()
                 .ToList();
 
-            //var messageVM = _mapper.Map<IEnumerable<Message>, IEnumerable<MessageVM>>(room);
+            //var messageVM = _mapper.Map<IEnumerable<Message>, IEnumerable<MessageVM>>(listMessages);
 
             var listAccount = _accountService.GetAccounts();
 
             var query = from account in listAccount
                         join message in listMessages
                         on account.Id equals message.AccountId
-                        select new UserChatVM
+                        select new MessageVM
                         {
+                            MessageId = message.MessageId,
                             FullName = account.FullName,
                             Content = message.Description,
-                            Time = DateTime.Now,
+                            Time = message.Time,
                             UserId = message.AccountId,
                             RoomId = message.ConversationId,
                             Avatar = account.Avatar,
@@ -74,21 +75,21 @@ namespace API.Controllers
             var room = roomId;
             var msg = new Message()
             {
-                MessageId = "C0012",
+                MessageId = Guid.NewGuid().ToString(),
                 Description = content,
                 AccountId = user,
                 ConversationId = room,
-                Time = DateOnly.MaxValue,
+                Time = DateTime.Now,
                 IsActive = true,
             };
 
             _dbContext.Add(msg);
             await _dbContext.SaveChangesAsync();
-            
-            //var createdMessage = _mapper.Map<Message, MessageVM>(msg);
-            await _hubContext.Clients.All.SendAsync("ReceiveSpecificMessage", content);
 
-            return Ok();
+            //var createdMessage = _mapper.Map<Message, MessageVM>(msg);
+            await _hubContext.Clients.Group(roomId).SendAsync("ReceiveSpecificMessage", roomId, msg);
+
+            return Ok(msg);
         }
     }
 }
