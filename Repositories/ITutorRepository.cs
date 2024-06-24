@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using BusinessObjects.Models.TutorModel;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,8 @@ namespace Repositories
             string? sortBy,
             string? sortType,
             int pageIndex);
+
+        Task<TutorVM> UpdateTutor(string idAccount, TutorVM tutorVM);
     }
 }
 

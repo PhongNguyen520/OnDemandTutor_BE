@@ -12,6 +12,8 @@ using NuGet.Protocol;
 using Repositories;
 using BusinessObjects.Models.TutorModel;
 using System.Net;
+using BusinessObjects.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Controllers
 {

@@ -68,4 +68,44 @@ namespace BusinessObjects.Models
         public int isActive { get; set; } = 1;
     }
 
+    public class TutorVM
+    {
+        public string FullName { get; set; } = null!;
+
+        public bool Gender { get; set; }
+
+        public int PhoneNumber { get; set; }
+
+        public string Email { get; set; }
+
+        public string? Avatar { get; set; }
+
+        public DateTime Dob { get; set; }
+
+        public string Education { get; set; } = null!;
+
+        public string TypeOfDegree { get; set; } = null!;
+
+        public int CardId { get; set; }
+
+        public float HourlyRate { get; set; }
+
+        public string? Photo { get; set; }
+
+        public string? Headline { get; set; }
+
+        public string? Description { get; set; }
+
+        public string? Address { get; set; }
+
+        public bool IsActive { get; set; }
+
+    }
+
+    public class RefreshTokenVM
+    {
+        public string refreshToken { get; set; }
+        public string userId { get; set; }
+    }
+
 }

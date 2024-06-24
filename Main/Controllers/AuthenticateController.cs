@@ -109,11 +109,10 @@ namespace API.Controller
 
         [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> refeshToken([FromBody] string refreshToken)
+        public async Task<IActionResult> refeshToken(RefreshTokenVM refreshToken)
         {
-            var userId = _currentUserService.GetUserId();
-            var user = await _accountService.GetAccountById(userId.ToString());
-            if (user == null || !(user.IsActive) || user.RefreshToken != refreshToken || user.DateExpireRefreshToken < DateTime.UtcNow)
+            var user = await _accountService.GetAccountById(refreshToken.userId);
+            if (user == null || !(user.IsActive) || user.RefreshToken != refreshToken.refreshToken || user.DateExpireRefreshToken < DateTime.UtcNow)
             {
                 return BadRequest("Not permission");
             }

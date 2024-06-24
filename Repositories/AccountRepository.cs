@@ -5,6 +5,7 @@ using BusinessObjects.Models;
 using DAOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace Repositories
             SignInManager<Account> signInManager, IConfiguration configuration,
             RoleManager<IdentityRole> roleManager, IMapper mapper, DAOs.DbContext dbContext)
         {
+            
             if (accountDAO == null)
             {
                 accountDAO = new AccountDAO();

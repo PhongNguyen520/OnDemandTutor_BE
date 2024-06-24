@@ -1,6 +1,10 @@
-﻿using BusinessObjects;
+﻿using AutoMapper;
+using BusinessObjects;
+using BusinessObjects.Models;
 using BusinessObjects.Models.TutorModel;
 using DAOs;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,6 +18,9 @@ namespace Repositories
     public class TutorRepository : ITutorRepository
     {
         private readonly TutorDAO tutorDAO = null;
+        private readonly DAOs.DbContext _dbContext;
+        private readonly UserManager<Account> _userManager;
+        private readonly IMapper _mapper;
 
         public TutorRepository()
         {
@@ -119,5 +126,35 @@ namespace Repositories
 
             return query;
         }
+
+        public async Task<TutorVM> UpdateTutor(string idAccount, TutorVM tutorVM)
+        {
+            var tutorDb = await _dbContext.Tutors
+                                          .Include(t => t.Account)
+                                          .FirstOrDefaultAsync(t => t.AccountId == idAccount);
+            var accountDb = await _userManager.FindByIdAsync(idAccount);
+            var norEmail = accountDb.NormalizedEmail;
+
+            if (tutorDb == null)
+            {
+                return null;
+            }
+            else
+            {
+                _mapper.Map(tutorVM, tutorDb);
+                tutorDAO.UpdateTutors(tutorDb);
+
+                _mapper.Map(tutorVM, accountDb);
+                accountDb.NormalizedEmail = _userManager.NormalizeEmail(accountDb.Email);
+                if (accountDb.NormalizedEmail != norEmail)
+                {
+                    accountDb.EmailConfirmed = false;
+                }
+                _dbContext.Update(accountDb);
+                _dbContext.SaveChanges();
+                return tutorVM;
+            }
+        }
+
     }
 }
