@@ -10,6 +10,8 @@ using DAOs;
 using Services;
 using Microsoft.AspNetCore.Authorization;
 using BusinessObjects.Constrant;
+using BusinessObjects.Models;
+using API.Services;
 
 namespace API.Controllers
 {
@@ -18,109 +20,74 @@ namespace API.Controllers
     [Authorize(Roles = AppRole.Admin)]
     public class ClassesController : ControllerBase
     {
-        private readonly IClassService iClassService;
+        private readonly IClassService _iClassService;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly ITutorService _tutorService;
+        private readonly ISubjectService _subjectService;
 
-        public ClassesController()
+        public ClassesController(ICurrentUserService currentUserService)
         {
-            iClassService = new ClassService();
+            _iClassService = new ClassService();
+            _currentUserService = currentUserService;
+            _tutorService = new TutorService();
+            _subjectService = new SubjectService();
         }
 
-        // GET: api/Classes
-        [HttpGet]
-        public IActionResult GetClasses()
+        // Tutor tạo class
+        [HttpPost("tutor/createClass")]
+        public IActionResult Create(ClassVM request)
         {
-            return Ok(iClassService.GetClasses());
+            var user = _currentUserService.GetUserId().ToString();
+            var tutor = _tutorService.GetTutors().Where(s => s.AccountId == user).FirstOrDefault();
+
+            var newClass = new Class()
+            {
+                ClassId = Guid.NewGuid().ToString(),
+                ClassName = request.ClassName,
+                Price = tutor.HourlyRate,
+                Description = request.Description,
+                CreateDay = DateTime.Now,
+                HourPerDay = request.HourPerDay,
+                DayPerWeek = request.DayPerWeek,
+                Status = null,
+                IsApprove = null,
+                StudentId = request.StudentId,
+                TutorId = tutor.TutorId,
+                SubjectId = _subjectService.GetSubjects().Where(s => s.GradeId == request.GradeId && s.SubjectGroupId == request.SubjectGroupId).Select(s => s.SubjectId).FirstOrDefault(),
+            };
+
+            _iClassService.AddClass(newClass);
+
+            return Ok();
         }
 
-        // GET: api/Classes/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Class>> GetClass(string id)
-        //{
-        //    var @class = await _context.Classes.FindAsync(id);
+        // Tutor view class
+        [HttpGet("tutor/viewClass")]
+        public IActionResult TutorViewClass()
+        {
+            return Ok();
+        }
 
-        //    if (@class == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // Student view class
+        [HttpGet("student/viewClass")]
+        public IActionResult StudentViewClass()
+        {
+            return Ok();
+        }
 
-        //    return @class;
-        //}
+        [HttpPut("student/browseClass")]
+        public IActionResult BrowseClass(string classId, bool action)
+        {
+            if (classId is not null)
+            {
+                var getClass = _iClassService.GetClasses().Where(s => s.ClassId == classId).FirstOrDefault();
+                getClass.Status = action;
+            } else
+            {
+                return NoContent();
+            }
 
-        //// PUT: api/Classes/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutClass(string id, Class @class)
-        //{
-        //    if (id != @class.ClassId)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(@class).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!ClassExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-        //// POST: api/Classes
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public async Task<ActionResult<Class>> PostClass(Class @class)
-        //{
-        //    _context.Classes.Add(@class);
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        if (ClassExists(@class.ClassId))
-        //        {
-        //            return Conflict();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return CreatedAtAction("GetClass", new { id = @class.ClassId }, @class);
-        //}
-
-        //// DELETE: api/Classes/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteClass(string id)
-        //{
-        //    var @class = await _context.Classes.FindAsync(id);
-        //    if (@class == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.Classes.Remove(@class);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
-        //private bool ClassExists(string id)
-        //{
-        //    return _context.Classes.Any(e => e.ClassId == id);
-        //}
+            return Ok();
+        }
     }
 }
