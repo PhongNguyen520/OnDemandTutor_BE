@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace BusinessObjects.Models
 {
     public class StudentDTO
-    {
-        public string SchoolName { get; set; }
+    { 
+        public string? SchoolName { get; set; }
 
         public string? Address { get; set; }
 
