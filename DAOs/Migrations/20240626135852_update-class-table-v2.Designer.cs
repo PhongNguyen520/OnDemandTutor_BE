@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240626135852_update-class-table-v2")]
+    partial class updateclasstablev2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -512,15 +515,6 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("AccountID");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsParent")
-                        .HasColumnType("bit");
 
                     b.Property<string>("SchoolName")
                         .HasMaxLength(255)
