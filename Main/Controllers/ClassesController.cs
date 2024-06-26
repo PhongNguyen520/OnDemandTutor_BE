@@ -49,7 +49,7 @@ namespace API.Controllers
             {
                 ClassId = Guid.NewGuid().ToString(),
                 ClassName = request.ClassName,
-                Price = tutor.HourlyRate,
+                Price = (float)(request.HourPerDay * tutor.HourlyRate *request.DayPerWeek),
                 Description = request.Description,
                 CreateDay = DateTime.Now,
                 HourPerDay = request.HourPerDay,
