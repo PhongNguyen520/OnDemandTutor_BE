@@ -44,7 +44,7 @@ namespace Main
 
             builder.Services.AddSignalR();
 
-            builder.Services.AddSingleton<ShareDBService> ();
+            builder.Services.AddSingleton<ShareDBService>();
 
             builder.Services.AddControllers();
 
@@ -61,11 +61,13 @@ namespace Main
             builder.Services.AddSwaggerGen();
 
             // Cấu hình đồng bộ LifeTime
-            builder.Services.AddAuthentication(options => {
+            builder.Services.AddAuthentication(options =>
+            {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options => {
+            }).AddJwtBearer(options =>
+            {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
@@ -130,20 +132,21 @@ namespace Main
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
 
 
-            // Set up CORS
-            app.UseCors("AllowReactApp");
+                // Set up CORS
+                app.UseCors("AllowReactApp");
 
-            app.UseHttpsRedirection();
+                app.UseHttpsRedirection();
 
-            app.UseAuthentication();
+                app.UseAuthentication();
 
-            app.UseAuthorization();
+                app.UseAuthorization();
 
-            app.MapControllers();
+                app.MapControllers();
 
-            app.MapHub<ChatHub>("/chatHub");
+                app.MapHub<ChatHub>("/chatHub");
 
-            app.Run();
+                app.Run();
+            }
         }
     }
 }
