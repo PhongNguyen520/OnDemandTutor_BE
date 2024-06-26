@@ -42,6 +42,9 @@ namespace API.Helper
 
             CreateMap<Student,StudentVM>()
                 .ForMember(dest => dest.SchoolName, opt => opt.MapFrom(src => src.SchoolName))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.Age))
+                .ForMember(dest => dest.IsParent, opt => opt.MapFrom(src => src.IsParent))
                 .ReverseMap();
 
             CreateMap<Account,StudentVM>()

@@ -9,6 +9,12 @@ public partial class Student
 
     public string? SchoolName { get; set; }
 
+    public string? Address { get; set; }
+
+    public int? Age { get; set; }
+
+    public bool IsParent { get; set; }
+
     public string AccountId { get; set; } = null!;
 
     public virtual Account Account { get; set; } = null!;
