@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using BusinessObjects.Models.TutorModel;
 using Repositories;
 using System;
@@ -16,6 +17,12 @@ namespace Services
         public TutorService()
         {
             _repository = new TutorRepository();
+        }
+
+        //------------------------
+        public TutorService(ITutorRepository repository)
+        {
+            _repository = repository;
         }
 
         public bool AddTutor(Tutor tutor)
@@ -44,9 +51,20 @@ namespace Services
             return _repository.Sorting(query, sortBy, sortType, pageIndex);
         }
 
+
         public bool UpdateTutors(Tutor tutor)
         {
-            return _repository.UpdateTutors(tutor);
+            throw new NotImplementedException();
+        }
+
+        public async Task<TutorVM> UpdateTutor(string idAccount, TutorVM tutorVM)
+        {
+            return await _repository.UpdateTutor(idAccount, tutorVM);
+        }
+
+        public async Task<TutorVM> GetTutorCurrent(string idAccount)
+        {
+            return await _repository.GetTutorCurrent(idAccount);
         }
     }
 }

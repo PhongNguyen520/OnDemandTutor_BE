@@ -28,6 +28,7 @@ namespace Repositories
             int pageIndex);
 
         Task<TutorVM> UpdateTutor(string idAccount, TutorVM tutorVM);
+        Task<TutorVM> GetTutorCurrent(string idAccount);
     }
 }
 
