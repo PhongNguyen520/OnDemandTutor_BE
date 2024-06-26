@@ -74,9 +74,7 @@ namespace BusinessObjects.Models
 
         public bool Gender { get; set; }
 
-        public int PhoneNumber { get; set; }
-
-        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
 
         public string? Avatar { get; set; }
 
@@ -102,10 +100,49 @@ namespace BusinessObjects.Models
 
     }
 
+    public class StudentVM
+    {
+        public string FullName { get; set; } = null!;
+
+        public bool Gender { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public string? Avatar { get; set; }
+
+        public string? SchoolName { get; set; }
+
+    }
+
     public class RefreshTokenVM
     {
         public string refreshToken { get; set; }
         public string userId { get; set; }
+
+    }
+
+    public class SignUpModerator
+    {
+        [Required]
+        public string FullName { get; set; }
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string UserName { get; set; }
+        [Required]
+        public string Password { get; set; }
+        [StringLength(10)]
+        public String? PhoneNumber { get; set; }
+        public bool Gender { get; set; }
+        public int isActive { get; set; } = 1;
+
+    }
+
+    public class ResetPasswordModel
+    {
+        public string Email { get; set; }
+        public string Token { get; set; }
+        public string Password { get; set; }
     }
 
 }

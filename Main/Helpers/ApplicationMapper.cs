@@ -10,6 +10,7 @@ namespace API.Helper
         {
             #region User
             CreateMap<Account, AccountDTO>().ReverseMap();
+            CreateMap<Account, SignUpModerator>().ReverseMap();
             CreateMap<Account, UserRolesVM>().ReverseMap();
 
             CreateMap<Account, UserRoles>().ReverseMap();
@@ -34,8 +35,19 @@ namespace API.Helper
             CreateMap<Account, TutorVM>()
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))            
+                .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Avatar))
+                .ReverseMap();
+
+
+            CreateMap<Student,StudentVM>()
+                .ForMember(dest => dest.SchoolName, opt => opt.MapFrom(src => src.SchoolName))
+                .ReverseMap();
+
+            CreateMap<Account,StudentVM>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))               
                 .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Avatar))
                 .ReverseMap();
             #endregion

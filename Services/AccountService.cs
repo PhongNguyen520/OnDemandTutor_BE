@@ -82,5 +82,24 @@ namespace Services
         {
             return await iAccountRepository.StudentSignUpAsync(model);
         }
+        public async Task<String> SignUpModerator(SignUpModerator model)
+        {
+            return await iAccountRepository.SignUpModerator(model);
+        }
+
+        public Task<Account> SignInWithGG(string gmail)
+        {
+            return iAccountRepository.SignInWithGG(gmail);
+        }
+
+        public async Task<string> TokenForgetPassword(string email)
+        {
+            return await iAccountRepository.TokenForgetPassword(email);
+        }
+
+        public async Task<int> ResetPasswordEmail(ResetPasswordModel model)
+        {
+            return await iAccountRepository.ResetPasswordEmail(model);
+        }
     }
 }
