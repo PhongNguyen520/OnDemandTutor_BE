@@ -7,6 +7,7 @@ using Services;
 using API.Services;
 using Repositories;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Controller
 {
@@ -20,7 +21,7 @@ namespace API.Controller
         private readonly ICurrentUserService _currentUserService;
         private readonly IJwtTokenService _jwtTokenService;
 
-        public AuthenticateController(IJwtTokenService jwtTokenService, IAccountService accountService, 
+        public AuthenticateController(IJwtTokenService jwtTokenService, IAccountService accountService,
             ICurrentUserService currentUserService, IMailService mailService)
         {
             _mailService = mailService;
@@ -68,7 +69,26 @@ namespace API.Controller
             return StatusCode(500);
         }
 
+        [AllowAnonymous]
+        [HttpPost("signUpModerator")]
+        public async Task<IActionResult> SignUpModerator(SignUpModerator signUpModer)
+        {
+            var userIdSignUpId = await _accountService.SignUpModerator(signUpModer);
+            if (userIdSignUpId == null)
+            {
+                return BadRequest("Email is existed");
+            }
+            if (userIdSignUpId != null)
+            {
+                var scheme = HttpContext.Request.Scheme;
+                var host = HttpContext.Request.Host.Value;
+                var url = $"{scheme}://{host}/api/auth/confirm-email?email={signUpModer.Email}";
+                await _mailService.SendEmailAsync(signUpModer.Email, "Xác thực tài khoản của bạn", url);
+                return Ok(new { userId = userIdSignUpId });
+            }
 
+            return StatusCode(500);
+        }
 
         [AllowAnonymous]
         [HttpPost("signIn")]
@@ -78,7 +98,35 @@ namespace API.Controller
             if (user == null || !(user.IsActive))
             {
                 return Unauthorized();
-            } else if (!user.EmailConfirmed)
+            }
+            else if (!user.EmailConfirmed)
+            {
+                return BadRequest("Cần phải xác thực tài khoản của bạn qua email đăng kí");
+            }
+            var userRoles = await _accountService.GetRolesAsync(user);
+            var accessToken = _jwtTokenService.CreateToken(user, userRoles);
+            var refreshToken = _jwtTokenService.CreateRefeshToken();
+            user.RefreshToken = refreshToken;
+            user.DateExpireRefreshToken = DateTime.Now.AddDays(7);
+            var result = _accountService.UpdateAccounts(user);
+            if (result)
+            {
+                return Ok(new { token = accessToken, refreshToken });
+
+            }
+            return BadRequest("Failed to update user's token");
+        }
+
+        [AllowAnonymous]
+        [HttpPost("signInWithGoogle")]
+        public async Task<IActionResult> SignInWithGoogle([FromBody] string gmail)
+        {
+            var user = await _accountService.SignInWithGG(gmail);
+            if (user == null || !(user.IsActive))
+            {
+                return Unauthorized();
+            }
+            else if (!user.EmailConfirmed)
             {
                 return BadRequest("Cần phải xác thực tài khoản của bạn qua email đăng kí");
             }
@@ -134,5 +182,27 @@ namespace API.Controller
             else return BadRequest("Cannot confirm your email");
         }
 
+        [HttpPost("forgetPassword")]
+        public async Task<IActionResult> ForgetPassword([FromBody] string email)
+        {
+            var token = await _accountService.TokenForgetPassword(email);
+            if (token == null)
+            {
+                return BadRequest("Not Found!!!");
+            }
+            var scheme = HttpContext.Request.Scheme;
+            var host = HttpContext.Request.Host.Value;
+            var url = $"{scheme}://{host}/api/auth/resetPassword";
+            await _mailService.SendTokenAsync(email, "Token For ResetPassword", url, token);
+
+            return Ok("Password reset link has been sent to your email.");
+        }
+
+        [HttpPost("resetPassword")]
+        public async Task<IActionResult> ResetPassword([FromQuery] ResetPasswordModel model)
+        {
+            var result = _accountService.ResetPasswordEmail(model);
+            return Ok(result);
+        }
     }
 }

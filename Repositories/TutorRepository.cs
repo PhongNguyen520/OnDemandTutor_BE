@@ -30,6 +30,17 @@ namespace Repositories
             }
         }
 
+        public TutorRepository(UserManager<Account> userManager, IMapper mapper, DAOs.DbContext dbContext)
+        {
+            if (tutorDAO == null)
+            {
+                tutorDAO = new TutorDAO();
+            }
+            _dbContext = dbContext;
+            _userManager = userManager;
+            _mapper = mapper;
+        }
+
 
         public bool AddTutor(Tutor tutor)
         {
@@ -129,11 +140,11 @@ namespace Repositories
 
         public async Task<TutorVM> UpdateTutor(string idAccount, TutorVM tutorVM)
         {
+ 
             var tutorDb = await _dbContext.Tutors
                                           .Include(t => t.Account)
                                           .FirstOrDefaultAsync(t => t.AccountId == idAccount);
             var accountDb = await _userManager.FindByIdAsync(idAccount);
-            var norEmail = accountDb.NormalizedEmail;
 
             if (tutorDb == null)
             {
@@ -145,13 +156,27 @@ namespace Repositories
                 tutorDAO.UpdateTutors(tutorDb);
 
                 _mapper.Map(tutorVM, accountDb);
-                accountDb.NormalizedEmail = _userManager.NormalizeEmail(accountDb.Email);
-                if (accountDb.NormalizedEmail != norEmail)
-                {
-                    accountDb.EmailConfirmed = false;
-                }
                 _dbContext.Update(accountDb);
                 _dbContext.SaveChanges();
+                return tutorVM;
+            }
+        }
+
+        public async Task<TutorVM> GetTutorCurrent(string idAccount)
+        {
+            var tutorVM = new TutorVM();
+            var tutorDb = await _dbContext.Tutors
+                                          .Include(t => t.Account)
+                                          .FirstOrDefaultAsync(t => t.AccountId == idAccount);
+            var accountDb = await _userManager.FindByIdAsync(idAccount);
+            if (tutorDb == null)
+            {
+                return null;
+            }
+            else
+            {
+                tutorVM = _mapper.Map<TutorVM>(tutorDb);
+                _mapper.Map(accountDb, tutorVM);
                 return tutorVM;
             }
         }
