@@ -14,6 +14,7 @@ using BusinessObjects.Models.TutorModel;
 using System.Net;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Identity;
+using BusinessObjects.Models.FormModel;
 
 namespace API.Controllers
 {
@@ -47,7 +48,12 @@ namespace API.Controllers
         {
             var sortBy = requestSearchTutorModel.SortContent != null ? requestSearchTutorModel.SortContent?.sortTutorBy.ToString() : null;
             var sortType = requestSearchTutorModel.SortContent != null ? requestSearchTutorModel.SortContent?.sortTutorType.ToString() : null;
-            var searchQuery = requestSearchTutorModel.Search.ToLower();
+            string searchQuery = "";
+
+            if (requestSearchTutorModel.Search != null)
+            {
+                searchQuery = requestSearchTutorModel.Search.ToLower();
+            }
 
             //List tutors active 
             var allTutor = iTutorService.Filter(requestSearchTutorModel);
