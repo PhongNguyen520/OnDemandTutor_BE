@@ -16,8 +16,15 @@ namespace Services.Dependency
         {
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountService, AccountService>();
+
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+
+            services.AddScoped<ITutorService, TutorService>();
+            services.AddScoped<ITutorRepository, TutorRepository>();
+
+            services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IStudentRepository, StudentRepository>();
 
             return services;
         }

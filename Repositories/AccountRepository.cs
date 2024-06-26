@@ -4,6 +4,7 @@ using BusinessObjects.Constrant;
 using BusinessObjects.Models;
 using DAOs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -89,7 +90,35 @@ namespace Repositories
             }
             return null;
         }
-        public async Task<String> SignUpAsync(AccountDTO model)
+
+        public async Task<Account> SignInWithGG(string gmail)
+        {
+            var result = await _userManager.FindByEmailAsync(gmail);
+            if (result != null)
+            {
+                return result;
+            }
+            return null;
+        }
+
+        public async Task<String> SignUpModerator(SignUpModerator model)
+        {
+            var isDupplicate = await _userManager.FindByEmailAsync(model.Email);
+            if (isDupplicate != null)
+            {
+                return null;
+            }
+            var user = _mapper.Map<Account>(model);
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, AppRole.Moderator);
+                return user.Id;
+            }
+            return null;
+        }
+
+            public async Task<String> SignUpAsync(AccountDTO model)
         {
             var isDupplicate = await _userManager.FindByEmailAsync(model.Email);
             if (isDupplicate != null)
@@ -205,6 +234,33 @@ namespace Repositories
             student.StudentId = userId;
             _dbContext.Add(student);
             return await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<string> TokenForgetPassword(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return null;
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            return token;
+        }
+
+
+        public async Task<int> ResetPasswordEmail(ResetPasswordModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return 0;
+            }
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            if (result.Succeeded)
+            {
+                return 1;
+            }
+            return 2;
         }
  
     }

@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,9 @@ namespace Repositories
         public List<Student> GetStudents();
 
         public bool UpdateStudents(Student student);
+
+        Task<StudentVM> UpdateStudent(string accountId, StudentVM studentVM);
+
+        Task<StudentVM> GetStudentCurrent(string  accountId);
     }
 }

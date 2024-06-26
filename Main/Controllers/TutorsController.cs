@@ -14,6 +14,7 @@ using BusinessObjects.Models.TutorModel;
 using System.Net;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Identity;
+using API.Services;
 using BusinessObjects.Models.FormModel;
 
 namespace API.Controllers
@@ -29,11 +30,24 @@ namespace API.Controllers
         private readonly ISubjectGroupService iSubjectGroupService;
         private readonly ISubjectService iSubjectService;
         private readonly ISubjectTutorService iSubjectTutorService;
+        private readonly ICurrentUserService currentUserService;
 
 
-        public TutorsController(IAccountService accountService)
+        //public TutorsController(IAccountService accountService)
+        //{
+        //    iTutorService = new TutorService();
+        //    iAccountService = accountService;
+        //    iFeedbackService = new FeedbackService();
+        //    iGradeService = new GradeService();
+        //    iSubjectGroupService = new SubjectGroupService();
+        //    iSubjectService = new SubjectService();
+        //    iSubjectTutorService = new SubjectTutorService();
+        //}
+        public TutorsController(IAccountService accountService, ITutorService _iTutorService, ICurrentUserService _currentUserServiece)
         {
-            iTutorService = new TutorService();
+            iTutorService = _iTutorService;
+            currentUserService = _currentUserServiece;
+
             iAccountService = accountService;
             iFeedbackService = new FeedbackService();
             iGradeService = new GradeService();
@@ -62,7 +76,7 @@ namespace API.Controllers
             var allAccount = iAccountService.GetAccounts()
                 .Where(ac => ac.FullName.ToLower().Contains(searchQuery) && ac.IsActive == true);
 
-            
+
             // TÌM KIẾM THEO TÊN NHÓM MÔN HỌC
             var allSubjectGroup = iSubjectGroupService.GetSubjectGroups().Where(su => su.SubjectName.ToLower().Contains(searchQuery));
 
@@ -189,6 +203,30 @@ namespace API.Controllers
             };
 
             return Ok(tutorDetail);
+        }
+
+        [HttpPost("UpdateTutor")]
+        public async Task<IActionResult> UpdateTutorAccount(TutorVM tutorVM)
+        {
+            var accountId = currentUserService.GetUserId().ToString();
+            if (accountId == null)
+            {
+                return BadRequest("Sign Account!!!");
+            }
+            var result = await iTutorService.UpdateTutor(accountId, tutorVM);
+            return Ok(result);
+        }
+
+        [HttpGet("GetTutorCurrent")]
+        public async Task<IActionResult> GetTutorCurrent()
+        {
+            var accountId = currentUserService.GetUserId().ToString();
+            if (accountId == null)
+            {
+                return BadRequest("Sign Account!!!");
+            }
+            var result = await iTutorService.GetTutorCurrent(accountId);
+            return Ok(result);
         }
 
 
