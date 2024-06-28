@@ -8,6 +8,7 @@ using API.Services;
 using Repositories;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
 
 namespace API.Controller
 {
@@ -190,18 +191,30 @@ namespace API.Controller
             {
                 return BadRequest("Not Found!!!");
             }
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(token);
+            var encodedToken = Base64UrlTextEncoder.Encode(plainTextBytes);
             var scheme = HttpContext.Request.Scheme;
             var host = HttpContext.Request.Host.Value;
-            var url = $"{scheme}://{host}/api/auth/resetPassword";
-            await _mailService.SendTokenAsync(email, "Token For ResetPassword", url, token);
+            var url = $"{scheme}://{host}/api/auth/redirectoResetPasswordPage?email={email}&token={encodedToken}";
+            await _mailService.SendToken(email, "Token For ResetPassword", url);
+            return Ok("Send email to confirm reset password");
+        }
 
-            return Ok("Password reset link has been sent to your email.");
+        [HttpGet("redirectoResetPasswordPage")]
+        public async Task<IActionResult> RedirectoResetPasswordPage(string email, string token)
+        {
+            var result = _accountService.GetAccountByEmail(email);
+            if(result == null)
+            {
+                return BadRequest();
+            }
+            return Ok(token);
         }
 
         [HttpPost("resetPassword")]
-        public async Task<IActionResult> ResetPassword([FromQuery] ResetPasswordModel model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {
-            var result = _accountService.ResetPasswordEmail(model);
+            var result = await _accountService.ResetPasswordEmail(model);
             return Ok(result);
         }
     }

@@ -78,6 +78,10 @@ namespace Services
             return await iAccountRepository.TutorSignUpAsync(model);
         }
 
+        public async Task<String> GetAccountByEmail(string email)
+        {
+            return await iAccountRepository.GetAccountByEmail(email);
+        }
         public async Task<int> StudentSignUpAsync(StudentDTO model)
         {
             return await iAccountRepository.StudentSignUpAsync(model);
@@ -100,6 +104,16 @@ namespace Services
         public async Task<int> ResetPasswordEmail(ResetPasswordModel model)
         {
             return await iAccountRepository.ResetPasswordEmail(model);
+        }
+
+        public Task<IQueryable<TutorInterVM>> GetAccountTutorIsActiveFalse()
+        {
+            return iAccountRepository.GetAccountTutorIsActiveFalse();
+        }
+
+        public Task<bool> CheckAccountByEmail(string email)
+        {
+            return iAccountRepository.CheckAccountByEmail(email);
         }
     }
 }

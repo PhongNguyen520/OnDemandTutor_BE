@@ -29,6 +29,7 @@ namespace Repositories
 
         Task<TutorVM> UpdateTutor(string idAccount, TutorVM tutorVM);
         Task<TutorVM> GetTutorCurrent(string idAccount);
+        Task<bool> UpdateIsActiveTutor(string idAccount);
     }
 }
 
