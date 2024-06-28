@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.Models
 {
-    public class ClassCreate
+    public class CreateRequestTutor
     {
         public string ClassName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public double HourPerDay { get; set; }
-        public int DayPerWeek { get; set; }
+        public List<int> DayOfWeek { get; set; } = new List<int>();
+        public int TimeStart { get; set; }
+        public int TimeEnd { get; set; }
         // StudentID == userId của Student
+        public DateTime DayStart { get; set; }
+        public DateTime DayEnd { get; set; }
         public string StudentId { get; set; } = string.Empty;
         public string GradeId { get; set; } = string.Empty;
         public string SubjectGroupId { get; set; } = string.Empty;
@@ -32,5 +35,12 @@ namespace BusinessObjects.Models
         public string? StudentAvatar {  get; set; }
         public string? TutorName { get; set; }
         public string? TutorAvatar {  get; set; }
+    }
+
+    public class CalenderVM
+    {
+        public DateTime BookDay { get; set; }
+        public int TimeStart { get; set; }
+        public int TimeEnd { get; set; }
     }
 }
