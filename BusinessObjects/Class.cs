@@ -33,6 +33,7 @@ public partial class Class
 
     public virtual Tutor Tutor { get; set; } = null!;
 
+    public virtual ICollection<ClassCalender> ClassCalenders { get; set; } = new List<ClassCalender>();
     public DateTime DayStart { get; set; }
     public DateTime DayEnd { get; set; }
 }

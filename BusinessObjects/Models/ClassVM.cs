@@ -11,7 +11,7 @@ namespace BusinessObjects.Models
     {
         public string ClassName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public List<int> DayOfWeek { get; set; } = new List<int>();
+        public string DayOfWeek { get; set; } = string.Empty;
         public int TimeStart { get; set; }
         public int TimeEnd { get; set; }
         // StudentID == userId của Student
@@ -42,5 +42,6 @@ namespace BusinessObjects.Models
         public DateTime BookDay { get; set; }
         public int TimeStart { get; set; }
         public int TimeEnd { get; set; }
+        public string ClassId { get; set; } = string.Empty;
     }
 }

@@ -53,6 +53,11 @@ public partial class DbContext : IdentityDbContext<Account>
     public virtual DbSet<TutorAd> TutorAds { get; set; }
 
     public virtual DbSet<Wallet> Wallets { get; set; }
+
+    public virtual DbSet<ClassCalender> ClassCalenders { get; set; }
+
+    public virtual DbSet<RequestTutorForm> RequestTutorForms { get; set; }
+
     private string? GetConnectionString()
     {
         IConfiguration configuration = new ConfigurationBuilder()
@@ -258,9 +263,6 @@ public partial class DbContext : IdentityDbContext<Account>
                 .HasMaxLength(255)
                 .IsUnicode(true)
                 .HasColumnName("SubjectID");
-            entity.Property(e => e.SubjectName)
-                .HasMaxLength(255)
-                .IsUnicode(true);
             entity.Property(e => e.TypeOfDegree)
                 .HasMaxLength(255)
                 .IsUnicode(true);
@@ -556,6 +558,40 @@ public partial class DbContext : IdentityDbContext<Account>
                 .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKWallet1156962");
+        });
+
+        modelBuilder.Entity<ClassCalender>(entity =>
+        {
+            entity.HasKey(e => e.CalenderId).HasName("PK__ClassCalender__77C70FC2A16C50DB1");
+
+            entity.ToTable("ClassCalender");
+
+            entity.HasOne(d => d.Classes).WithMany(p => p.ClassCalenders)
+                .HasForeignKey(d => d.ClassId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKClassCal3875973");
+        });
+
+        modelBuilder.Entity<RequestTutorForm>(entity =>
+        {
+            entity.HasKey(e => e.FormId).HasName("PK__RequestTutorForm__77C70FC2A16C50DB2");
+
+            entity.ToTable("RequestTutorForm");
+
+            entity.HasOne(d => d.Tutor).WithMany(p => p.RequestTutorForms)
+                .HasForeignKey(d => d.TutorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKRequestTu3875974");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.RequestTutorForms)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKRequestTu3875B45");
+
+            entity.HasOne(d => d.Subject).WithMany(p => p.RequestTutorForms)
+                .HasForeignKey(d => d.SubjectId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKRequestTu3875945");
         });
 
         base.OnModelCreating(modelBuilder);

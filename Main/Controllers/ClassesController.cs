@@ -21,7 +21,7 @@ namespace API.Controllers
     [ApiController]
     public class ClassesController : ControllerBase
     {
-        private readonly IClassService _iClassService;
+        private readonly IClassService _classService;
         private readonly ICurrentUserService _currentUserService;
         private readonly ITutorService _tutorService;
         private readonly ISubjectService _subjectService;
@@ -31,7 +31,7 @@ namespace API.Controllers
 
         public ClassesController(ICurrentUserService currentUserService, IAccountService accountService)
         {
-            _iClassService = new ClassService();
+            _classService = new ClassService();
             _currentUserService = currentUserService;
             _tutorService = new TutorService();
             _subjectService = new SubjectService();
@@ -41,16 +41,16 @@ namespace API.Controllers
         }
 
         // Tutor tạo class
-        [HttpPost("tutor/createClass")]
+        [HttpPost("createClass")]
         public IActionResult Create(CreateRequestTutor request)
         {
             var user = _currentUserService.GetUserId().ToString();
             var tutor = _tutorService.GetTutors().Where(s => s.AccountId == user).FirstOrDefault();
             var student = _studentService.GetStudents().Where(s => s.AccountId == request.StudentId).FirstOrDefault();
 
-            List<DayOfWeek> dayOfWeek = new List<DayOfWeek> { DayOfWeek.Friday, 2 };
+            List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(request.DayOfWeek);
 
-            List<DateTime> filteredDates = GetDatesByDaysOfWeek(request.DayStart, request.DayEnd, dayOfWeek);
+            List<DateTime> filteredDates = _classCalenderService.GetDatesByDaysOfWeek(request.DayStart, request.DayEnd, desiredDays);
 
             var newClass = new Class()
             {
@@ -78,10 +78,10 @@ namespace API.Controllers
                 newClassCalender.IsActive = true;
                 newClassCalender.ClassId = newClass.ClassId;
 
-                _classCalenderService.Add(newClassCalender);
+                _classCalenderService.AddClassCalender(newClassCalender);
             }
 
-            _iClassService.AddClass(newClass);
+            _classService.AddClass(newClass);
 
             return Ok();
         }
@@ -89,8 +89,8 @@ namespace API.Controllers
         [HttpGet("showTutorCalender")]
         public IActionResult GetTutorCalender(string tutorId)
         {
-            var calenders = _classCalenderService.GetClassCaleder().Where(s => s.TutorId == tutorId);
-            var classes = _iClassService.GetClasses().Where(s => s.TutorId == tutorId && s.Status != true);
+            var calenders = _classCalenderService.GetClassCalenders();
+            var classes = _classService.GetClasses().Where(s => s.TutorId == tutorId && s.Status != true);
 
             var result = from calender in calenders
                          join classL in classes
@@ -100,6 +100,7 @@ namespace API.Controllers
                              BookDay = DateTime.Now,
                              TimeStart = calender.TimeStart,
                              TimeEnd = calender.TimeEnd,
+                             ClassId = calender.ClassId,
                          };
 
             return Ok(result);
@@ -117,7 +118,7 @@ namespace API.Controllers
                 return NotFound("Tutor not found.");
             }
 
-            var classList = _iClassService.GetClasses()
+            var classList = _classService.GetClasses()
                                            .Where(c => c.IsApprove == true && c.Status == action && c.TutorId == tutor.TutorId);
 
             var classVMs = classList.Select(c => new ClassVM()
@@ -165,7 +166,7 @@ namespace API.Controllers
                 return NotFound("Student not found.");
             }
 
-            var classList = _iClassService.GetClasses()
+            var classList = _classService.GetClasses()
                                            .Where(c => c.IsApprove == true && c.Status == action && c.StudentId == student.StudentId);
 
             var classVMs = classList.Select(c => new ClassVM()
@@ -208,9 +209,9 @@ namespace API.Controllers
         {
             if (classId is not null)
             {
-                var getClass = _iClassService.GetClasses().Where(s => s.ClassId == classId).FirstOrDefault();
+                var getClass = _classService.GetClasses().Where(s => s.ClassId == classId).FirstOrDefault();
                 getClass.IsApprove = action;
-                _iClassService.UpdateClasses(getClass);
+                _classService.UpdateClasses(getClass);
             } else
             {
                 return NoContent();
@@ -227,9 +228,9 @@ namespace API.Controllers
         {
             if (classId is not null)
             {
-                var getClass = _iClassService.GetClasses().Where(s => s.ClassId == classId).FirstOrDefault();
+                var getClass = _classService.GetClasses().Where(s => s.ClassId == classId).FirstOrDefault();
                 getClass.Status = action;
-                _iClassService.UpdateClasses(getClass);
+                _classService.UpdateClasses(getClass);
             }
             else
             {

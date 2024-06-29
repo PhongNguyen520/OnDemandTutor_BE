@@ -9,8 +9,6 @@ public partial class FindTutorForm
 
     public DateTime CreateDay { get; set; }
 
-    public string SubjectName { get; set; } = null!;
-
     public bool? TutorGender { get; set; }
 
     public string? TypeOfDegree { get; set; }
@@ -34,4 +32,9 @@ public partial class FindTutorForm
     public string? Title { get; set; }
 
     public bool? IsActived { get; set; }
+    public string DayOfWeek { get; set; } = string.Empty;
+    public int TimeStart { get; set; }
+    public int TimeEnd { get; set; }
+    public DateTime DayStart { get; set; }
+    public DateTime DayEnd { get; set; }
 }
