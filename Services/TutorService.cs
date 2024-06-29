@@ -66,5 +66,10 @@ namespace Services
         {
             return await _repository.GetTutorCurrent(idAccount);
         }
+
+        public async Task<bool> ChangeStatusTutor(string idAccount)
+        {
+            return await _repository.UpdateIsActiveTutor(idAccount);
+        }
     }
 }

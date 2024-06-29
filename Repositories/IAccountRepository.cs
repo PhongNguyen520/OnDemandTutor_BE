@@ -20,6 +20,7 @@ namespace Repositories
         
         public bool UpdateAccounts(Account account);
         Task<Account> GetAccountById(string id);
+        Task<String> GetAccountByEmail(string email);
         Task<String> SignUpAsync(AccountDTO model);
         Task<int> TutorSignUpAsync(TutorDTO model);
         Task<int> StudentSignUpAsync(StudentDTO model);
@@ -31,5 +32,7 @@ namespace Repositories
         Task<Account> SignInWithGG(string gmail);
         Task<string> TokenForgetPassword(string email);
         Task<int> ResetPasswordEmail(ResetPasswordModel model);
+        Task<IQueryable<TutorInterVM>> GetAccountTutorIsActiveFalse();
+        Task<bool> CheckAccountByEmail(string email);
     }
 }

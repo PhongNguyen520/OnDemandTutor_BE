@@ -30,6 +30,10 @@ namespace API.Helper
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Account.FullName))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Account.Gender))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Account.PhoneNumber))
+                .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Account.Avatar))
                 .ReverseMap();
 
             CreateMap<Account, TutorVM>()
@@ -52,6 +56,25 @@ namespace API.Helper
                 .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Avatar))
+                .ReverseMap();
+
+            CreateMap<Tutor, TutorInterVM>()
+                .ForMember(dest => dest.Dob, opt => opt.MapFrom(src => src.Dob))
+                .ForMember(dest => dest.Education, opt => opt.MapFrom(src => src.Education))
+                .ForMember(dest => dest.TypeOfDegree, opt => opt.MapFrom(src => src.TypeOfDegree))
+                .ForMember(dest => dest.CardId, opt => opt.MapFrom(src => src.CardId))
+                .ForMember(dest => dest.HourlyRate, opt => opt.MapFrom(src => src.HourlyRate))
+                .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.Photo))
+                .ForMember(dest => dest.Headline, opt => opt.MapFrom(src => src.Headline))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Account.FullName))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Account.Gender))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Account.PhoneNumber))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Account.Email))
+                .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Account.Avatar))
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId))
                 .ReverseMap();
             #endregion
         }
