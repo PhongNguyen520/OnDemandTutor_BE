@@ -10,34 +10,34 @@ namespace Repositories
 {
     public class RequestTutorFormRepository : IRequestTutorFormRepository
     {
-        private readonly RequestTutorFormDAO _dao = null;
+        private readonly RequestTutorFormDAO dao = null;
 
         public RequestTutorFormRepository()
         {
-            if (_dao == null)
+            if (dao == null)
             {
-                _dao = new RequestTutorFormDAO();
+                dao = new RequestTutorFormDAO();
             }
         }
 
         public bool AddRequestTutorForm(RequestTutorForm form)
         {
-            return _dao.AddRequestTutorForm(form);
+            return dao.AddRequestTutorForm(form);
         }
 
         public bool DelRequestTutorForms(int id)
         {
-            return _dao.DelRequestTutorForms(id);
+            return dao.DelRequestTutorForms(id);
         }
 
         public List<RequestTutorForm> GetRequestTutorForms()
         {
-            return _dao.GetRequestTutorForms();
+            return dao.GetRequestTutorForms();
         }
 
         public bool UpdateRequestTutorForms(RequestTutorForm form)
         {
-            return _dao.UpdateRequestTutorForms(form);
+            return dao.UpdateRequestTutorForms(form);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using BusinessObjects;
-using BusinessObjects.Models.FormModel;
+using BusinessObjects.Models.FindFormModel;
 using BusinessObjects.Models.TutorModel;
 using DAOs;
 using System;
@@ -68,8 +68,8 @@ namespace Repositories
             return result;
         }
 
-        public IEnumerable<FormVM> Sorting
-            (IEnumerable<FormVM> query,
+        public IEnumerable<FormFindTutorVM> Sorting
+            (IEnumerable<FormFindTutorVM> query,
             string? sortBy,
             string? sortType,
             int pageIndex)

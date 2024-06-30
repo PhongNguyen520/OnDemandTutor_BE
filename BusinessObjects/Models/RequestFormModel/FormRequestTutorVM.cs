@@ -6,16 +6,20 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.Models.RequestFormModel
 {
-    public class RequestCreateForm
+    public class FormRequestTutorVM
     {
-        public string GradeId { get; set; } = string.Empty;
-        public string SubjectGroupId { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public required string FormId { get; set; }
+        public DateTime CreateDay { get; set; }
         public DateTime DayStart { get; set; }
         public DateTime DayEnd { get; set; }
         public string DayOfWeek { get; set; } = string.Empty;
         public int TimeStart { get; set; }
         public int TimeEnd { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string? Avatar { get; set; }
+        public string? SubjectName { get; set; }
+        public string? Description { get; set; }
+        public string StudentId { get; set; } = string.Empty;
         public string TutorId { get; set; } = string.Empty;
     }
 }

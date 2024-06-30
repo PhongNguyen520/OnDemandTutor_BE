@@ -10,34 +10,34 @@ namespace Services
 {
     public class RequestTutorFormService : IRequestTutorFormService
     {
-        private readonly RequestTutorFormRepository _repository = null;
+        private readonly RequestTutorFormRepository repository = null;
 
         public RequestTutorFormService()
         {
-            if (_repository == null)
+            if (repository == null)
             {
-                _repository = new RequestTutorFormRepository();
+                repository = new RequestTutorFormRepository();
             }
         }
 
         public bool AddRequestTutorForm(RequestTutorForm form)
         {
-            return _repository.AddRequestTutorForm(form);
+            return repository.AddRequestTutorForm(form);
         }
 
         public bool DelRequestTutorForms(int id)
         {
-            return _repository.DelRequestTutorForms(id);
+            return repository.DelRequestTutorForms(id);
         }
 
         public List<RequestTutorForm> GetRequestTutorForms()
         {
-            return _repository.GetRequestTutorForms();
+            return repository.GetRequestTutorForms();
         }
 
         public bool UpdateRequestTutorForms(RequestTutorForm form)
         {
-            return _repository.UpdateRequestTutorForms(form);
+            return repository.UpdateRequestTutorForms(form);
         }
     }
 }

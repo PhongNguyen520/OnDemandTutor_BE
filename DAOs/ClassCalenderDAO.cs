@@ -10,40 +10,40 @@ namespace DAOs
 {
     public class ClassCalenderDAO
     {
-        private DbContext _dbContext;
+        private DbContext dbContext = null;
 
         public ClassCalenderDAO()
         {
-            if (_dbContext == null)
+            if (dbContext == null)
             {
-                _dbContext = new DbContext();
+                dbContext = new DbContext();
             }
         }
 
         public bool AddClassCalenders(ClassCalender calender)
         {
-            _dbContext.ClassCalenders.Add(calender);
-            _dbContext.SaveChanges();
+            dbContext.ClassCalenders.Add(calender);
+            dbContext.SaveChanges();
             return true;
         }
 
         public bool DelClassCalenders(int id)
         {
-            ClassCalender calender = _dbContext.ClassCalenders.Find(id);
-            _dbContext.ClassCalenders.Remove(calender);
-            _dbContext.SaveChanges();
+            ClassCalender calender = dbContext.ClassCalenders.Find(id);
+            dbContext.ClassCalenders.Remove(calender);
+            dbContext.SaveChanges();
             return true;
         }
 
         public List<ClassCalender> GetClassCalenders()
         {
-            return _dbContext.ClassCalenders.ToList();
+            return dbContext.ClassCalenders.ToList();
         }
 
         public bool UpdateClassCalenders(ClassCalender calender)
         {
-            _dbContext.ClassCalenders.Update(calender);
-            _dbContext.SaveChanges();
+            dbContext.ClassCalenders.Update(calender);
+            dbContext.SaveChanges();
             return true;
         }
     }

@@ -9,7 +9,6 @@ namespace BusinessObjects
 {
     public class ClassCalender
     {
-        [Required]
         public string CalenderId { get; set; }
         public DateTime DayOfWeek { get; set; }
         public int TimeStart { get; set; }

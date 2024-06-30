@@ -10,35 +10,39 @@ namespace Repositories
 {
     public class ClassCalenderRepository : IClassCalenderRepository
     {
-        private readonly ClassCalenderDAO _dao = null;
+        private readonly ClassCalenderDAO dao = null;
 
         public ClassCalenderRepository()
         {
-            if (_dao == null)
+            if (dao == null)
             {
-                _dao = new ClassCalenderDAO();
+                dao = new ClassCalenderDAO();
             }
         }
 
         public bool AddClassCalender(ClassCalender calender)
         {
-            return _dao.AddClassCalenders(calender);
+            return dao.AddClassCalenders(calender);
         }
 
         public bool DelClassCalenders(int id)
         {
-            return _dao.DelClassCalenders(id);
+            return dao.DelClassCalenders(id);
         }
 
         public List<ClassCalender> GetClassCalenders()
         {
-            return _dao.GetClassCalenders();
+            return dao.GetClassCalenders();
         }
 
         public bool UpdateClassCalenders(ClassCalender calender)
         {
-            return _dao.UpdateClassCalenders(calender);
+            return dao.UpdateClassCalenders(calender);
         }
+
+
+
+
 
         public List<DateTime> GetDatesByDaysOfWeek(DateTime startDate, DateTime endDate, List<DayOfWeek> desiredDays)
         {

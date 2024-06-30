@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.Models.FormModel
+namespace BusinessObjects.Models.FindFormModel
 {
     public class RequestSearchPostModel
     {
