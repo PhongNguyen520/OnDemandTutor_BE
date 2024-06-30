@@ -13,6 +13,7 @@ using BusinessObjects.Constrant;
 using BusinessObjects.Models;
 using API.Services;
 using System.Threading.Tasks.Dataflow;
+using NuGet.Protocol;
 
 namespace API.Controllers
 {
@@ -20,40 +21,46 @@ namespace API.Controllers
     [ApiController]
     public class ClassesController : ControllerBase
     {
-        private readonly IClassService _iClassService;
+        private readonly IClassService _classService;
         private readonly ICurrentUserService _currentUserService;
         private readonly ITutorService _tutorService;
         private readonly ISubjectService _subjectService;
         private readonly IStudentService _studentService;
         private readonly IAccountService _accountService;
+        private readonly IClassCalenderService _classCalenderService;
 
         public ClassesController(ICurrentUserService currentUserService, IAccountService accountService)
         {
-            _iClassService = new ClassService();
+            _classService = new ClassService();
             _currentUserService = currentUserService;
             _tutorService = new TutorService();
             _subjectService = new SubjectService();
             _studentService = new StudentService();
             _accountService = accountService;
+            _classCalenderService = new ClassCalenderService();
         }
 
         // Tutor tạo class
-        [HttpPost("tutor/createClass")]
-        public IActionResult Create(ClassCreate request)
+        [HttpPost("createClass")]
+        public IActionResult Create(CreateRequestTutor request)
         {
             var user = _currentUserService.GetUserId().ToString();
             var tutor = _tutorService.GetTutors().Where(s => s.AccountId == user).FirstOrDefault();
             var student = _studentService.GetStudents().Where(s => s.AccountId == request.StudentId).FirstOrDefault();
 
+            List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(request.DayOfWeek);
+
+            List<DateTime> filteredDates = _classCalenderService.GetDatesByDaysOfWeek(request.DayStart, request.DayEnd, desiredDays);
+
             var newClass = new Class()
             {
                 ClassId = Guid.NewGuid().ToString(),
                 ClassName = request.ClassName,
-                Price = (float)(request.HourPerDay * tutor.HourlyRate *request.DayPerWeek),
+                Price = (float)(tutor.HourlyRate * (request.TimeEnd - request.TimeStart)),
                 Description = request.Description,
                 CreateDay = DateTime.Now,
-                HourPerDay = request.HourPerDay,
-                DayPerWeek = request.DayPerWeek,
+                DayStart = request.DayStart,
+                DayEnd = request.DayEnd,
                 Status = null,
                 IsApprove = null,
                 StudentId = student.StudentId,
@@ -61,9 +68,42 @@ namespace API.Controllers
                 SubjectId = _subjectService.GetSubjects().Where(s => s.GradeId == request.GradeId && s.SubjectGroupId == request.SubjectGroupId).Select(s => s.SubjectId).FirstOrDefault(),
             };
 
-            _iClassService.AddClass(newClass);
+            var newClassCalender = new ClassCalender();
+            foreach (var day in filteredDates)
+            {
+                newClassCalender.CalenderId = Guid.NewGuid().ToString();
+                newClassCalender.DayOfWeek = day;
+                newClassCalender.TimeStart = request.TimeStart;
+                newClassCalender.TimeEnd = request.TimeEnd;
+                newClassCalender.IsActive = true;
+                newClassCalender.ClassId = newClass.ClassId;
+
+                _classCalenderService.AddClassCalender(newClassCalender);
+            }
+
+            _classService.AddClass(newClass);
 
             return Ok();
+        }
+
+        [HttpGet("showTutorCalender")]
+        public IActionResult GetTutorCalender(string tutorId)
+        {
+            var calenders = _classCalenderService.GetClassCalenders();
+            var classes = _classService.GetClasses().Where(s => s.TutorId == tutorId && s.Status != true);
+
+            var result = from calender in calenders
+                         join classL in classes
+                         on calender.ClassId equals classL.ClassId
+                         select new CalenderVM()
+                         {
+                             BookDay = DateTime.Now,
+                             TimeStart = calender.TimeStart,
+                             TimeEnd = calender.TimeEnd,
+                             ClassId = calender.ClassId,
+                         };
+
+            return Ok(result);
         }
 
         // Tutor view class
@@ -78,7 +118,7 @@ namespace API.Controllers
                 return NotFound("Tutor not found.");
             }
 
-            var classList = _iClassService.GetClasses()
+            var classList = _classService.GetClasses()
                                            .Where(c => c.IsApprove == true && c.Status == action && c.TutorId == tutor.TutorId);
 
             var classVMs = classList.Select(c => new ClassVM()
@@ -86,8 +126,6 @@ namespace API.Controllers
                 ClassName = c.ClassName,
                 Createday = c.CreateDay,
                 Description = c.Description,
-                HourPerDay = c.HourPerDay,
-                DayPerWeek = c.DayPerWeek,
                 Price = c.Price,
                 SubjectName = _subjectService.GetSubjects()
                                              .Where(s => s.SubjectId == c.SubjectId)
@@ -128,7 +166,7 @@ namespace API.Controllers
                 return NotFound("Student not found.");
             }
 
-            var classList = _iClassService.GetClasses()
+            var classList = _classService.GetClasses()
                                            .Where(c => c.IsApprove == true && c.Status == action && c.StudentId == student.StudentId);
 
             var classVMs = classList.Select(c => new ClassVM()
@@ -136,8 +174,6 @@ namespace API.Controllers
                 ClassName = c.ClassName,
                 Createday = c.CreateDay,
                 Description = c.Description,
-                HourPerDay = c.HourPerDay,
-                DayPerWeek = c.DayPerWeek,
                 Price = c.Price,
                 SubjectName = _subjectService.GetSubjects()
                                              .Where(s => s.SubjectId == c.SubjectId)
@@ -173,9 +209,9 @@ namespace API.Controllers
         {
             if (classId is not null)
             {
-                var getClass = _iClassService.GetClasses().Where(s => s.ClassId == classId).FirstOrDefault();
+                var getClass = _classService.GetClasses().Where(s => s.ClassId == classId).FirstOrDefault();
                 getClass.IsApprove = action;
-                _iClassService.UpdateClasses(getClass);
+                _classService.UpdateClasses(getClass);
             } else
             {
                 return NoContent();
@@ -192,9 +228,9 @@ namespace API.Controllers
         {
             if (classId is not null)
             {
-                var getClass = _iClassService.GetClasses().Where(s => s.ClassId == classId).FirstOrDefault();
+                var getClass = _classService.GetClasses().Where(s => s.ClassId == classId).FirstOrDefault();
                 getClass.Status = action;
-                _iClassService.UpdateClasses(getClass);
+                _classService.UpdateClasses(getClass);
             }
             else
             {

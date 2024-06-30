@@ -40,4 +40,6 @@ public partial class Tutor
     public virtual ICollection<TutorAd> TutorAds { get; set; } = new List<TutorAd>();
 
     public virtual ICollection<SubjectTutor> SubjectTutors { get; set; } = new List<SubjectTutor>();
+
+    public virtual ICollection<RequestTutorForm> RequestTutorForms { get; set; } = new List<RequestTutorForm>();
 }

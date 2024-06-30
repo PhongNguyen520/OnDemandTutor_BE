@@ -1,5 +1,5 @@
 ﻿using BusinessObjects;
-using BusinessObjects.Models.FormModel;
+using BusinessObjects.Models.FindFormModel;
 using Repositories;
 using System;
 using System.Collections.Generic;
@@ -45,7 +45,7 @@ namespace Services
             return iFindTutorFormRepository.Filter(requestSearchPostModel);
         }
 
-        public IEnumerable<FormVM> Sorting(IEnumerable<FormVM> query, string? sortBy, string? sortType, int pageIndex)
+        public IEnumerable<FormFindTutorVM> Sorting(IEnumerable<FormFindTutorVM> query, string? sortBy, string? sortType, int pageIndex)
         {
             return iFindTutorFormRepository.Sorting(query, sortBy, sortType, pageIndex);
         }
