@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240701050223_UpdatePaymentTableV1")]
+    partial class UpdatePaymentTableV1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -721,15 +724,10 @@ namespace DAOs.Migrations
                     b.Property<string>("TranStatus")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WalletId")
-                        .HasColumnType("nvarchar(255)");
-
                     b.HasKey("Id")
                         .HasName("PK__PaymentTransaction__CB1927A1291BF343P");
 
                     b.HasIndex("PaymentId");
-
-                    b.HasIndex("WalletId");
 
                     b.ToTable("PaymentTransaction", (string)null);
                 });
@@ -861,14 +859,19 @@ namespace DAOs.Migrations
             modelBuilder.Entity("BusinessObjects.Transaction", b =>
                 {
                     b.Property<string>("TransactionId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(255)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("TransactionID");
 
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
@@ -876,9 +879,19 @@ namespace DAOs.Migrations
                     b.Property<float>("TransactionMoney")
                         .HasColumnType("real");
 
-                    b.HasKey("TransactionId");
+                    b.Property<string>("WalletId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("WalletID");
 
-                    b.ToTable("Transactions");
+                    b.HasKey("TransactionId")
+                        .HasName("PK__Transact__55433A4B61451DBED");
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("Transaction", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObjects.Tutor", b =>
@@ -1366,14 +1379,7 @@ namespace DAOs.Migrations
                         .HasForeignKey("PaymentId")
                         .HasConstraintName("FKPaymentTransaction3171253");
 
-                    b.HasOne("BusinessObjects.Wallet", "Wallet")
-                        .WithMany("PaymentTransactions")
-                        .HasForeignKey("WalletId")
-                        .HasConstraintName("FKPaymentTransaction3271453");
-
                     b.Navigation("Payment");
-
-                    b.Navigation("Wallet");
                 });
 
             modelBuilder.Entity("BusinessObjects.Student", b =>
@@ -1423,6 +1429,17 @@ namespace DAOs.Migrations
                     b.Navigation("Subject");
 
                     b.Navigation("Tutor");
+                });
+
+            modelBuilder.Entity("BusinessObjects.Transaction", b =>
+                {
+                    b.HasOne("BusinessObjects.Wallet", "Wallet")
+                        .WithMany("Transactions")
+                        .HasForeignKey("WalletId")
+                        .IsRequired()
+                        .HasConstraintName("FKTransactio1812602");
+
+                    b.Navigation("Wallet");
                 });
 
             modelBuilder.Entity("BusinessObjects.Tutor", b =>
@@ -1604,7 +1621,7 @@ namespace DAOs.Migrations
 
             modelBuilder.Entity("BusinessObjects.Wallet", b =>
                 {
-                    b.Navigation("PaymentTransactions");
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }
