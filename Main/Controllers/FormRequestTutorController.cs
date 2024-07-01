@@ -200,8 +200,8 @@ namespace API.Controllers
             }
 
             var form = _formService.GetRequestTutorForms().Where(s => s.FormId == formId).FirstOrDefault();
-            var formList = _formService.GetRequestTutorForms().Where(s => s.Status == null);
-            List<RequestTutorForm> list = null;
+            var formList = _formService.GetRequestTutorForms().Where(s => s.Status == null && s.FormId != formId);
+            List<string> list = new List<string>();
 
             List<DayOfWeek> formDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
 
@@ -213,25 +213,21 @@ namespace API.Controllers
                 var fDates = _classCalenderService.GetDatesByDaysOfWeek(f.DayStart, f.DayEnd, fDays);
                 foreach (var d in fDates)
                 {
-                    for (int i = 0; i < filteredDates.Count; i++)
+                    if (filteredDates.Contains(d))
                     {
-                        if (d == filteredDates[i])
+                        if (form.TimeStart <= f.TimeStart && form.TimeEnd >= f.TimeEnd
+                         || form.TimeStart >= f.TimeStart && form.TimeStart < f.TimeEnd
+                         || form.TimeEnd > f.TimeStart && form.TimeEnd <= f.TimeEnd)
                         {
-                            if (form.TimeStart <= f.TimeStart && form.TimeEnd >= f.TimeEnd
-                             || form.TimeStart >= f.TimeStart && form.TimeStart < f.TimeEnd
-                             || form.TimeEnd > f.TimeStart && form.TimeEnd <= f.TimeEnd)
-                            {
-                                list.Add(f);
-                            }
+                            list.Add(f.FormId);
+                            break;
                         }
+
                     }
                 }
             }
-            if (list != null)
-            {
-                return Ok(list);
-            }
-            return Ok();
+            return Ok(list);
+
         }
     }
 }

@@ -18,4 +18,13 @@ namespace BusinessObjects.Models
         public string? Title { get; set; }
 
     }
+
+    public class CreateFeedback
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set;} = string.Empty;
+        public string TutorId { get; set; } = string.Empty;
+        public string ClassId { get; set; } = string.Empty;
+        public int Star { get; set; }
+    }
 }

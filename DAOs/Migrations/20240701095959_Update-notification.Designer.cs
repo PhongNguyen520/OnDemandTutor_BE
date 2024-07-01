@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240701095959_Update-notification")]
+    partial class Updatenotification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,13 +222,6 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("ComplaintID");
 
-                    b.Property<string>("ClassId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Complainter")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
 
@@ -235,10 +231,7 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("Processnote")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("Status")
+                    b.Property<bool>("Status")
                         .HasColumnType("bit");
 
                     b.Property<string>("StudentId")
@@ -257,8 +250,6 @@ namespace DAOs.Migrations
 
                     b.HasKey("ComplaintId")
                         .HasName("PK__Complain__740D89AFCEF50736D");
-
-                    b.HasIndex("ClassId");
 
                     b.HasIndex("StudentId");
 
@@ -1118,12 +1109,6 @@ namespace DAOs.Migrations
 
             modelBuilder.Entity("BusinessObjects.Complaint", b =>
                 {
-                    b.HasOne("BusinessObjects.Class", "Class")
-                        .WithMany("Complaints")
-                        .HasForeignKey("ClassId")
-                        .IsRequired()
-                        .HasConstraintName("FKComplaint1966098");
-
                     b.HasOne("BusinessObjects.Student", "Student")
                         .WithMany("Complaints")
                         .HasForeignKey("StudentId")
@@ -1135,8 +1120,6 @@ namespace DAOs.Migrations
                         .HasForeignKey("TutorId")
                         .IsRequired()
                         .HasConstraintName("FKComplaint1966472");
-
-                    b.Navigation("Class");
 
                     b.Navigation("Student");
 
@@ -1446,8 +1429,6 @@ namespace DAOs.Migrations
             modelBuilder.Entity("BusinessObjects.Class", b =>
                 {
                     b.Navigation("ClassCalenders");
-
-                    b.Navigation("Complaints");
 
                     b.Navigation("Feedbacks");
                 });
