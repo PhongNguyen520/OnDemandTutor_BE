@@ -58,6 +58,8 @@ public partial class DbContext : IdentityDbContext<Account>
 
     public virtual DbSet<RequestTutorForm> RequestTutorForms { get; set; }
 
+    public virtual DbSet<TutorApply> TutorApplies { get; set; }
+
     private string? GetConnectionString()
     {
         IConfiguration configuration = new ConfigurationBuilder()
@@ -592,6 +594,23 @@ public partial class DbContext : IdentityDbContext<Account>
                 .HasForeignKey(d => d.SubjectId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKRequestTu3875945");
+        });
+
+        modelBuilder.Entity<TutorApply>(entity =>
+        {
+            entity.HasKey(e => new { e.FormId, e.TutorId }).HasName("PK__TutorAp___9B67D374BBB4AFDSS");
+
+            entity.ToTable("TutorApply");
+
+            entity.HasOne(d => d.FindTutorForm).WithMany(p => p.TutorApplies)
+                .HasForeignKey(d => d.FormId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKTutorApply6750344");
+
+            entity.HasOne(d => d.Tutor).WithMany(p => p.TutorApplies)
+                .HasForeignKey(d => d.TutorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKTutorApply31899");
         });
 
         base.OnModelCreating(modelBuilder);

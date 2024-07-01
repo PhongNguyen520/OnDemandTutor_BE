@@ -37,4 +37,5 @@ public partial class FindTutorForm
     public int TimeEnd { get; set; }
     public DateTime DayStart { get; set; }
     public DateTime DayEnd { get; set; }
+    public virtual ICollection<TutorApply> TutorApplies { get; set; } = new List<TutorApply>();
 }
