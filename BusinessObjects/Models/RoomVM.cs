@@ -42,4 +42,10 @@ namespace BusinessObjects.Models
         public string UserName { get; set; } = string.Empty;
         public string ChatRoom { get; set; } = string.Empty;
     }
+
+    public class CreateMessage
+    {
+        public string RoomId { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
+    }
 }
