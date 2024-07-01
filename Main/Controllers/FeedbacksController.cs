@@ -11,6 +11,7 @@ using Services;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using BusinessObjects.Models.TutorModel;
+using API.Services;
 
 namespace API.Controllers
 {
@@ -23,14 +24,16 @@ namespace API.Controllers
         private readonly IAccountService _accountService;
         private readonly IClassService _classService;
         private readonly ISubjectService _subjectService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public FeedbacksController(IAccountService accountService)
+        public FeedbacksController(IAccountService accountService, ICurrentUserService currentUserService)
         {
             iFeedbackService = new FeedbackService();
             iStudentService = new StudentService();
             _accountService = accountService;
             _classService = new ClassService();
             _subjectService = new SubjectService();
+            _currentUserService = currentUserService;
         }
 
         // GET: api/Feedbacks
@@ -77,29 +80,26 @@ namespace API.Controllers
             return Ok(query);
         }
 
-        //[HttpPost("create")]
-        //public IActionResult createFeedback(FeedbackDTO feedbackDTO)
-        //{
-        //    DAOs.DbContext dbContext = new DAOs.DbContext();
-        //    int count = dbContext.Feedbacks.Count() + 1;
-        //    string feedbackID = "F" + count.ToString("D4");
-        //    Feedback feedback = new Feedback
-        //    {
-        //        FeedbackId = feedbackID,
-        //        CreateDay = DateTime.Now,
-        //        Description = feedbackDTO.Description,
-        //        Rate = feedbackDTO.Start,
-        //        IsActive = true,
-        //        StudentId = feedbackDTO.StudentId,
-        //        TutorId = feedbackDTO.TutorID,
-        //        ClassId = feedbackDTO.ClassID,
-        //        Student = iStudentService.GetStudents().FirstOrDefault(n => n.StudentId == feedbackDTO.StudentId),
-        //        Tutor = dbContext.Tutors.FirstOrDefault(n => n.TutorId == feedbackDTO.TutorID),
-        //        Class = dbContext.Classes.FirstOrDefault(n => n.ClassId == feedbackDTO.ClassID),
-        //        Title = feedbackDTO.Title,
-        //    };
-        //    iFeedbackService.AddFeedback(feedback);
-        //    return Ok(feedback);
-        //}
+        //Student Create FeedBack
+        [HttpPost("createFeedbcak")]
+        public IActionResult createFeedback(CreateFeedback request)
+        {
+            var userId = _currentUserService.GetUserId().ToString();
+            var student = iStudentService.GetStudents().Where(s => s.AccountId ==  userId).FirstOrDefault();
+            var result = new Feedback
+            {
+                FeedbackId = Guid.NewGuid().ToString(),
+                CreateDay = DateTime.Now,
+                Description = request.Description,
+                Rate = request.Star,
+                IsActive = true,
+                StudentId = student.StudentId,
+                TutorId = request.TutorId,
+                ClassId = request.ClassId,
+                Title = request.Title,
+            };
+            iFeedbackService.AddFeedback(result);
+            return Ok(result);
+        }
     }
 }

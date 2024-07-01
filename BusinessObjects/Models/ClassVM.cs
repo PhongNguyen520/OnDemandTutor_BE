@@ -11,21 +11,17 @@ namespace BusinessObjects.Models
     {
         public string ClassName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string DayOfWeek { get; set; } = string.Empty;
-        public int TimeStart { get; set; }
-        public int TimeEnd { get; set; }
         // StudentID == userId của Student
-        public DateTime DayStart { get; set; }
-        public DateTime DayEnd { get; set; }
+        public string FormId { get; set; } = string.Empty;
         public string StudentId { get; set; } = string.Empty;
-        public string GradeId { get; set; } = string.Empty;
-        public string SubjectGroupId { get; set; } = string.Empty;
     }
 
     public class ClassVM
     {
         public string? ClassName { get; set; }
         public DateTime Createday { get; set; }
+        public DateTime DayStart { get; set; }
+        public DateTime DayEnd { get; set; }
         public string? Description { get; set; }
         public double HourPerDay { get; set; }
         public int DayPerWeek { get; set; }
@@ -35,6 +31,7 @@ namespace BusinessObjects.Models
         public string? StudentAvatar {  get; set; }
         public string? TutorName { get; set; }
         public string? TutorAvatar {  get; set; }
+        public List<ClassCalender> ClassCalenders { get; set;} = new List<ClassCalender>();
     }
 
     public class CalenderVM
