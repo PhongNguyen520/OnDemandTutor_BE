@@ -197,6 +197,12 @@ namespace Repositories
             return await _userManager.FindByIdAsync(id);
         }
 
+        public async Task<String> GetAccountByEmail(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            return user.Email;
+        }
+
         public async Task<bool> ConfirmAccount(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -253,15 +259,44 @@ namespace Repositories
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                return 0;
+                return 0;   
             }
-            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+
+            var base64EncodedBytes = System.Convert.FromBase64String(model.Token);
+            var tokenEnCode =  System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            var result = await _userManager.ResetPasswordAsync(user, tokenEnCode, model.Password);
             if (result.Succeeded)
             {
                 return 1;
             }
             return 2;
         }
- 
+
+        public async Task<IQueryable<TutorInterVM>> GetAccountTutorIsActiveFalse()
+        {
+            var listTutor = _dbContext.Tutors.Where(t => t.IsActive == false)
+                                      .Include(a => a.Account)
+                                      .Where(a => a.Account.IsActive == true)
+                                      .ToList();
+            var listTutorVM = new List<TutorInterVM>();
+            foreach(var tutor in listTutor)
+            {
+                var tutorVM = _mapper.Map<TutorInterVM>(tutor);
+                listTutorVM.Add(tutorVM);
+            }
+
+            return listTutorVM.AsQueryable();
+
+        }
+
+        public async Task<bool> CheckAccountByEmail(string email)
+        {
+            if (await _userManager.FindByEmailAsync(email) != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
     }
 }

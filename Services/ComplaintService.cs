@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
 using Repositories;
 using System;
@@ -11,14 +12,16 @@ namespace Services
 {
     public class ComplaintService : IComplaintService
     {
-        private readonly IComplaintRepository iComplaintRepository = null;
+        private readonly IComplaintRepository iComplaintRepository;
 
-        public ComplaintService()
+        public ComplaintService(IComplaintRepository complaintRepository)
         {
             if (iComplaintRepository == null)
             {
-                iComplaintRepository = new ComplaintRepository();
+                //iComplaintRepository = new ComplaintRepository();
             }
+            iComplaintRepository = complaintRepository;
+
         }
 
         public bool AddComplaint(Complaint complaint)
@@ -39,6 +42,21 @@ namespace Services
         public bool UpdateComplaints(Complaint complaint)
         {
             return iComplaintRepository.UpdateComplaints(complaint);
+        }
+
+        public async Task<bool> CreateComplaint(ComplaintDTO model)
+        {
+            return await iComplaintRepository.CreateComplaint(model);
+        }
+
+        public async Task<IQueryable<ComplaintVM>> ViewAllComplaintInClass(string classId)
+        {
+            return await iComplaintRepository.GetAllComplaintOfUser(classId);
+        }
+
+        public Task<ComplaintVM> ModeratorComplaint(string complaintId, string proce, bool sta)
+        {
+            return iComplaintRepository.UpdateProcessnoteStatus(complaintId, proce, sta);
         }
     }
 }

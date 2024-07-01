@@ -1,5 +1,5 @@
 ﻿using BusinessObjects;
-using BusinessObjects.Models.FormModel;
+using BusinessObjects.Models.FindFormModel;
 using DAOs;
 using System;
 using System.Collections.Generic;
@@ -20,8 +20,8 @@ namespace Repositories
         public bool UpdateFindTutorForms(FindTutorForm form);
         public IEnumerable<FindTutorForm> Filter(RequestSearchPostModel requestSearchPostModel);
 
-        public IEnumerable<FormVM> Sorting
-           (IEnumerable<FormVM> query,
+        public IEnumerable<FormFindTutorVM> Sorting
+           (IEnumerable<FormFindTutorVM> query,
            string? sortBy,
            string? sortType,
            int pageIndex);

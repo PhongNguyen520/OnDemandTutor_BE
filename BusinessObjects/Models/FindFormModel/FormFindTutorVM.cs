@@ -4,12 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.Models.FormModel
+namespace BusinessObjects.Models.FindFormModel
 {
-    public class FormVM
+    public class FormFindTutorVM
     {
         public required string FormId { get; set; }
         public DateTime CreateDay { get; set; }
+        public DateTime DayStart { get; set; }
+        public DateTime DayEnd { get; set; }
+        public string DayOfWeek { get; set; } = string.Empty;
+        public int TimeStart { get; set; }
+        public int TimeEnd { get; set; }
         public string FullName { get; set; } = string.Empty;
         public string? Title { get; set; }
         public double? MinHourlyRate { get; set; }

@@ -1,6 +1,6 @@
 ﻿using API.Services;
 using BusinessObjects;
-using BusinessObjects.Models.FormModel;
+using BusinessObjects.Models.FindFormModel;
 using BusinessObjects.Models.TutorModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -108,7 +108,7 @@ namespace API.Controllers
                         on post.StudentId equals student.StudentId
                         join account in allAccounts
                         on student.AccountId equals account.Id
-                        select new FormVM
+                        select new FormFindTutorVM
                         {
                             FormId = post.FormId,
                             CreateDay = post.CreateDay,
@@ -116,7 +116,6 @@ namespace API.Controllers
                             Title = post.Title,
                             MinHourlyRate = post.MinHourlyRate,
                             MaxHourlyRate = post.MaxHourlyRate,
-                            SubjectName = post.SubjectName,
                             Description = post.DescribeTutor,
                             TutorGender = post.TutorGender,
                             SubjectId = post.SubjectId,
@@ -156,7 +155,7 @@ namespace API.Controllers
 
             // Tạo danh sách các FormVM để trả về
             var query = from post in forms
-                        select new FormVM
+                        select new FormFindTutorVM
                         {
                             FormId = post.FormId,
                             CreateDay = post.CreateDay,
@@ -164,7 +163,6 @@ namespace API.Controllers
                             Title = post.Title,
                             MinHourlyRate = post.MinHourlyRate,
                             MaxHourlyRate = post.MaxHourlyRate,
-                            SubjectName = post.SubjectName,
                             Description = post.DescribeTutor,
                             TutorGender = post.TutorGender,
                             SubjectId = post.SubjectId,
@@ -177,7 +175,7 @@ namespace API.Controllers
 
         // STUDENT TẠO FORM
         [HttpPost("student/createform")]
-        public IActionResult CreateForm(RequestCreateForm form)
+        public IActionResult CreateForm(RequestCreateFormFindTutor form)
         {
             if (form == null)
             {
@@ -207,7 +205,6 @@ namespace API.Controllers
                 MinHourlyRate = form.MinHourlyRate,
                 TutorGender = form.TutorGender,
                 TypeOfDegree = form.TypeOfDegree,
-                SubjectName = subject.Description,
                 Title = form.Tittle,
                 DescribeTutor = form.DescribeTutor,
                 Status = null,

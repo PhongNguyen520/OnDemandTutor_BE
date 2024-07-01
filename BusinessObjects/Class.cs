@@ -9,14 +9,10 @@ public partial class Class
 
     public string ClassName { get; set; } = null !;
 
-    //public int Quantity { get; set; }
-
-    // Change: float => double
     public float Price { get; set; }
 
     public string Description { get; set; } = null!;
 
-    // Change: có thể null
     public bool? Status { get; set; }
 
     public string TutorId { get; set; } = null!;
@@ -25,16 +21,9 @@ public partial class Class
 
     public string SubjectId { get; set; } = null!;
 
-    //------- New ---------
     public DateTime CreateDay { get; set; }
 
-    public double HourPerDay { get; set; }
-
-    public int DayPerWeek { get; set; }
-
     public bool? IsApprove { get; set; }
-
-    //---------------------
 
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
@@ -43,4 +32,11 @@ public partial class Class
     public virtual Subject Subject { get; set; } = null!;
 
     public virtual Tutor Tutor { get; set; } = null!;
+
+    public virtual ICollection<ClassCalender> ClassCalenders { get; set; } = new List<ClassCalender>();
+    public DateTime DayStart { get; set; }
+
+    public DateTime DayEnd { get; set; }
+
+    public virtual ICollection<Complaint> Complaints { get; set; } = new List<Complaint>();
 }

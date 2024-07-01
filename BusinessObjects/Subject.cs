@@ -22,4 +22,6 @@ public partial class Subject
     public virtual SubjectGroup SubjectGroup { get; set; } = null!;
 
     public virtual ICollection<SubjectTutor> SubjectTutors { get; set; } = new List<SubjectTutor>();
+
+    public virtual ICollection<RequestTutorForm> RequestTutorForms { get; set; } = new List<RequestTutorForm>();
 }

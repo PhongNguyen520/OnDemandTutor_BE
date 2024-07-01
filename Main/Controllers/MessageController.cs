@@ -69,14 +69,14 @@ namespace API.Controllers
 
         [HttpPost]
         // Send message
-        public async Task<ActionResult> SendMessage(string roomId, string content)
+        public async Task<ActionResult> SendMessage(CreateMessage message)
         {
             var user = _currentUserService.GetUserId().ToString();
-            var room = roomId;
+            var room = message.RoomId;
             var msg = new Message()
             {
                 MessageId = Guid.NewGuid().ToString(),
-                Description = content,
+                Description = message.Content,
                 AccountId = user,
                 ConversationId = room,
                 Time = DateTime.Now,
@@ -87,7 +87,7 @@ namespace API.Controllers
             await _dbContext.SaveChangesAsync();
 
             //var createdMessage = _mapper.Map<Message, MessageVM>(msg);
-            await _hubContext.Clients.Group(roomId).SendAsync("ReceiveSpecificMessage", roomId, msg);
+            await _hubContext.Clients.Group(message.RoomId).SendAsync("ReceiveSpecificMessage", message.RoomId, msg);
 
             return Ok(msg);
         }

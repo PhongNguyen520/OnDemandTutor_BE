@@ -126,17 +126,17 @@ namespace DAOs.Migrations
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DayPerWeek")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DayEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DayStart")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
-
-                    b.Property<double>("HourPerDay")
-                        .HasColumnType("float");
 
                     b.Property<bool?>("IsApprove")
                         .HasColumnType("bit");
@@ -182,6 +182,35 @@ namespace DAOs.Migrations
                     b.ToTable("Class", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObjects.ClassCalender", b =>
+                {
+                    b.Property<string>("CalenderId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ClassId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("DayOfWeek")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("TimeEnd")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeStart")
+                        .HasColumnType("int");
+
+                    b.HasKey("CalenderId")
+                        .HasName("PK__ClassCalender__77C70FC2A16C50DB1");
+
+                    b.HasIndex("ClassId");
+
+                    b.ToTable("ClassCalender", (string)null);
+                });
+
             modelBuilder.Entity("BusinessObjects.Complaint", b =>
                 {
                     b.Property<string>("ComplaintId")
@@ -189,6 +218,13 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("ComplaintID");
+
+                    b.Property<string>("ClassId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Complainter")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
@@ -199,7 +235,10 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<bool>("Status")
+                    b.Property<string>("Processnote")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("Status")
                         .HasColumnType("bit");
 
                     b.Property<string>("StudentId")
@@ -218,6 +257,8 @@ namespace DAOs.Migrations
 
                     b.HasKey("ComplaintId")
                         .HasName("PK__Complain__740D89AFCEF50736D");
+
+                    b.HasIndex("ClassId");
 
                     b.HasIndex("StudentId");
 
@@ -341,6 +382,16 @@ namespace DAOs.Migrations
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("DayEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DayStart")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("DescribeTutor")
                         .HasMaxLength(500)
                         .IsUnicode(true)
@@ -372,11 +423,11 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("SubjectID");
 
-                    b.Property<string>("SubjectName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<int>("TimeEnd")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeStart")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -516,8 +567,12 @@ namespace DAOs.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("NotificationId")
                         .HasName("PK__Notifica__20CF2E32FFBD5FC4D");
@@ -525,6 +580,64 @@ namespace DAOs.Migrations
                     b.HasIndex("AccountId");
 
                     b.ToTable("Notification", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObjects.RequestTutorForm", b =>
+                {
+                    b.Property<string>("FormId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreateDay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DayEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DayStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("SubjectId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("TimeEnd")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeStart")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TutorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("FormId")
+                        .HasName("PK__RequestTutorForm__77C70FC2A16C50DB2");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("TutorId");
+
+                    b.ToTable("RequestTutorForm", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObjects.Payment", b =>
@@ -993,6 +1106,28 @@ namespace DAOs.Migrations
                     b.ToTable("Tutor_Ads", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObjects.TutorApply", b =>
+                {
+                    b.Property<string>("FormId")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("TutorId")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("DayApply")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsApprove")
+                        .HasColumnType("bit");
+
+                    b.HasKey("FormId", "TutorId")
+                        .HasName("PK__TutorAp___9B67D374BBB4AFDSS");
+
+                    b.HasIndex("TutorId");
+
+                    b.ToTable("TutorApply", (string)null);
+                });
+
             modelBuilder.Entity("BusinessObjects.Wallet", b =>
                 {
                     b.Property<string>("WalletId")
@@ -1191,8 +1326,25 @@ namespace DAOs.Migrations
                     b.Navigation("Tutor");
                 });
 
+            modelBuilder.Entity("BusinessObjects.ClassCalender", b =>
+                {
+                    b.HasOne("BusinessObjects.Class", "Classes")
+                        .WithMany("ClassCalenders")
+                        .HasForeignKey("ClassId")
+                        .IsRequired()
+                        .HasConstraintName("FKClassCal3875973");
+
+                    b.Navigation("Classes");
+                });
+
             modelBuilder.Entity("BusinessObjects.Complaint", b =>
                 {
+                    b.HasOne("BusinessObjects.Class", "Class")
+                        .WithMany("Complaints")
+                        .HasForeignKey("ClassId")
+                        .IsRequired()
+                        .HasConstraintName("FKComplaint1966098");
+
                     b.HasOne("BusinessObjects.Student", "Student")
                         .WithMany("Complaints")
                         .HasForeignKey("StudentId")
@@ -1204,6 +1356,8 @@ namespace DAOs.Migrations
                         .HasForeignKey("TutorId")
                         .IsRequired()
                         .HasConstraintName("FKComplaint1966472");
+
+                    b.Navigation("Class");
 
                     b.Navigation("Student");
 
@@ -1303,6 +1457,33 @@ namespace DAOs.Migrations
                         .HasConstraintName("FKNotificati7652242");
 
                     b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("BusinessObjects.RequestTutorForm", b =>
+                {
+                    b.HasOne("BusinessObjects.Student", "Student")
+                        .WithMany("RequestTutorForms")
+                        .HasForeignKey("StudentId")
+                        .IsRequired()
+                        .HasConstraintName("FKRequestTu3875B45");
+
+                    b.HasOne("BusinessObjects.Subject", "Subject")
+                        .WithMany("RequestTutorForms")
+                        .HasForeignKey("SubjectId")
+                        .IsRequired()
+                        .HasConstraintName("FKRequestTu3875945");
+
+                    b.HasOne("BusinessObjects.Tutor", "Tutor")
+                        .WithMany("RequestTutorForms")
+                        .HasForeignKey("TutorId")
+                        .IsRequired()
+                        .HasConstraintName("FKRequestTu3875974");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("Tutor");
                 });
 
             modelBuilder.Entity("BusinessObjects.Payment", b =>
@@ -1447,6 +1628,25 @@ namespace DAOs.Migrations
                     b.Navigation("Tutor");
                 });
 
+            modelBuilder.Entity("BusinessObjects.TutorApply", b =>
+                {
+                    b.HasOne("BusinessObjects.FindTutorForm", "FindTutorForm")
+                        .WithMany("TutorApplies")
+                        .HasForeignKey("FormId")
+                        .IsRequired()
+                        .HasConstraintName("FKTutorApply6750344");
+
+                    b.HasOne("BusinessObjects.Tutor", "Tutor")
+                        .WithMany("TutorApplies")
+                        .HasForeignKey("TutorId")
+                        .IsRequired()
+                        .HasConstraintName("FKTutorApply31899");
+
+                    b.Navigation("FindTutorForm");
+
+                    b.Navigation("Tutor");
+                });
+
             modelBuilder.Entity("BusinessObjects.Wallet", b =>
                 {
                     b.HasOne("BusinessObjects.Account", "Account")
@@ -1526,6 +1726,10 @@ namespace DAOs.Migrations
 
             modelBuilder.Entity("BusinessObjects.Class", b =>
                 {
+                    b.Navigation("ClassCalenders");
+
+                    b.Navigation("Complaints");
+
                     b.Navigation("Feedbacks");
                 });
 
@@ -1534,6 +1738,11 @@ namespace DAOs.Migrations
                     b.Navigation("ConversationAccounts");
 
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("BusinessObjects.FindTutorForm", b =>
+                {
+                    b.Navigation("TutorApplies");
                 });
 
             modelBuilder.Entity("BusinessObjects.Grade", b =>
@@ -1573,6 +1782,8 @@ namespace DAOs.Migrations
                     b.Navigation("Feedbacks");
 
                     b.Navigation("FindTutorForms");
+
+                    b.Navigation("RequestTutorForms");
                 });
 
             modelBuilder.Entity("BusinessObjects.Subject", b =>
@@ -1580,6 +1791,8 @@ namespace DAOs.Migrations
                     b.Navigation("Classes");
 
                     b.Navigation("FindTutorForms");
+
+                    b.Navigation("RequestTutorForms");
 
                     b.Navigation("SubjectTutors");
                 });
@@ -1597,9 +1810,13 @@ namespace DAOs.Migrations
 
                     b.Navigation("Feedbacks");
 
+                    b.Navigation("RequestTutorForms");
+
                     b.Navigation("SubjectTutors");
 
                     b.Navigation("TutorAds");
+
+                    b.Navigation("TutorApplies");
                 });
 
             modelBuilder.Entity("BusinessObjects.Wallet", b =>

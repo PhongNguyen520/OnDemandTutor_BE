@@ -26,4 +26,6 @@ public partial class Student
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
     public virtual ICollection<FindTutorForm> FindTutorForms { get; set; } = new List<FindTutorForm>();
+
+    public virtual ICollection<RequestTutorForm> RequestTutorForms { get; set; } = new List<RequestTutorForm>();
 }

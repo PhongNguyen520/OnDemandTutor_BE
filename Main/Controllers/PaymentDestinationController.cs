@@ -80,20 +80,6 @@ namespace API.Controllers
             return Ok(iPaymentDestinationService.UpdateDestination(destination));
         }
 
-        [HttpPut]
-        [Route("set_active/{id}")]
-        public IActionResult SetActive(string id, bool isActive)
-        {
-            var destination = iPaymentDestinationService.GetDestinations().FirstOrDefault(s => s.Id == id);
-            if (destination == null)
-            {
-                return NotFound();
-            }
-            destination.IsActive = isActive;
-
-            return Ok(iPaymentDestinationService.UpdateDestination(destination));
-        }
-
         [HttpDelete]
         [Route("delete/{id}")]
         public IActionResult Delete(string id)
