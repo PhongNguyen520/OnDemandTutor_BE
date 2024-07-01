@@ -35,5 +35,8 @@ public partial class Class
 
     public virtual ICollection<ClassCalender> ClassCalenders { get; set; } = new List<ClassCalender>();
     public DateTime DayStart { get; set; }
+
     public DateTime DayEnd { get; set; }
+
+    public virtual ICollection<Complaint> Complaints { get; set; } = new List<Complaint>();
 }

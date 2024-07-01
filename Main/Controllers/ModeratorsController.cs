@@ -1,5 +1,6 @@
 ﻿using API.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
@@ -12,12 +13,14 @@ namespace API.Controllers
         private readonly IAccountService _accountService;
         private IMailService _mailService;
         private readonly ITutorService _tutorService;
+        private readonly IComplaintService _complaintService;
 
-        public ModeratorsController(IAccountService accountService, IMailService mailService, ITutorService tutorService)
+        public ModeratorsController(IAccountService accountService, IMailService mailService, ITutorService tutorService, IComplaintService complaintService)
         {
             _accountService = accountService;
             _mailService = mailService;
             _tutorService = tutorService;
+            _complaintService = complaintService;
         }
 
         [HttpGet("ShowListTutorInter")]
@@ -46,6 +49,17 @@ namespace API.Controllers
                 return Ok("Successful");
             }
             return BadRequest("No Found!!!");
+        }
+
+        [HttpPut("ModerComplaint")]
+        public async Task<IActionResult> ModerComplaint (string complaintId, string pro, bool stu)
+        {
+            var result = await _complaintService.ModeratorComplaint(complaintId, pro, stu);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,11 @@ namespace Services
         public List<Complaint> GetComplaints();
 
         public bool UpdateComplaints(Complaint complaint);
+
+        Task<bool> CreateComplaint(ComplaintDTO model);
+
+        Task<IQueryable<ComplaintVM>> ViewAllComplaintInClass(string classId);
+
+        Task<ComplaintVM> ModeratorComplaint(string complaintId, string proce, bool sta);
     }
 }

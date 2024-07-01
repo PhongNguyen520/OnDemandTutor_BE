@@ -76,6 +76,10 @@ namespace API.Helper
                 .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Account.Avatar))
                 .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId))
                 .ReverseMap();
+
+            CreateMap<Complaint, ComplaintDTO>().ReverseMap();
+            CreateMap<Complaint, ComplaintVM>().ReverseMap();
+
             #endregion
         }
     }

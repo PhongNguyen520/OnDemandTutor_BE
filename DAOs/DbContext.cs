@@ -160,6 +160,11 @@ public partial class DbContext : IdentityDbContext<Account>
                 .HasForeignKey(d => d.TutorId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKComplaint1966472");
+
+            entity.HasOne(d => d.Class).WithMany(p => p.Complaints)
+               .HasForeignKey(d => d.ClassId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FKComplaint1966098");
         });
 
         modelBuilder.Entity<Conversation>(entity =>
