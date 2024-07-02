@@ -102,6 +102,5 @@ namespace Repositories
             var result = _mapper.Map<ComplaintVM>(complaintDb);
             return result;
         }
-
     }
 }
