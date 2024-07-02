@@ -7,13 +7,24 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.Models
 {
-    public class CreateRequestTutor
+    public class CreateClassByRequestVM
     {
         public string ClassName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         // StudentID == userId của Student
         public string FormId { get; set; } = string.Empty;
         public string StudentId { get; set; } = string.Empty;
+    }
+
+    public class CreateClassByFindVM
+    {
+        public string ClassName { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        // StudentID == userId của Student
+        public string FormId { get; set; } = string.Empty;
+        public string StudentId { get; set; } = string.Empty;
+
+        public string TutorId {  get; set; } = string.Empty;
     }
 
     public class ClassVM

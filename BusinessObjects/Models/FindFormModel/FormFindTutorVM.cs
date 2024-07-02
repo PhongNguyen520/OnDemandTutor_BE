@@ -25,4 +25,12 @@ namespace BusinessObjects.Models.FindFormModel
         public string SubjectId { get; set; } = string.Empty;
         public string StudentId { get; set; } = string.Empty;
     }
+
+    public class TutorApplyVM
+    {
+        public string TutorId { get; set; } = string.Empty;
+        public string TutorName { get; set; } = string.Empty;
+        public string TutorAvatar { get; set; } = string.Empty;
+        public DateTime DayApply { get; set; }
+    }
 }
