@@ -298,5 +298,26 @@ namespace Repositories
             return false;
         }
 
+        public async Task<IQueryable<UserRolesVM>> GetAllIsActive()
+        {
+            var listUserRolesVM = new List<UserRolesVM>();
+            var listUser = accountDAO.GetAccounts().ToList();
+            foreach (var user in listUser.ToList())
+            {
+                var userRoles = (await GetRolesAsync(user));
+                if (userRoles.Contains(AppRole.Admin) || user.IsActive == false)
+                {
+                    listUser.Remove(user);
+                }
+                else
+                {
+                    var userRolesVM = _mapper.Map<UserRolesVM>(user);
+                    userRolesVM.RolesName = userRoles.ToList();
+                    listUserRolesVM.Add(userRolesVM);
+                }
+            }
+            return listUserRolesVM.AsQueryable();
+        }
+
     }
 }

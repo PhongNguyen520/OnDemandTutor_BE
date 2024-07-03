@@ -34,5 +34,6 @@ namespace Repositories
         Task<int> ResetPasswordEmail(ResetPasswordModel model);
         Task<IQueryable<TutorInterVM>> GetAccountTutorIsActiveFalse();
         Task<bool> CheckAccountByEmail(string email);
+        Task<IQueryable<UserRolesVM>> GetAllIsActive();
     }
 }
