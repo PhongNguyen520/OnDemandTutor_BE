@@ -1,5 +1,6 @@
 ﻿using API.Services;
 using BusinessObjects;
+using BusinessObjects.Models;
 using BusinessObjects.Models.FindFormModel;
 using BusinessObjects.Models.TutorModel;
 using Microsoft.AspNetCore.Authorization;
@@ -47,10 +48,34 @@ namespace API.Controllers
         [HttpGet("moderator/viewformlist")]
         public IActionResult GetRequestList()
         {
-            var result = _findTutorFormService.GetFindTutorForms()
+            var forms = _findTutorFormService.GetFindTutorForms()
                                               .Where(s => s.IsActived == null && s.Status == null)
                                               .OrderBy(s => s.CreateDay);
-            return Ok(result);
+            var students = _studentService.GetStudents();
+            // Tạo danh sách các FormVM để trả về
+            var query = from form in forms
+                        join student in students
+                        on form.StudentId equals student.StudentId
+                        select new FormFindTutorVM
+                        {
+                            FormId = form.FormId,
+                            CreateDay = form.CreateDay.ToString("dd/MM/yyyy HH:mm:ss"),
+                            FullName = _accountService.GetAccounts().Where(s => s.Id == student.AccountId).Select(s => s.FullName).FirstOrDefault(),
+                            Avatar = _accountService.GetAccounts().Where(s => s.Id == student.AccountId).Select(s => s.Avatar).FirstOrDefault(),
+                            Title = form.Title,
+                            DayStart = form.DayStart,
+                            DayEnd = form.DayEnd,
+                            DayOfWeek = form.DayOfWeek,
+                            TimeStart = form.TimeStart,
+                            TimeEnd = form.TimeEnd,
+                            MinHourlyRate = form.MinHourlyRate,
+                            MaxHourlyRate = form.MaxHourlyRate,
+                            Description = form.DescribeTutor,
+                            TutorGender = form.TutorGender,
+                            SubjectId = form.SubjectId,
+                            StudentId = student.StudentId,
+                        };
+            return Ok(query);
         }
 
         // TUTOR FILTER DANH SÁCH FORM
@@ -120,9 +145,15 @@ namespace API.Controllers
                         select new FormFindTutorVM
                         {
                             FormId = post.FormId,
-                            CreateDay = post.CreateDay,
+                            CreateDay = post.CreateDay.ToString("dd/MM/yyyy HH:mm:ss"),
                             FullName = account.FullName,
+                            Avatar = account.Avatar,
                             Title = post.Title,
+                            DayStart = post.DayStart,
+                            DayEnd = post.DayEnd,
+                            DayOfWeek = post.DayOfWeek,
+                            TimeStart = post.TimeStart,
+                            TimeEnd = post.TimeEnd,
                             MinHourlyRate = post.MinHourlyRate,
                             MaxHourlyRate = post.MaxHourlyRate,
                             Description = post.DescribeTutor,
@@ -163,9 +194,14 @@ namespace API.Controllers
                         select new FormFindTutorVM
                         {
                             FormId = post.FormId,
-                            CreateDay = post.CreateDay,
+                            CreateDay = post.CreateDay.ToString("dd/MM/yyyy HH:mm:ss"),
                             FullName = user.FullName,
                             Title = post.Title,
+                            DayStart = post.DayStart,
+                            DayEnd = post.DayEnd,
+                            DayOfWeek = post.DayOfWeek,
+                            TimeStart = post.TimeStart,
+                            TimeEnd = post.TimeEnd,
                             MinHourlyRate = post.MinHourlyRate,
                             MaxHourlyRate = post.MaxHourlyRate,
                             Description = post.DescribeTutor,

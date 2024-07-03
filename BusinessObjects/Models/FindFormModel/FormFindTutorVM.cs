@@ -9,13 +9,14 @@ namespace BusinessObjects.Models.FindFormModel
     public class FormFindTutorVM
     {
         public required string FormId { get; set; }
-        public DateTime CreateDay { get; set; }
+        public string CreateDay { get; set; } = string.Empty;
         public DateTime DayStart { get; set; }
         public DateTime DayEnd { get; set; }
         public string DayOfWeek { get; set; } = string.Empty;
         public int TimeStart { get; set; }
         public int TimeEnd { get; set; }
         public string FullName { get; set; } = string.Empty;
+        public string? Avatar {  get; set; }
         public string? Title { get; set; }
         public double? MinHourlyRate { get; set; }
         public double? MaxHourlyRate { get; set; }
