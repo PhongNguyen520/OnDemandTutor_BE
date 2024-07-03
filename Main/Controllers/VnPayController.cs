@@ -1,30 +1,48 @@
 ﻿using API.Helpers;
+using BusinessObjects;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Ocsp;
+using Services;
+using Services.PaymentServices;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace API.Controllers
 {
 
-    [Route("api/vnpay")]
+    [Route("api/[controller]")]
     [ApiController]
     public class VnPayController : ControllerBase
     {
+        private readonly VnPayService vnPayService;
+        private readonly IPaymentService paymentService;
+        private readonly IPaymentTransactionService transactionService;
         private readonly string vnp_TmnCode = "WX3Z3JAI";
         private readonly string vnp_HashSecret = "TI56EMVNTQM55D9JT08D93N4N825CE05";
         private readonly string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        private readonly string vnp_ReturnUrl = "http://localhost:3000/notifications";
+        private readonly string returnUrl = "http://localhost:3000/notifications";
 
-        [HttpPost("create_payment_url")]
-        public IActionResult CreatePaymentUrl([FromBody] VnPayVM request)
+        public VnPayController()
         {
-            var date = DateTime.Now;
-            var createDate = date.ToString("yyyyMMddHHmmss");
-            var orderInfo = request.Description;
+            vnPayService = new VnPayService();
+            paymentService = new PaymentService();
+            transactionService = new PaymentTransactionService();
+        }
+
+        [HttpPost]
+        [Route("create_payment_url")]
+        public IActionResult CreatePaymentUrl([FromBody] RequestPayment request)
+        {
             var orderType = "other";
             var locale = "vn";
             var currCode = "VND";
+            var txnRef = Guid.NewGuid().ToString();
+            var createDate = DateTime.Now.ToString("yyyyMMddHHmmss");
+
             var vnp_Params = new SortedDictionary<string, string>
             {
                 { "vnp_Version", "2.1.0" },
@@ -32,24 +50,74 @@ namespace API.Controllers
                 { "vnp_TmnCode", vnp_TmnCode },
                 { "vnp_Locale", locale },
                 { "vnp_CurrCode", currCode },
-                { "vnp_TxnRef", Guid.NewGuid().ToString() },
-                { "vnp_OrderInfo", orderInfo },
+                { "vnp_TxnRef", txnRef },
+                { "vnp_OrderInfo", request.Description },
                 { "vnp_OrderType", orderType },
                 { "vnp_Amount", (request.Amount * 100).ToString() },
-                { "vnp_ReturnUrl", vnp_ReturnUrl },
+                { "vnp_ReturnUrl", returnUrl },
                 { "vnp_IpAddr", HttpContext.Connection.RemoteIpAddress.ToString() },
-                { "vnp_CreateDate", createDate }
+                { "vnp_CreateDate", createDate },
+                {"vnp_ExpireDate", DateTime.Now.AddDays(7).ToString("yyyyMMddHHmmss") },
             };
 
-            var querystring = string.Join("&", vnp_Params.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+            var paymentUrl = vnPayService.CreateRequestUrl(vnp_Url, vnp_HashSecret, vnp_Params);
+            var signature = vnPayService.CreateSignature(vnp_HashSecret, vnp_Params);
 
-            var signData = HashHelper.HmacSHA256(vnp_HashSecret, querystring);
+            var payment = new Payment()
+            {
+                Id = Guid.NewGuid().ToString(),
+                RequiredAmount = request.Amount,
+                Description = request.Description,
+                CurrencyCode = currCode,
+                TxnRef = txnRef,
+                Signature = signature,
+                Status = true,
+                WalletId = request.WalletId,
+                PaymentDestinationId = request.PaymentDestinationId
+            };
 
-            var paymentUrl = $"{vnp_Url}?{querystring}&vnp_SecureHash={signData}";
+            paymentService.AddPayment(payment);
 
-            return Ok(new { paymentUrl, vnp_Params });
+            return Ok(  paymentUrl );
         }
 
-    }
+        [HttpPost]
+        [Route("payment_return/{id}")]
+        public IActionResult PaymentReturn(string id, [FromBody] ResponsePayment response)
+        {
+            var requestPayment = paymentService.GetPayments().FirstOrDefault(s => s.TxnRef == response.vnp_TxnRef);
 
+
+            if (requestPayment != null)
+            {
+                var transaction = new PaymentTransaction()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Amount = response.vnp_Amount,
+                    Description = response.vnp_OrderInfo,
+                    CardType = response.vnp_CardType,
+                    TxnRef = response.vnp_TxnRef,
+                    BankTranNo = response.vnp_BankTranNo,
+                    TranStatus = response.vnp_TransactionStatus,
+                    ResponseCode = response.vnp_ResponseCode,
+                    IsValid = true,
+                    PaymentId = id
+                };
+                if (response.vnp_ResponseCode == "00")
+                {
+                    transactionService.AddTransaction(transaction);
+                }
+                else
+                {
+                    transaction.IsValid = false;
+                    transactionService.AddTransaction(transaction);
+                }
+                    return Ok(response.vnp_ResponseCode);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+    }
 }

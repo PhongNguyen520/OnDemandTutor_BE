@@ -19,18 +19,11 @@ namespace API.Controllers
         }
 
         [HttpGet]
-     
+        [Route("viewlist")]
         public IActionResult Get()
         {
             var response = iPaymentDestinationService.GetDestinations();
             return Ok(response);
-        }
-
-        [HttpGet]
-        [Route("with-paging")]
-        public IActionResult GetPaging([FromQuery] BasePagingQuery query)
-        {
-            return Ok();
         }
 
         [HttpGet]
@@ -48,11 +41,9 @@ namespace API.Controllers
             var response = new PaymentDestination() 
             {
                 Id = Guid.NewGuid().ToString(),
-                DesName = request.DesName,
-                DesShortName = request.DesShortName,
-                DesParentId = request.DesParentId,
-                DesLogo = request.DesLogo,
-                SortIndex = request.SortIndex,
+                BankCode = request.BankCode,
+                BankName = request.BankName,
+                BankLogo = request.BankLogo,
                 IsActive = true
             };
 
@@ -69,13 +60,10 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            destination.DesName = request.DesName;
-            destination.DesShortName = request.DesShortName;
-            destination.DesParentId = request.DesParentId;
-            destination.DesLogo = request.DesLogo;
-            destination.SortIndex = request.SortIndex;
+            destination.BankCode = request.BankCode;
+            destination.BankName = request.BankName;
+            destination.BankLogo = request.BankLogo;
             destination.IsActive = true;
-
 
             return Ok(iPaymentDestinationService.UpdateDestination(destination));
         }

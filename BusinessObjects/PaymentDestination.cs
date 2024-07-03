@@ -9,19 +9,10 @@ namespace BusinessObjects
     public class PaymentDestination
     {
         public string Id { get; set; } = string.Empty;
-        public string? DesName { get; set; } = string.Empty;
-        public string? DesShortName { get; set; } = string.Empty;
-        public string? DesLogo { get; set; } = string.Empty;
-        public int SortIndex { get; set; }
+        public string? BankCode { get; set; } = string.Empty;
+        public string? BankName { get; set; } = string.Empty;
+        public string? BankLogo { get; set; } = string.Empty;
         public bool IsActive { get; set; }
-
-
-        public string? DesParentId { get; set; } = string.Empty;
-
-        public virtual PaymentDestination Destination { get; set; } = null!;
-
-        public virtual ICollection<PaymentDestination> PaymentDestinations { get; set; } = new List<PaymentDestination>();
-
         public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
 }

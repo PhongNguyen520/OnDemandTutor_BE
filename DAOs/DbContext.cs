@@ -60,16 +60,9 @@ public partial class DbContext : IdentityDbContext<Account>
 
     public virtual DbSet<TutorApply> TutorApplies { get; set; }
 
-
-    public virtual DbSet<Merchant> Merchants { get; set; }
-
     public virtual DbSet<Payment> Payments { get; set; }
 
     public virtual DbSet<PaymentDestination> PaymentDestinations { get; set; }
-
-    public virtual DbSet<PaymentNotification> PaymentNotifications { get; set; }
-
-    public virtual DbSet<PaymentSignature> PaymentSignatures { get; set; }
 
     public virtual DbSet<PaymentTransaction> PaymentTransactions { get; set; }
 
@@ -608,23 +601,16 @@ public partial class DbContext : IdentityDbContext<Account>
         });
 
 
-        modelBuilder.Entity<Merchant>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Merchant__C050D887C401235FC");
-
-            entity.ToTable("Merchant");
-        });
-
         modelBuilder.Entity<Payment>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Payment__CB1927A1190BF352E");
 
             entity.ToTable("Payment");
 
-            entity.HasOne(d => d.Merchant).WithMany(p => p.Payments)
-                .HasForeignKey(d => d.MerchantId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKPayment3070123");
+            entity.HasOne(d => d.Wallet).WithMany(p => p.Payments)
+              .HasForeignKey(d => d.WalletId)
+              .OnDelete(DeleteBehavior.ClientSetNull)
+              .HasConstraintName("FKPayment1158769");
 
             entity.HasOne(d => d.PaymentDestination).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.PaymentDestinationId)
@@ -638,42 +624,8 @@ public partial class DbContext : IdentityDbContext<Account>
 
             entity.ToTable("PaymentDestination");
 
-            entity.HasOne(d => d.Destination).WithMany(p => p.PaymentDestinations)
-                .HasForeignKey(d => d.DesParentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKPaymentDestination3071133");
         });
 
-
-        modelBuilder.Entity<PaymentNotification>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__PaymentNotification__CB1927A0190BF352H");
-
-            entity.ToTable("PaymentNotification");
-
-            entity.HasOne(d => d.Merchant).WithMany(p => p.PaymentNotifications)
-                .HasForeignKey(d => d.NotiMerchantId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKPaymentNotification3070122");
-
-            entity.HasOne(d => d.Payment).WithMany(p => p.PaymentNotifications)
-                .HasForeignKey(d => d.NotiPaymentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKPaymentNotification1059789");
-
-        });
-
-        modelBuilder.Entity<PaymentSignature>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__PaymentSignature__CB1927A1291BF352P");
-
-            entity.ToTable("PaymentSignature");
-
-            entity.HasOne(d => d.Payment).WithMany(p => p.PaymentSignatures)
-                .HasForeignKey(d => d.PaymentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKPaymentSignature3071243");
-        });
 
         modelBuilder.Entity<PaymentTransaction>(entity =>
         {
@@ -686,10 +638,6 @@ public partial class DbContext : IdentityDbContext<Account>
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKPaymentTransaction3171253");
             
-            entity.HasOne(d => d.Wallet).WithMany(p => p.PaymentTransactions)
-                .HasForeignKey(d => d.WalletId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKPaymentTransaction3271453");
         });
 
         base.OnModelCreating(modelBuilder);

@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.Models
 {
-    public class VnPayVM
+    public class RequestPayment
     {
-        public string PaymentId { get; set; }
-        public int Amount { get; set; }
+        public string? WalletId { get; set; } = string.Empty;
+        public string? PaymentDestinationId { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
         public string Description { get; set; }
     }
 }
