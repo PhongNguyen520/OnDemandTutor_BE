@@ -115,5 +115,10 @@ namespace Services
         {
             return iAccountRepository.CheckAccountByEmail(email);
         }
+
+        public Task<IQueryable<UserRolesVM>> ListAccountIsActive()
+        {
+            return iAccountRepository.GetAllIsActive();
+        }
     }
 }
