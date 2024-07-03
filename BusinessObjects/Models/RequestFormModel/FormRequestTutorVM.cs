@@ -9,7 +9,7 @@ namespace BusinessObjects.Models.RequestFormModel
     public class FormRequestTutorVM
     {
         public required string FormId { get; set; }
-        public DateTime CreateDay { get; set; }
+        public string CreateDay { get; set; } = string.Empty;
         public DateTime DayStart { get; set; }
         public DateTime DayEnd { get; set; }
         public string DayOfWeek { get; set; } = string.Empty;

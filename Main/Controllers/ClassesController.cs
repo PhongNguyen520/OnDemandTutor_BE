@@ -29,6 +29,7 @@ namespace API.Controllers
         private readonly IAccountService _accountService;
         private readonly IClassCalenderService _classCalenderService;
         private readonly IRequestTutorFormService _requestTutorFormService;
+        private readonly IFindTutorFormService _findTutorFormService;
 
         public ClassesController(ICurrentUserService currentUserService, IAccountService accountService)
         {
@@ -40,14 +41,62 @@ namespace API.Controllers
             _accountService = accountService;
             _classCalenderService = new ClassCalenderService();
             _requestTutorFormService = new RequestTutorFormService();
+            _findTutorFormService = new FindTutorFormService();
         }
 
         // Class tự động tạo sau khi Tutor duyệt form
         [HttpPost("createClassByFormRequest")]
-        public IActionResult Create(CreateRequestTutor request)
+        public IActionResult CreateByRequest(CreateClassByRequestVM request)
         {
             var form = _requestTutorFormService.GetRequestTutorForms().Where(s => s.FormId == request.FormId).FirstOrDefault();
+
             var tutor = _tutorService.GetTutors().Where(s => s.TutorId == form.TutorId).FirstOrDefault();
+
+            List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
+
+            List<DateTime> filteredDates = _classCalenderService.GetDatesByDaysOfWeek(form.DayStart, form.DayEnd, desiredDays);
+
+            var newClass = new Class()
+            {
+                ClassId = Guid.NewGuid().ToString(),
+                ClassName = request.ClassName,
+                Price = (float)(tutor.HourlyRate * (form.TimeEnd - form.TimeStart) * filteredDates.Count),
+                Description = request.Description,
+                CreateDay = DateTime.Now,
+                DayStart = form.DayStart,
+                DayEnd = form.DayEnd,
+                Status = true,
+                IsApprove = null,
+                StudentId = form.StudentId,
+                TutorId = tutor.TutorId,
+                SubjectId = form.SubjectId,
+            };
+
+            _classService.AddClass(newClass);
+
+            var newClassCalender = new ClassCalender();
+            foreach (var day in filteredDates)
+            {
+                newClassCalender.CalenderId = Guid.NewGuid().ToString();
+                newClassCalender.DayOfWeek = day;
+                newClassCalender.TimeStart = form.TimeStart;
+                newClassCalender.TimeEnd = form.TimeEnd;
+                newClassCalender.IsActive = true;
+                newClassCalender.ClassId = newClass.ClassId;
+
+                _classCalenderService.AddClassCalender(newClassCalender);
+            }
+
+            return Ok();
+        }
+
+        // Class tự động tạo sau khi Student duyệt Tutor
+        [HttpPost("createClassByFormFind")]
+        public IActionResult CreateByFind(CreateClassByFindVM request)
+        {
+            var form = _findTutorFormService.GetFindTutorForms().Where(s => s.FormId == request.FormId).FirstOrDefault();
+
+            var tutor = _tutorService.GetTutors().Where(s => s.TutorId == request.TutorId).FirstOrDefault();
 
             List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
 

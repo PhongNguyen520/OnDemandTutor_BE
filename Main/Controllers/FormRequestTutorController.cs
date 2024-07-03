@@ -4,6 +4,9 @@ using BusinessObjects;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services;
+using Humanizer;
+using Repositories;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace API.Controllers
 {
@@ -121,7 +124,7 @@ namespace API.Controllers
                          select new FormRequestTutorVM()
                          {
                              FormId = form.FormId,
-                             CreateDay = form.CreateDay,
+                             CreateDay = form.CreateDay.ToString("dd/MM/yyyy HH:mm:ss"),
                              DayStart = form.DayStart,
                              DayEnd = form.DayEnd,
                              DayOfWeek = form.DayOfWeek,
@@ -156,7 +159,7 @@ namespace API.Controllers
                          select new FormRequestTutorVM()
                          {
                              FormId = form.FormId,
-                             CreateDay = form.CreateDay,
+                             CreateDay = form.CreateDay.ToString("dd/MM/yyyy HH:mm:ss"),
                              DayStart = form.DayStart,
                              DayEnd = form.DayEnd,
                              DayOfWeek = form.DayOfWeek,
@@ -173,7 +176,6 @@ namespace API.Controllers
             return Ok(result);
         }
 
-
         // Tutor browser form
         [HttpPut("tutorBrowserForm")]
         public IActionResult TutorBrowserForm(string formId, bool action)
@@ -183,8 +185,20 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
-
-            form.Status = action;
+            if (action == false)
+            {
+                form.Status = action;
+            }
+            else
+            {
+                var list = _classCalenderService.HandleCalendar(formId);
+                foreach (var item in list)
+                {
+                    item.Status = false;
+                    _formService.UpdateRequestTutorForms(item);
+                }
+                form.Status = true;
+            }
 
             _formService.UpdateRequestTutorForms(form);
 
@@ -199,34 +213,9 @@ namespace API.Controllers
                 return Ok();
             }
 
-            var form = _formService.GetRequestTutorForms().Where(s => s.FormId == formId).FirstOrDefault();
-            var formList = _formService.GetRequestTutorForms().Where(s => s.Status == null && s.FormId != formId);
-            List<string> list = new List<string>();
+            var list = _classCalenderService.HandleCalendar(formId);
 
-            List<DayOfWeek> formDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
-
-            var filteredDates = _classCalenderService.GetDatesByDaysOfWeek(form.DayStart, form.DayEnd, formDays);
-
-            foreach (var f in formList)
-            {
-                List<DayOfWeek> fDays = _classCalenderService.ParseDaysOfWeek(f.DayOfWeek);
-                var fDates = _classCalenderService.GetDatesByDaysOfWeek(f.DayStart, f.DayEnd, fDays);
-                foreach (var d in fDates)
-                {
-                    if (filteredDates.Contains(d))
-                    {
-                        if (form.TimeStart <= f.TimeStart && form.TimeEnd >= f.TimeEnd
-                         || form.TimeStart >= f.TimeStart && form.TimeStart < f.TimeEnd
-                         || form.TimeEnd > f.TimeStart && form.TimeEnd <= f.TimeEnd)
-                        {
-                            list.Add(f.FormId);
-                            break;
-                        }
-
-                    }
-                }
-            }
-            return Ok(list);
+            return Ok(list.Count);
 
         }
     }

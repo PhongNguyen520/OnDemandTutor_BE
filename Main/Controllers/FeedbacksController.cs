@@ -55,7 +55,7 @@ namespace API.Controllers
                             FeedbackId = fb.FeedbackId,
                             StudentId = st.StudentId,
                             FullName = us.FullName,
-                            CreateDay = fb.CreateDay,
+                            CreateDay = fb.CreateDay.ToString("dd/MM/yyyy HH:mm:ss"),
                             Description = fb.Description,
                             SubjectName = tbSubjects
                                 .Join(tbClasses, s => s.SubjectId, c => c.SubjectId, (s, c) => new { s.Description, c.StudentId })
@@ -81,7 +81,7 @@ namespace API.Controllers
         }
 
         //Student Create FeedBack
-        [HttpPost("createFeedbcak")]
+        [HttpPost("createFeedback")]
         public IActionResult createFeedback(CreateFeedback request)
         {
             var userId = _currentUserService.GetUserId().ToString();

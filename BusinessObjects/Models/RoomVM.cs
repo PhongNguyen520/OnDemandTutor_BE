@@ -26,7 +26,7 @@ namespace BusinessObjects.Models
         public string FullName { get; set; }
         public string Content { get; set; }
         public string Avatar { get; set; }
-        public DateTime Time { get; set; }
+        public string Time { get; set; }
         public string RoomId { get; set; }
     }
 

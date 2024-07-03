@@ -16,18 +16,11 @@ namespace API.Hubs
     public class ChatHub : Hub
     {
         public readonly static List<UserConnection> _Connection = new List<UserConnection>();
-
-        //private readonly static Dictionary<string, string> _ConnectionsMap = new Dictionary<string, string>();
-
-        private readonly DbContext _dbContext;
-        private readonly ICurrentUserService _currentUserService;
         private readonly ShareDBService _shareDBService;
         private readonly IMessageService _messageService;
 
         public ChatHub(DbContext dbContext, ICurrentUserService currentUserService, ShareDBService shareDBService)
         {
-            _dbContext = dbContext;
-            _currentUserService = currentUserService;
             _shareDBService = shareDBService;
             _messageService = new MessageService();
         }
@@ -61,7 +54,7 @@ namespace API.Hubs
             if (_shareDBService.connection.TryGetValue(Context.ConnectionId, out UserConnection conn))
             {
                 var message = _messageService.GetMessages().Where(s => s.MessageId == messageId);
-                await Clients.Group(conn.ChatRoom).SendAsync("ReceiveSpecificMessage", conn.UserName, messageId);
+                await Clients.Group(conn.ChatRoom).SendAsync("ReceiveSpecificMessage", conn.UserName, message);
             }
         }
 

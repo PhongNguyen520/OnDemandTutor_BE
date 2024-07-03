@@ -11,7 +11,7 @@ namespace BusinessObjects.Models
         public string FeedbackId { get; set; } = string.Empty;
         public string StudentId { get; set; } = string.Empty;
         public string FullName { get; set;} = string.Empty;
-        public DateTime CreateDay { get; set; }
+        public string CreateDay { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string? SubjectName { get; set; }
         public double Start { get; set; }

@@ -20,5 +20,9 @@ namespace Services
         public List<DateTime> GetDatesByDaysOfWeek(DateTime startDate, DateTime endDate, List<DayOfWeek> desiredDays);
 
         public List<DayOfWeek> ParseDaysOfWeek(string input);
+
+        public List<RequestTutorForm> HandleCalendar(string formId);
+
+        public int TotalHourByMonth(IEnumerable<Class> classList, string tutorId);
     }
 }

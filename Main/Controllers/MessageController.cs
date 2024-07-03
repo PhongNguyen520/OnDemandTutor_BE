@@ -40,7 +40,6 @@ namespace API.Controllers
         {
             var listMessages = messageService.GetMessages()
                 .Where(r => r.ConversationId == roomID)
-                .OrderByDescending(m => m.Time)
                 .Take(20)
                 .AsEnumerable()
                 .Reverse()
@@ -53,12 +52,13 @@ namespace API.Controllers
             var query = from account in listAccount
                         join message in listMessages
                         on account.Id equals message.AccountId
+                        orderby message.Time ascending
                         select new MessageVM
                         {
                             MessageId = message.MessageId,
                             FullName = account.FullName,
                             Content = message.Description,
-                            Time = message.Time,
+                            Time = message.Time.ToString("dd/MM/yyyy HH:mm:ss"),
                             UserId = message.AccountId,
                             RoomId = message.ConversationId,
                             Avatar = account.Avatar,
