@@ -8,7 +8,7 @@ namespace BusinessObjects.Models.TutorModel
 {
     public class RequestSearchTutorModel
     {
-        public string Search { get; set; }
+        public string? Search { get; set; }
         public double? MaxRate { get; set; } = 150;
         public double? MinRate { get; set; } = 10;
         public string? GradeId { get; set; }

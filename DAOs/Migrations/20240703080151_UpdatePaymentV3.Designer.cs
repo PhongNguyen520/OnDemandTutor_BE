@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240703080151_UpdatePaymentV3")]
+    partial class UpdatePaymentV3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -467,6 +470,35 @@ namespace DAOs.Migrations
                     b.ToTable("Grade", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObjects.Merchant", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MerchantIpnUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MerchantName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MerchantReturnUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MerchantWebLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecretKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Merchant__C050D887C401235FC");
+
+                    b.ToTable("Merchant", (string)null);
+                });
+
             modelBuilder.Entity("BusinessObjects.Message", b =>
                 {
                     b.Property<string>("MessageId")
@@ -572,6 +604,9 @@ namespace DAOs.Migrations
                     b.Property<DateTime?>("ExpireDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("MerchantId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("PaymentDestinationId")
                         .HasColumnType("nvarchar(450)");
 
@@ -581,8 +616,8 @@ namespace DAOs.Migrations
                     b.Property<string>("Signature")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("Status")
-                        .HasColumnType("bit");
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TxnRef")
                         .IsRequired()
@@ -593,6 +628,8 @@ namespace DAOs.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK__Payment__CB1927A1190BF352E");
+
+                    b.HasIndex("MerchantId");
 
                     b.HasIndex("PaymentDestinationId");
 
@@ -629,8 +666,8 @@ namespace DAOs.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("Amount")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("BankTranNo")
                         .HasColumnType("nvarchar(max)");
@@ -1339,6 +1376,10 @@ namespace DAOs.Migrations
 
             modelBuilder.Entity("BusinessObjects.Payment", b =>
                 {
+                    b.HasOne("BusinessObjects.Merchant", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("MerchantId");
+
                     b.HasOne("BusinessObjects.PaymentDestination", "PaymentDestination")
                         .WithMany("Payments")
                         .HasForeignKey("PaymentDestinationId")
@@ -1582,6 +1623,11 @@ namespace DAOs.Migrations
             modelBuilder.Entity("BusinessObjects.Grade", b =>
                 {
                     b.Navigation("Subjects");
+                });
+
+            modelBuilder.Entity("BusinessObjects.Merchant", b =>
+                {
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("BusinessObjects.Payment", b =>

@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240701050223_UpdatePaymentTableV1")]
+    partial class UpdatePaymentTableV1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,17 +129,17 @@ namespace DAOs.Migrations
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DayEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DayStart")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("DayPerWeek")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<double>("HourPerDay")
+                        .HasColumnType("float");
 
                     b.Property<bool?>("IsApprove")
                         .HasColumnType("bit");
@@ -182,35 +185,6 @@ namespace DAOs.Migrations
                     b.ToTable("Class", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObjects.ClassCalender", b =>
-                {
-                    b.Property<string>("CalenderId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ClassId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("DayOfWeek")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("TimeEnd")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TimeStart")
-                        .HasColumnType("int");
-
-                    b.HasKey("CalenderId")
-                        .HasName("PK__ClassCalender__77C70FC2A16C50DB1");
-
-                    b.HasIndex("ClassId");
-
-                    b.ToTable("ClassCalender", (string)null);
-                });
-
             modelBuilder.Entity("BusinessObjects.Complaint", b =>
                 {
                     b.Property<string>("ComplaintId")
@@ -218,13 +192,6 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("ComplaintID");
-
-                    b.Property<string>("ClassId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Complainter")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
@@ -235,10 +202,7 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("Processnote")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("Status")
+                    b.Property<bool>("Status")
                         .HasColumnType("bit");
 
                     b.Property<string>("StudentId")
@@ -257,8 +221,6 @@ namespace DAOs.Migrations
 
                     b.HasKey("ComplaintId")
                         .HasName("PK__Complain__740D89AFCEF50736D");
-
-                    b.HasIndex("ClassId");
 
                     b.HasIndex("StudentId");
 
@@ -382,16 +344,6 @@ namespace DAOs.Migrations
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DayEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DayOfWeek")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DayStart")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("DescribeTutor")
                         .HasMaxLength(500)
                         .IsUnicode(true)
@@ -423,11 +375,11 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("SubjectID");
 
-                    b.Property<int>("TimeEnd")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TimeStart")
-                        .HasColumnType("int");
+                    b.Property<string>("SubjectName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -465,6 +417,35 @@ namespace DAOs.Migrations
                         .HasName("PK__Grade__54F87A37CC152DE4D");
 
                     b.ToTable("Grade", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObjects.Merchant", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MerchantIpnUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MerchantName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MerchantReturnUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MerchantWebLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecretKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Merchant__C050D887C401235FC");
+
+                    b.ToTable("Merchant", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObjects.Message", b =>
@@ -538,12 +519,8 @@ namespace DAOs.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Url")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
 
                     b.HasKey("NotificationId")
                         .HasName("PK__Notifica__20CF2E32FFBD5FC4D");
@@ -558,45 +535,51 @@ namespace DAOs.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("CreateDate")
+                    b.Property<DateTime?>("ExpireDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CurrencyCode")
+                    b.Property<string>("MerchantId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal?>("PaidAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PaymentContent")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("PaymentCurrency")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("ExpireDate")
+                    b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PaymentDestinationId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal>("RequiredAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Signature")
+                    b.Property<string>("PaymentLanguage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("Status")
-                        .HasColumnType("bit");
+                    b.Property<string>("PaymentLastMessage")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TxnRef")
+                    b.Property<string>("PaymentRefId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WalletId")
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<string>("PaymentStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("RequiredAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id")
                         .HasName("PK__Payment__CB1927A1190BF352E");
 
-                    b.HasIndex("PaymentDestinationId");
+                    b.HasIndex("MerchantId");
 
-                    b.HasIndex("WalletId");
+                    b.HasIndex("PaymentDestinationId");
 
                     b.ToTable("Payment", (string)null);
                 });
@@ -606,22 +589,113 @@ namespace DAOs.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("BankCode")
+                    b.Property<string>("DesLogo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BankLogo")
+                    b.Property<string>("DesName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BankName")
+                    b.Property<string>("DesParentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DesShortName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<int>("SortIndex")
+                        .HasColumnType("int");
+
                     b.HasKey("Id")
                         .HasName("PK__PaymentDestination__CB1927A1191BF352P");
 
+                    b.HasIndex("DesParentId");
+
                     b.ToTable("PaymentDestination", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObjects.PaymentNotification", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("NotiAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("NotiContent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("NotiDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NotiMerchantId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NotiMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NotiPaymentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("NotiResDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NotiResHttpCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NotiResMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NotiSignature")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NotiStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentRefId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__PaymentNotification__CB1927A0190BF352H");
+
+                    b.HasIndex("NotiMerchantId");
+
+                    b.HasIndex("NotiPaymentId");
+
+                    b.ToTable("PaymentNotification", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObjects.PaymentSignature", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsValid")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SignAlgo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SignDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SignOwn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SignValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__PaymentSignature__CB1927A1291BF352P");
+
+                    b.HasIndex("PaymentId");
+
+                    b.ToTable("PaymentSignature", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObjects.PaymentTransaction", b =>
@@ -629,34 +703,25 @@ namespace DAOs.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("BankTranNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CardType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsValid")
-                        .HasColumnType("bit");
-
                     b.Property<string>("PaymentId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ResponseCode")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal?>("TranAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("TranDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TranStatus")
+                    b.Property<string>("TranMessage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TxnRef")
+                    b.Property<string>("TranPayload")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TranRefId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TranStatus")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id")
@@ -665,64 +730,6 @@ namespace DAOs.Migrations
                     b.HasIndex("PaymentId");
 
                     b.ToTable("PaymentTransaction", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObjects.RequestTutorForm", b =>
-                {
-                    b.Property<string>("FormId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreateDay")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DayEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DayOfWeek")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DayStart")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("Status")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("SubjectId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("TimeEnd")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TimeStart")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TutorId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("FormId")
-                        .HasName("PK__RequestTutorForm__77C70FC2A16C50DB2");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.HasIndex("TutorId");
-
-                    b.ToTable("RequestTutorForm", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObjects.Student", b =>
@@ -852,14 +859,19 @@ namespace DAOs.Migrations
             modelBuilder.Entity("BusinessObjects.Transaction", b =>
                 {
                     b.Property<string>("TransactionId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(255)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("TransactionID");
 
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
@@ -867,9 +879,19 @@ namespace DAOs.Migrations
                     b.Property<float>("TransactionMoney")
                         .HasColumnType("real");
 
-                    b.HasKey("TransactionId");
+                    b.Property<string>("WalletId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("WalletID");
 
-                    b.ToTable("Transactions");
+                    b.HasKey("TransactionId")
+                        .HasName("PK__Transact__55433A4B61451DBED");
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("Transaction", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObjects.Tutor", b =>
@@ -982,28 +1004,6 @@ namespace DAOs.Migrations
                     b.HasIndex("TutorId");
 
                     b.ToTable("Tutor_Ads", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObjects.TutorApply", b =>
-                {
-                    b.Property<string>("FormId")
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("TutorId")
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("DayApply")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsApprove")
-                        .HasColumnType("bit");
-
-                    b.HasKey("FormId", "TutorId")
-                        .HasName("PK__TutorAp___9B67D374BBB4AFDSS");
-
-                    b.HasIndex("TutorId");
-
-                    b.ToTable("TutorApply", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObjects.Wallet", b =>
@@ -1204,25 +1204,8 @@ namespace DAOs.Migrations
                     b.Navigation("Tutor");
                 });
 
-            modelBuilder.Entity("BusinessObjects.ClassCalender", b =>
-                {
-                    b.HasOne("BusinessObjects.Class", "Classes")
-                        .WithMany("ClassCalenders")
-                        .HasForeignKey("ClassId")
-                        .IsRequired()
-                        .HasConstraintName("FKClassCal3875973");
-
-                    b.Navigation("Classes");
-                });
-
             modelBuilder.Entity("BusinessObjects.Complaint", b =>
                 {
-                    b.HasOne("BusinessObjects.Class", "Class")
-                        .WithMany("Complaints")
-                        .HasForeignKey("ClassId")
-                        .IsRequired()
-                        .HasConstraintName("FKComplaint1966098");
-
                     b.HasOne("BusinessObjects.Student", "Student")
                         .WithMany("Complaints")
                         .HasForeignKey("StudentId")
@@ -1234,8 +1217,6 @@ namespace DAOs.Migrations
                         .HasForeignKey("TutorId")
                         .IsRequired()
                         .HasConstraintName("FKComplaint1966472");
-
-                    b.Navigation("Class");
 
                     b.Navigation("Student");
 
@@ -1339,19 +1320,56 @@ namespace DAOs.Migrations
 
             modelBuilder.Entity("BusinessObjects.Payment", b =>
                 {
+                    b.HasOne("BusinessObjects.Merchant", "Merchant")
+                        .WithMany("Payments")
+                        .HasForeignKey("MerchantId")
+                        .HasConstraintName("FKPayment3070123");
+
                     b.HasOne("BusinessObjects.PaymentDestination", "PaymentDestination")
                         .WithMany("Payments")
                         .HasForeignKey("PaymentDestinationId")
                         .HasConstraintName("FKPayment1159779");
 
-                    b.HasOne("BusinessObjects.Wallet", "Wallet")
-                        .WithMany("Payments")
-                        .HasForeignKey("WalletId")
-                        .HasConstraintName("FKPayment1158769");
+                    b.Navigation("Merchant");
 
                     b.Navigation("PaymentDestination");
+                });
 
-                    b.Navigation("Wallet");
+            modelBuilder.Entity("BusinessObjects.PaymentDestination", b =>
+                {
+                    b.HasOne("BusinessObjects.PaymentDestination", "Destination")
+                        .WithMany("PaymentDestinations")
+                        .HasForeignKey("DesParentId")
+                        .HasConstraintName("FKPaymentDestination3071133");
+
+                    b.Navigation("Destination");
+                });
+
+            modelBuilder.Entity("BusinessObjects.PaymentNotification", b =>
+                {
+                    b.HasOne("BusinessObjects.Merchant", "Merchant")
+                        .WithMany("PaymentNotifications")
+                        .HasForeignKey("NotiMerchantId")
+                        .HasConstraintName("FKPaymentNotification3070122");
+
+                    b.HasOne("BusinessObjects.Payment", "Payment")
+                        .WithMany("PaymentNotifications")
+                        .HasForeignKey("NotiPaymentId")
+                        .HasConstraintName("FKPaymentNotification1059789");
+
+                    b.Navigation("Merchant");
+
+                    b.Navigation("Payment");
+                });
+
+            modelBuilder.Entity("BusinessObjects.PaymentSignature", b =>
+                {
+                    b.HasOne("BusinessObjects.Payment", "Payment")
+                        .WithMany("PaymentSignatures")
+                        .HasForeignKey("PaymentId")
+                        .HasConstraintName("FKPaymentSignature3071243");
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("BusinessObjects.PaymentTransaction", b =>
@@ -1362,33 +1380,6 @@ namespace DAOs.Migrations
                         .HasConstraintName("FKPaymentTransaction3171253");
 
                     b.Navigation("Payment");
-                });
-
-            modelBuilder.Entity("BusinessObjects.RequestTutorForm", b =>
-                {
-                    b.HasOne("BusinessObjects.Student", "Student")
-                        .WithMany("RequestTutorForms")
-                        .HasForeignKey("StudentId")
-                        .IsRequired()
-                        .HasConstraintName("FKRequestTu3875B45");
-
-                    b.HasOne("BusinessObjects.Subject", "Subject")
-                        .WithMany("RequestTutorForms")
-                        .HasForeignKey("SubjectId")
-                        .IsRequired()
-                        .HasConstraintName("FKRequestTu3875945");
-
-                    b.HasOne("BusinessObjects.Tutor", "Tutor")
-                        .WithMany("RequestTutorForms")
-                        .HasForeignKey("TutorId")
-                        .IsRequired()
-                        .HasConstraintName("FKRequestTu3875974");
-
-                    b.Navigation("Student");
-
-                    b.Navigation("Subject");
-
-                    b.Navigation("Tutor");
                 });
 
             modelBuilder.Entity("BusinessObjects.Student", b =>
@@ -1440,6 +1431,17 @@ namespace DAOs.Migrations
                     b.Navigation("Tutor");
                 });
 
+            modelBuilder.Entity("BusinessObjects.Transaction", b =>
+                {
+                    b.HasOne("BusinessObjects.Wallet", "Wallet")
+                        .WithMany("Transactions")
+                        .HasForeignKey("WalletId")
+                        .IsRequired()
+                        .HasConstraintName("FKTransactio1812602");
+
+                    b.Navigation("Wallet");
+                });
+
             modelBuilder.Entity("BusinessObjects.Tutor", b =>
                 {
                     b.HasOne("BusinessObjects.Account", "Account")
@@ -1458,25 +1460,6 @@ namespace DAOs.Migrations
                         .HasForeignKey("TutorId")
                         .IsRequired()
                         .HasConstraintName("FKTutor_Ads5728872");
-
-                    b.Navigation("Tutor");
-                });
-
-            modelBuilder.Entity("BusinessObjects.TutorApply", b =>
-                {
-                    b.HasOne("BusinessObjects.FindTutorForm", "FindTutorForm")
-                        .WithMany("TutorApplies")
-                        .HasForeignKey("FormId")
-                        .IsRequired()
-                        .HasConstraintName("FKTutorApply6750344");
-
-                    b.HasOne("BusinessObjects.Tutor", "Tutor")
-                        .WithMany("TutorApplies")
-                        .HasForeignKey("TutorId")
-                        .IsRequired()
-                        .HasConstraintName("FKTutorApply31899");
-
-                    b.Navigation("FindTutorForm");
 
                     b.Navigation("Tutor");
                 });
@@ -1560,10 +1543,6 @@ namespace DAOs.Migrations
 
             modelBuilder.Entity("BusinessObjects.Class", b =>
                 {
-                    b.Navigation("ClassCalenders");
-
-                    b.Navigation("Complaints");
-
                     b.Navigation("Feedbacks");
                 });
 
@@ -1574,23 +1553,31 @@ namespace DAOs.Migrations
                     b.Navigation("Messages");
                 });
 
-            modelBuilder.Entity("BusinessObjects.FindTutorForm", b =>
-                {
-                    b.Navigation("TutorApplies");
-                });
-
             modelBuilder.Entity("BusinessObjects.Grade", b =>
                 {
                     b.Navigation("Subjects");
                 });
 
+            modelBuilder.Entity("BusinessObjects.Merchant", b =>
+                {
+                    b.Navigation("PaymentNotifications");
+
+                    b.Navigation("Payments");
+                });
+
             modelBuilder.Entity("BusinessObjects.Payment", b =>
                 {
+                    b.Navigation("PaymentNotifications");
+
+                    b.Navigation("PaymentSignatures");
+
                     b.Navigation("PaymentTransactions");
                 });
 
             modelBuilder.Entity("BusinessObjects.PaymentDestination", b =>
                 {
+                    b.Navigation("PaymentDestinations");
+
                     b.Navigation("Payments");
                 });
 
@@ -1603,8 +1590,6 @@ namespace DAOs.Migrations
                     b.Navigation("Feedbacks");
 
                     b.Navigation("FindTutorForms");
-
-                    b.Navigation("RequestTutorForms");
                 });
 
             modelBuilder.Entity("BusinessObjects.Subject", b =>
@@ -1612,8 +1597,6 @@ namespace DAOs.Migrations
                     b.Navigation("Classes");
 
                     b.Navigation("FindTutorForms");
-
-                    b.Navigation("RequestTutorForms");
 
                     b.Navigation("SubjectTutors");
                 });
@@ -1631,18 +1614,14 @@ namespace DAOs.Migrations
 
                     b.Navigation("Feedbacks");
 
-                    b.Navigation("RequestTutorForms");
-
                     b.Navigation("SubjectTutors");
 
                     b.Navigation("TutorAds");
-
-                    b.Navigation("TutorApplies");
                 });
 
             modelBuilder.Entity("BusinessObjects.Wallet", b =>
                 {
-                    b.Navigation("Payments");
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

@@ -15,7 +15,7 @@ public partial class Transaction
 
     public bool Status { get; set; }
 
-    public string WalletId { get; set; } = null!;
+    //public string WalletId { get; set; } = null!;
 
-    public virtual Wallet Wallet { get; set; } = null!;
+    //public virtual Wallet Wallet { get; set; } = null!;
 }
