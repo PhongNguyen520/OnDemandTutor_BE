@@ -21,6 +21,7 @@ namespace API.Controllers
         private readonly IMapper _mapper;
         private readonly IHubContext<ChatHub> _hubContext;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IMessageService _messageService;
 
         public ConversationAccountController(IMapper mapper, IHubContext<ChatHub> hubContext, ICurrentUserService currentUserService, IAccountService accountService)
         {
@@ -30,13 +31,13 @@ namespace API.Controllers
             _currentUserService = currentUserService;
             _accountService = accountService;
             _conversationService = new ConversationService();
+            _messageService = new MessageService();
         }
 
         [HttpGet]
         // Lấy danh sách chat box của người dùng
         public async Task<ActionResult<IEnumerable<RoomVM>>> Get()
         {
-            // Lấy ConversationAccount chat của User
             var rawRooms = _conversationAccountService.GetConversationAccounts().Where(x => x.AccountId == _currentUserService.GetUserId().ToString());
 
             var rooms = _conversationAccountService.GetConversationAccounts();
@@ -60,10 +61,21 @@ namespace API.Controllers
                             AccountId = r.AccountId,
                             Name = u.FullName,
                             Avatar = u.Avatar,
+                            LastMessage = _currentUserService.GetUserId().ToString() == _messageService.GetMessages()
+                                                                                        .Where(s => s.ConversationId == r.ConversationId)
+                                                                                        .Select(s => s.Account.Id).LastOrDefault()
+                                          ? $"You: {_messageService.GetMessages()
+                                                    .Where(s => s.ConversationId == r.ConversationId)
+                                                    .Select(s => s.Description).LastOrDefault()}"
+                                          : $"{_messageService.GetMessages()
+                                                .Where(s => s.ConversationId == r.ConversationId)
+                                                .Select(s => s.Account.FullName).LastOrDefault()} : {_messageService.GetMessages()
+                                                                                                    .Where(s => s.ConversationId == r.ConversationId)
+                                                                                                    .Select(s => s.Description).LastOrDefault()}",
                         };
 
 
-            return Ok(query);
+            return Ok(query.OrderBy(s => s.LastMessage));
         }
 
         [HttpPost]

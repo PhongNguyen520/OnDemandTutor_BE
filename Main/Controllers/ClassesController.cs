@@ -140,7 +140,7 @@ namespace API.Controllers
         public IActionResult GetTutorCalender(string tutorId)
         {
             var calenders = _classCalenderService.GetClassCalenders();
-            var classes = _classService.GetClasses().Where(s => s.TutorId == tutorId && s.Status != true);
+            var classes = _classService.GetClasses().Where(s => s.TutorId == tutorId && s.Status == null && s.IsApprove == true);
 
             var result = from calender in calenders
                          join classL in classes

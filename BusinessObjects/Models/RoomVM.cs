@@ -17,6 +17,7 @@ namespace BusinessObjects.Models
         public string AccountId { get; set; }
         public string Avatar { get; set; }
         public string Name { get; set; }
+        public string? LastMessage { get; set; }
     }
 
     public class MessageVM

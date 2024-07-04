@@ -86,8 +86,18 @@ namespace API.Controllers
             _dbContext.Add(msg);
             await _dbContext.SaveChangesAsync();
 
+            var showMessage = new MessageVM()
+            {
+                MessageId = msg.MessageId,
+                FullName = _accountService.GetAccounts().Where(s => s.Id == msg.AccountId).Select(s => s.FullName).FirstOrDefault(),
+                Content = msg.Description,
+                Time = msg.Time.ToString("dd/MM/yyyy HH:mm:ss"),
+                UserId = msg.AccountId,
+                RoomId = msg.ConversationId,
+                Avatar = _accountService.GetAccounts().Where(s => s.Id == msg.AccountId).Select(s => s.Avatar).FirstOrDefault(),
+            };
             //var createdMessage = _mapper.Map<Message, MessageVM>(msg);
-            await _hubContext.Clients.Group(message.RoomId).SendAsync("ReceiveSpecificMessage", message.RoomId, msg);
+            await _hubContext.Clients.Group(message.RoomId).SendAsync("ReceiveSpecificMessage", message.RoomId, showMessage);
 
             return Ok(msg);
         }
