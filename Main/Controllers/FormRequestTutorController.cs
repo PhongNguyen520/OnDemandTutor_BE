@@ -191,7 +191,7 @@ namespace API.Controllers
             }
             else
             {
-                var list = _classCalenderService.HandleCalendar(formId);
+                var list = _classCalenderService.HandleCalendar(formId).ToList();
                 foreach (var item in list)
                 {
                     item.Status = false;
