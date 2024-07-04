@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace DAOs
 
         public List<Message> GetMessages()
         {
-            return dbContext.Messages.OrderByDescending(x => x.MessageId).ToList();
+            return dbContext.Messages.Include("Account").ToList();
         }
 
         public bool UpdateMessages(Message message)
