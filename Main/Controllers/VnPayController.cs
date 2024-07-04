@@ -21,6 +21,7 @@ namespace API.Controllers
         private readonly VnPayService vnPayService;
         private readonly IPaymentService paymentService;
         private readonly IPaymentTransactionService transactionService;
+        private readonly IWalletService walletService;
         private readonly string vnp_TmnCode = "WX3Z3JAI";
         private readonly string vnp_HashSecret = "TI56EMVNTQM55D9JT08D93N4N825CE05";
         private readonly string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
@@ -31,6 +32,7 @@ namespace API.Controllers
             vnPayService = new VnPayService();
             paymentService = new PaymentService();
             transactionService = new PaymentTransactionService();
+            walletService = new WalletService();
         }
 
         [HttpPost]
@@ -57,15 +59,16 @@ namespace API.Controllers
                 { "vnp_ReturnUrl", returnUrl },
                 { "vnp_IpAddr", HttpContext.Connection.RemoteIpAddress.ToString() },
                 { "vnp_CreateDate", createDate },
-                {"vnp_ExpireDate", DateTime.Now.AddDays(7).ToString("yyyyMMddHHmmss") },
+                {"vnp_ExpireDate", DateTime.Now.AddMinutes(30).ToString("yyyyMMddHHmmss") },
             };
 
             var paymentUrl = vnPayService.CreateRequestUrl(vnp_Url, vnp_HashSecret, vnp_Params);
             var signature = vnPayService.CreateSignature(vnp_HashSecret, vnp_Params);
+            var paymentId = Guid.NewGuid().ToString();
 
             var payment = new Payment()
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = paymentId,
                 RequiredAmount = request.Amount,
                 Description = request.Description,
                 CurrencyCode = currCode,
@@ -78,7 +81,7 @@ namespace API.Controllers
 
             paymentService.AddPayment(payment);
 
-            return Ok(  paymentUrl );
+            return Ok( new { paymentUrl, paymentId });
         }
 
         [HttpPost]
@@ -106,6 +109,14 @@ namespace API.Controllers
                 if (response.vnp_ResponseCode == "00")
                 {
                     transactionService.AddTransaction(transaction);
+
+                    var payment = paymentService.GetPayments().FirstOrDefault(p => p.Id == id);
+                   if (payment != null)
+                    {
+                        var wallet = walletService.GetWallets().FirstOrDefault(w => w.WalletId == payment.WalletId);
+                        wallet.Balance = wallet.Balance + response.vnp_Amount;
+                        walletService.UpdateWallets(wallet);
+                    }
                 }
                 else
                 {

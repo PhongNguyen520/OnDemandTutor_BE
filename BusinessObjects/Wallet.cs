@@ -9,7 +9,7 @@ public partial class Wallet
 
     public DateTime CreateDay { get; set; }
 
-    public float Balance { get; set; }
+    public int? Balance { get; set; }
 
     public string BankName { get; set; } = null!;
 
