@@ -143,6 +143,7 @@ namespace BusinessObjects.Models
         [StringLength(10)]
         public String? PhoneNumber { get; set; }
         public bool Gender { get; set; }
+        public string? Avatar { get; set; }
         public int isActive { get; set; } = 1;
 
     }
