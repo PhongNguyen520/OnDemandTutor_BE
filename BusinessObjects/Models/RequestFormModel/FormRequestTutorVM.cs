@@ -10,11 +10,11 @@ namespace BusinessObjects.Models.RequestFormModel
     {
         public required string FormId { get; set; }
         public string CreateDay { get; set; } = string.Empty;
-        public DateTime DayStart { get; set; }
-        public DateTime DayEnd { get; set; }
+        public string DayStart { get; set; } = string.Empty;
+        public string DayEnd { get; set; } = string.Empty;
         public string DayOfWeek { get; set; } = string.Empty;
-        public int TimeStart { get; set; }
-        public int TimeEnd { get; set; }
+        public string TimeStart { get; set; } = string.Empty;
+        public string TimeEnd { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string? Avatar { get; set; }
         public string? SubjectName { get; set; }

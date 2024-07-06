@@ -91,7 +91,7 @@ namespace Services
         {
             var tutorClass = classList.Where(s => s.TutorId == tutorId);
             int result = 0;
-            foreach (var item in tutorClass) 
+            foreach (var item in tutorClass)
             {
                 var calenderList = classCalenderRepository.GetClassCalenders().Where(s => s.ClassId == item.ClassId);
                 foreach (var calender in calenderList)
@@ -104,5 +104,10 @@ namespace Services
             }
             return result;
         }
-}
+
+        public string ConvertToDaysOfWeeks(string input)
+        {
+            return classCalenderRepository.ConvertToDaysOfWeeks(input);
+        }
+    }
 }

@@ -45,9 +45,9 @@ namespace Services
             return iFindTutorFormRepository.Filter(requestSearchPostModel);
         }
 
-        public IEnumerable<FormFindTutorVM> Sorting(IEnumerable<FormFindTutorVM> query, string? sortBy, string? sortType, int pageIndex)
+        public IEnumerable<FormFindTutorVM> Sorting(IEnumerable<FormFindTutorVM> query, string? sortBy, string? sortType)
         {
-            return iFindTutorFormRepository.Sorting(query, sortBy, sortType, pageIndex);
+            return iFindTutorFormRepository.Sorting(query, sortBy, sortType);
         }
     }
 }

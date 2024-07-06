@@ -46,9 +46,9 @@ namespace Services
             return _repository.GetTutors();
         }
 
-        public IEnumerable<ResponseSearchTutorModel> Sorting(IEnumerable<ResponseSearchTutorModel> query, string? sortBy, string? sortType, int pageIndex)
+        public IEnumerable<ResponseSearchTutorModel> Sorting(IEnumerable<ResponseSearchTutorModel> query, string? sortBy, string? sortType)
         {
-            return _repository.Sorting(query, sortBy, sortType, pageIndex);
+            return _repository.Sorting(query, sortBy, sortType);
         }
 
 

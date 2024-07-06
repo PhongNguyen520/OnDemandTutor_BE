@@ -28,6 +28,7 @@ namespace API.Controllers
         private readonly ITutorApplyService _tutorApplyService;
         private readonly IClassCalenderService _classCalenderService;
         private readonly IClassService _classService;
+        private readonly IPagingListService<FormFindTutorVM> _pagingListService;
 
         public FormFindTutorController(ICurrentUserService currentUserService, IAccountService accountService)
         {
@@ -41,33 +42,33 @@ namespace API.Controllers
             _tutorApplyService = new TutorApplyService();
             _classCalenderService = new ClassCalenderService();
             _classService = new ClassService();
-
+            _pagingListService = new PagingListService<FormFindTutorVM>();
         }
 
         // MODERATER XEM DANH SÁCH FORM CHX DUYỆT
         [HttpGet("moderator/viewformlist")]
-        public IActionResult GetRequestList()
+        public IActionResult GetRequestList(int pageIndex)
         {
             var forms = _findTutorFormService.GetFindTutorForms()
-                                              .Where(s => s.IsActived == null && s.Status == null)
-                                              .OrderBy(s => s.CreateDay);
+                                              .Where(s => s.IsActived == null && s.Status == null);
             var students = _studentService.GetStudents();
             // Tạo danh sách các FormVM để trả về
             var query = from form in forms
                         join student in students
                         on form.StudentId equals student.StudentId
+                        orderby form.CreateDay descending
                         select new FormFindTutorVM
                         {
                             FormId = form.FormId,
-                            CreateDay = form.CreateDay.ToString("dd/MM/yyyy HH:mm:ss"),
-                            FullName = _accountService.GetAccounts().Where(s => s.Id == student.AccountId).Select(s => s.FullName).FirstOrDefault(),
-                            Avatar = _accountService.GetAccounts().Where(s => s.Id == student.AccountId).Select(s => s.Avatar).FirstOrDefault(),
+                            CreateDay = form.CreateDay.ToString("dd/MM/yyyy HH:mm"),
+                            FullName = _accountService.GetAccounts().Where(s => s.Id == student.AccountId).Select(s => s.FullName).First(),
+                            Avatar = _accountService.GetAccounts().Where(s => s.Id == student.AccountId).Select(s => s.Avatar).First(),
                             Title = form.Title,
-                            DayStart = form.DayStart,
-                            DayEnd = form.DayEnd,
-                            DayOfWeek = form.DayOfWeek,
-                            TimeStart = form.TimeStart,
-                            TimeEnd = form.TimeEnd,
+                            DayStart = form.DayStart.ToString("dd/MM/yyyy"),
+                            DayEnd = form.DayEnd.ToString("dd/MM/yyyy"),
+                            DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(form.DayOfWeek),
+                            TimeStart = form.TimeStart.ToString() + "h",
+                            TimeEnd = form.TimeEnd.ToString() + "h",
                             MinHourlyRate = form.MinHourlyRate,
                             MaxHourlyRate = form.MaxHourlyRate,
                             Description = form.DescribeTutor,
@@ -75,7 +76,9 @@ namespace API.Controllers
                             SubjectId = form.SubjectId,
                             StudentId = student.StudentId,
                         };
-            return Ok(query);
+            var result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
+
+            return Ok(result);
         }
 
         // TUTOR FILTER DANH SÁCH FORM
@@ -84,7 +87,7 @@ namespace API.Controllers
         {
             var sortBy = requestSearchPostModel.SortContent != null ? requestSearchPostModel.SortContent?.sortPostBy.ToString() : null;
             var sortType = requestSearchPostModel.SortContent != null ? requestSearchPostModel.SortContent?.sortPostType.ToString() : null;
-            string searchQuery = null;
+            string searchQuery = "";
 
             if (requestSearchPostModel.Search != null)
             {
@@ -145,15 +148,15 @@ namespace API.Controllers
                         select new FormFindTutorVM
                         {
                             FormId = post.FormId,
-                            CreateDay = post.CreateDay.ToString("dd/MM/yyyy HH:mm:ss"),
+                            CreateDay = post.CreateDay.ToString("dd/MM/yyyy HH:mm"),
                             FullName = account.FullName,
                             Avatar = account.Avatar,
                             Title = post.Title,
-                            DayStart = post.DayStart,
-                            DayEnd = post.DayEnd,
-                            DayOfWeek = post.DayOfWeek,
-                            TimeStart = post.TimeStart,
-                            TimeEnd = post.TimeEnd,
+                            DayStart = post.DayStart.ToString("dd/MM/yyyy"),
+                            DayEnd = post.DayEnd.ToString("dd/MM/yyyy"),
+                            DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(post.DayOfWeek),
+                            TimeStart = post.TimeStart.ToString() + "h",
+                            TimeEnd = post.TimeEnd.ToString() + "h",
                             MinHourlyRate = post.MinHourlyRate,
                             MaxHourlyRate = post.MaxHourlyRate,
                             Description = post.DescribeTutor,
@@ -161,27 +164,27 @@ namespace API.Controllers
                             SubjectId = post.SubjectId,
                             StudentId = post.StudentId,
                         };
+            query = _findTutorFormService.Sorting(query, sortBy, sortType);
 
+            var result = _pagingListService.Paging(query.ToList(), requestSearchPostModel.pageIndex, 7);
 
-            query = _findTutorFormService.Sorting(query, sortBy, sortType, requestSearchPostModel.pageIndex);
-
-            return Ok(query);
+            return Ok(result);
         }
 
         // STUDENT XEM DANH SÁCH FORM ĐÃ ĐĂNG KÍ
         [HttpGet("student/viewformlist")]
         // Show Student's post list
-        public IActionResult GetList()
+        public IActionResult GetList(int pageIndex)
         {
             var userId = _currentUserService.GetUserId().ToString();
 
-            var user = _accountService.GetAccounts().FirstOrDefault(s => s.Id == userId);
+            var user = _accountService.GetAccounts().First(s => s.Id == userId);
             if (user == null)
             {
                 return NotFound("User not found");
             }
 
-            var student = _studentService.GetStudents().FirstOrDefault(s => s.AccountId == userId);
+            var student = _studentService.GetStudents().First(s => s.AccountId == userId);
             if (student == null)
             {
                 return NotFound("Student not found");
@@ -191,17 +194,18 @@ namespace API.Controllers
 
             // Tạo danh sách các FormVM để trả về
             var query = from post in forms
+                        orderby post.CreateDay descending
                         select new FormFindTutorVM
                         {
                             FormId = post.FormId,
-                            CreateDay = post.CreateDay.ToString("dd/MM/yyyy HH:mm:ss"),
+                            CreateDay = post.CreateDay.ToString("dd/MM/yyyy HH:mm"),
                             FullName = user.FullName,
                             Title = post.Title,
-                            DayStart = post.DayStart,
-                            DayEnd = post.DayEnd,
-                            DayOfWeek = post.DayOfWeek,
-                            TimeStart = post.TimeStart,
-                            TimeEnd = post.TimeEnd,
+                            DayStart = post.DayStart.ToString("dd/MM/yyyy"),
+                            DayEnd = post.DayEnd.ToString("dd/MM/yyyy"),
+                            DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(post.DayOfWeek),
+                            TimeStart = post.TimeStart.ToString() + "h",
+                            TimeEnd = post.TimeEnd.ToString() + "h",
                             MinHourlyRate = post.MinHourlyRate,
                             MaxHourlyRate = post.MaxHourlyRate,
                             Description = post.DescribeTutor,
@@ -210,7 +214,9 @@ namespace API.Controllers
                             StudentId = student.StudentId,
                         };
 
-            return Ok(query);
+            var result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
+
+            return Ok(result);
         }
 
         // STUDENT TẠO FORM
@@ -228,10 +234,10 @@ namespace API.Controllers
                 return Unauthorized("User is not logged in.");
             }
 
-            var stId = _studentService.GetStudents().FirstOrDefault(s => s.AccountId == userId);
+            var stId = _studentService.GetStudents().First(s => s.AccountId == userId);
 
             var subject = _subjectService.GetSubjects()
-                .FirstOrDefault(s => s.SubjectGroupId == form.SubjectGroupId && s.GradeId == form.GradeId);
+                .First(s => s.SubjectGroupId == form.SubjectGroupId && s.GradeId == form.GradeId);
             if (subject == null)
             {
                 return NotFound("Subject not found for the given SubjectGroupId and GradeId.");
@@ -265,7 +271,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while creating the form.");
+                return StatusCode(500, "An error occurred while creating the form." + ex);
             }
         }
 
@@ -274,9 +280,9 @@ namespace API.Controllers
         public IActionResult TutorApply([FromBody] string formId)
         {
             var userId = _currentUserService.GetUserId().ToString();
-            var tutor = _tutorService.GetTutors().Where(s => s.AccountId == userId).FirstOrDefault();
+            var tutor = _tutorService.GetTutors().Where(s => s.AccountId == userId).First();
 
-            var form = _findTutorFormService.GetFindTutorForms().Where(s => s.FormId == formId).FirstOrDefault();
+            var form = _findTutorFormService.GetFindTutorForms().Where(s => s.FormId == formId).First();
 
             //Handle To Avoid Conflict With Tutor Calender
             //1.Get all booking day
@@ -327,17 +333,23 @@ namespace API.Controllers
 
         // MODERATER DUYỆT FORM
         [HttpPut("moderator/browserform")]
-        public IActionResult BrowserForm(string id, bool action)
+        public IActionResult BrowserForm([FromBody] List<string> id, [FromQuery]bool action)
         {
-            var form = _findTutorFormService.GetFindTutorForms().FirstOrDefault(s => s.FormId == id);
-            if (form == null)
+            var forms = _findTutorFormService.GetFindTutorForms();
+            if (forms == null)
             {
                 return NotFound();
             }
+            foreach (var form in forms)
+            {
+                if (id.Contains(form.FormId))
+                {
+                    form.Status = action;
+                    _findTutorFormService.UpdateFindTutorForms(form);
+                }
+            }
 
-            form.Status = action;
-
-            return Ok(_findTutorFormService.UpdateFindTutorForms(form));
+            return Ok();
         }
 
         // STUDENT UPDATE FORM
@@ -350,11 +362,6 @@ namespace API.Controllers
             }
 
             var updatedForm = _findTutorFormService.UpdateFindTutorForms(form);
-
-            if (updatedForm == null)
-            {
-                return NotFound("Form not found");
-            }
 
             return Ok(updatedForm);
         }
@@ -384,7 +391,7 @@ namespace API.Controllers
         public IActionResult SubmitForm(string formId, string tutorId)
         {
             var tutorApply = _tutorApplyService.GetTutorApplies();
-            var form = _findTutorFormService.GetFindTutorForms().FirstOrDefault(s => s.FormId == formId);
+            var form = _findTutorFormService.GetFindTutorForms().First(s => s.FormId == formId);
             
             foreach ( var tutor in tutorApply)
             {
@@ -407,7 +414,7 @@ namespace API.Controllers
         [HttpDelete("student/deleteform")]
         public IActionResult DeleteForm(string id)
         {
-            var form = _findTutorFormService.GetFindTutorForms().FirstOrDefault(s => s.FormId == id);
+            var form = _findTutorFormService.GetFindTutorForms().First(s => s.FormId == id);
             if (form == null)
             {
                 return NotFound();

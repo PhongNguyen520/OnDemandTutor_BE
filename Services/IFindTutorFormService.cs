@@ -23,7 +23,6 @@ namespace Services
         public IEnumerable<FormFindTutorVM> Sorting
            (IEnumerable<FormFindTutorVM> query,
            string? sortBy,
-           string? sortType,
-           int pageIndex);
+           string? sortType);
     }
 }

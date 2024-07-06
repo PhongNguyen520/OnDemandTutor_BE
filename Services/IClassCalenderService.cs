@@ -24,5 +24,7 @@ namespace Services
         public List<RequestTutorForm> HandleCalendar(string formId);
 
         public int TotalHourByMonth(IEnumerable<Class> classList, string tutorId);
+
+        public string ConvertToDaysOfWeeks(string input);
     }
 }

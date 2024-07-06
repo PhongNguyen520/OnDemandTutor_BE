@@ -30,6 +30,7 @@ namespace API.Controllers
         private readonly IClassCalenderService _classCalenderService;
         private readonly IRequestTutorFormService _requestTutorFormService;
         private readonly IFindTutorFormService _findTutorFormService;
+        private readonly IPagingListService<ClassVM> _pagingListService;
 
         public ClassesController(ICurrentUserService currentUserService, IAccountService accountService)
         {
@@ -42,15 +43,16 @@ namespace API.Controllers
             _classCalenderService = new ClassCalenderService();
             _requestTutorFormService = new RequestTutorFormService();
             _findTutorFormService = new FindTutorFormService();
+            _pagingListService = new PagingListService<ClassVM>();
         }
 
         // Class tự động tạo sau khi Tutor duyệt form
         [HttpPost("createClassByFormRequest")]
         public IActionResult CreateByRequest(CreateClassByRequestVM request)
         {
-            var form = _requestTutorFormService.GetRequestTutorForms().Where(s => s.FormId == request.FormId).FirstOrDefault();
+            var form = _requestTutorFormService.GetRequestTutorForms().Where(s => s.FormId == request.FormId).First();
 
-            var tutor = _tutorService.GetTutors().Where(s => s.TutorId == form.TutorId).FirstOrDefault();
+            var tutor = _tutorService.GetTutors().Where(s => s.TutorId == form.TutorId).First();
 
             List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
 
@@ -94,9 +96,9 @@ namespace API.Controllers
         [HttpPost("createClassByFormFind")]
         public IActionResult CreateByFind(CreateClassByFindVM request)
         {
-            var form = _findTutorFormService.GetFindTutorForms().Where(s => s.FormId == request.FormId).FirstOrDefault();
+            var form = _findTutorFormService.GetFindTutorForms().Where(s => s.FormId == request.FormId).First();
 
-            var tutor = _tutorService.GetTutors().Where(s => s.TutorId == request.TutorId).FirstOrDefault();
+            var tutor = _tutorService.GetTutors().Where(s => s.TutorId == request.TutorId).First();
 
             List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
 
@@ -147,7 +149,7 @@ namespace API.Controllers
                          on calender.ClassId equals classL.ClassId
                          select new CalenderVM()
                          {
-                             BookDay = calender.DayOfWeek,
+                             BookDay = calender.DayOfWeek.ToString("dd/MM/yyyy"),
                              TimeStart = calender.TimeStart,
                              TimeEnd = calender.TimeEnd,
                              ClassId = calender.ClassId,
@@ -158,23 +160,23 @@ namespace API.Controllers
 
         // Tutor view class
         [HttpGet("tutor/viewClass")]
-        public IActionResult TutorViewClass(bool action)
+        public IActionResult TutorViewClass(bool action, int pageIdex)
         {
             var user = _currentUserService.GetUserId().ToString();
-            var tutor = _tutorService.GetTutors().FirstOrDefault(s => s.AccountId == user);
+            var tutor = _tutorService.GetTutors().First(s => s.AccountId == user);
 
             var classList = _classService.GetClasses()
                                            .Where(c => c.Status == action && c.TutorId == tutor.TutorId);
 
-            var classVMs = from c in classList
+            var query = from c in classList
                            select new ClassVM()
                            {
                                ClassName = c.ClassName,
-                               Createday = c.CreateDay,
+                               Createday = c.CreateDay.ToString("dd/MM/yyyy"),
                                Description = c.Description,
                                Price = c.Price,
-                               DayStart = c.DayStart,
-                               DayEnd = c.DayEnd,
+                               DayStart = c.DayStart.ToString("dd/MM/yyyy"),
+                               DayEnd = c.DayEnd.ToString("dd/MM/yyyy"),
                                SubjectName = _subjectService.GetSubjects()
                                              .Where(s => s.SubjectId == c.SubjectId)
                                              .Select(s => s.Description)
@@ -200,29 +202,31 @@ namespace API.Controllers
                                ClassCalenders = _classCalenderService.GetClassCalenders().Where(s => s.ClassId == c.ClassId).ToList(),
                            };
 
-            return Ok(classVMs);
+            var result = _pagingListService.Paging(query.ToList(), pageIdex, 7);
+
+            return Ok(result);
         }
 
         // Student view class
         [HttpGet("student/viewClass")]
-        public IActionResult StudentViewClass(bool action)
+        public IActionResult StudentViewClass(bool action, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
-            var student = _studentService.GetStudents().FirstOrDefault(s => s.AccountId == user);
+            var student = _studentService.GetStudents().First(s => s.AccountId == user);
 
 
             var classList = _classService.GetClasses()
                                            .Where(c => c.Status == action && c.StudentId == student.StudentId);
 
-            var classVMs = from c in classList
+            var query = from c in classList
                            select new ClassVM()
                            {
                                ClassName = c.ClassName,
-                               Createday = c.CreateDay,
+                               Createday = c.CreateDay.ToString("dd/MM/yyyy"),
                                Description = c.Description,
                                Price = c.Price,
-                               DayStart = c.DayStart,
-                               DayEnd = c.DayEnd,
+                               DayStart = c.DayStart.ToString("dd/MM/yyyy"),
+                               DayEnd = c.DayEnd.ToString("dd/MM/yyyy"),
                                SubjectName = _subjectService.GetSubjects()
                                             .Where(s => s.SubjectId == c.SubjectId)
                                             .Select(s => s.Description)
@@ -249,7 +253,9 @@ namespace API.Controllers
 
                            };
 
-            return Ok(classVMs);
+            var result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
+
+            return Ok(result);
         }
 
 
@@ -259,7 +265,7 @@ namespace API.Controllers
         {
             if (classId is not null)
             {
-                var getClass = _classService.GetClasses().Where(s => s.ClassId == classId).FirstOrDefault();
+                var getClass = _classService.GetClasses().Where(s => s.ClassId == classId).First();
                 getClass.IsApprove = action;
                 _classService.UpdateClasses(getClass);
             }

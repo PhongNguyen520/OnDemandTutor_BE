@@ -19,29 +19,31 @@ namespace API.Controllers
     [ApiController]
     public class FeedbacksController : ControllerBase
     {
-        private readonly IFeedbackService iFeedbackService;
-        private readonly IStudentService iStudentService;
+        private readonly IFeedbackService _feedbackService;
+        private readonly IStudentService _studentService;
         private readonly IAccountService _accountService;
         private readonly IClassService _classService;
         private readonly ISubjectService _subjectService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IPagingListService<FeedbackVM> _pagingListService;
 
         public FeedbacksController(IAccountService accountService, ICurrentUserService currentUserService)
         {
-            iFeedbackService = new FeedbackService();
-            iStudentService = new StudentService();
+            _feedbackService = new FeedbackService();
+            _studentService = new StudentService();
             _accountService = accountService;
             _classService = new ClassService();
             _subjectService = new SubjectService();
             _currentUserService = currentUserService;
+            _pagingListService = new PagingListService<FeedbackVM>();
         }
 
         // GET: api/Feedbacks
         [HttpGet("{id}")]
         public IActionResult GetFeedbackList(string id, int pageIndex)
         {
-            var tbFB = iFeedbackService.GetFeedbacks(id);
-            var tbStudent = iStudentService.GetStudents();
+            var tbFB = _feedbackService.GetFeedbacks(id);
+            var tbStudent = _studentService.GetStudents();
             var tbUser = _accountService.GetAccounts();
             var tbSubjects = _subjectService.GetSubjects();
             var tbClasses = _classService.GetClasses();
@@ -55,7 +57,7 @@ namespace API.Controllers
                             FeedbackId = fb.FeedbackId,
                             StudentId = st.StudentId,
                             FullName = us.FullName,
-                            CreateDay = fb.CreateDay.ToString("dd/MM/yyyy HH:mm:ss"),
+                            CreateDay = fb.CreateDay.ToString("dd/MM/yyyy HH:mm"),
                             Description = fb.Description,
                             SubjectName = tbSubjects
                                 .Join(tbClasses, s => s.SubjectId, c => c.SubjectId, (s, c) => new { s.Description, c.StudentId })
@@ -66,18 +68,9 @@ namespace API.Controllers
                             Title = fb.Title,
                         };
 
-            // --------------------- PAGING -------------------------
-            int validPageIndex = pageIndex > 0 ? pageIndex - 1 : 0;
-            int validPageSize = 5;
+            var result = _pagingListService.Paging(query.ToList(), pageIndex, 5);
 
-            if (query.Count() < 5)
-            {
-                validPageSize = query.Count();
-            }
-
-            query = query.Skip(validPageIndex * validPageSize).Take(validPageSize).ToList();
-
-            return Ok(query);
+            return Ok(result);
         }
 
         //Student Create FeedBack
@@ -85,7 +78,7 @@ namespace API.Controllers
         public IActionResult createFeedback(CreateFeedback request)
         {
             var userId = _currentUserService.GetUserId().ToString();
-            var student = iStudentService.GetStudents().Where(s => s.AccountId ==  userId).FirstOrDefault();
+            var student = _studentService.GetStudents().Where(s => s.AccountId ==  userId).First();
             var result = new Feedback
             {
                 FeedbackId = Guid.NewGuid().ToString(),
@@ -98,7 +91,7 @@ namespace API.Controllers
                 ClassId = request.ClassId,
                 Title = request.Title,
             };
-            iFeedbackService.AddFeedback(result);
+            _feedbackService.AddFeedback(result);
             return Ok(result);
         }
     }

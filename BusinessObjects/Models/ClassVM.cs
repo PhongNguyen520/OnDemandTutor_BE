@@ -30,24 +30,24 @@ namespace BusinessObjects.Models
     public class ClassVM
     {
         public string? ClassName { get; set; }
-        public DateTime Createday { get; set; }
-        public DateTime DayStart { get; set; }
-        public DateTime DayEnd { get; set; }
+        public string Createday { get; set; } = string.Empty;
+        public string DayStart { get; set; } = string.Empty;
+        public string DayEnd { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public double HourPerDay { get; set; }
-        public int DayPerWeek { get; set; }
+        public double HourPerDay { get; set; } //-
+        public int DayPerWeek { get; set; }//-
         public double Price { get; set; }
         public string? SubjectName { get; set; }
         public string? StudentName { get; set; }
         public string? StudentAvatar {  get; set; }
         public string? TutorName { get; set; }
         public string? TutorAvatar {  get; set; }
-        public List<ClassCalender> ClassCalenders { get; set;} = new List<ClassCalender>();
+        public List<ClassCalender> ClassCalenders { get; set;} = new List<ClassCalender>();//-
     }
 
     public class CalenderVM
     {
-        public DateTime BookDay { get; set; }
+        public string BookDay { get; set; } = string.Empty;
         public int TimeStart { get; set; }
         public int TimeEnd { get; set; }
         public string ClassId { get; set; } = string.Empty;
