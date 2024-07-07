@@ -32,6 +32,6 @@ namespace BusinessObjects.Models.FindFormModel
         public string TutorId { get; set; } = string.Empty;
         public string TutorName { get; set; } = string.Empty;
         public string? TutorAvatar { get; set; }
-        public DateTime DayApply { get; set; }
+        public string DayApply { get; set; } = string.Empty;
     }
 }

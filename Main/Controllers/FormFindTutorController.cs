@@ -60,12 +60,12 @@ namespace API.Controllers
                         select new FormFindTutorVM
                         {
                             FormId = form.FormId,
-                            CreateDay = form.CreateDay.ToString("dd/MM/yyyy HH:mm"),
+                            CreateDay = form.CreateDay.ToString("yyyy-MM-dd HH:mm"),
                             FullName = _accountService.GetAccounts().Where(s => s.Id == student.AccountId).Select(s => s.FullName).First(),
                             Avatar = _accountService.GetAccounts().Where(s => s.Id == student.AccountId).Select(s => s.Avatar).First(),
                             Title = form.Title,
-                            DayStart = form.DayStart.ToString("dd/MM/yyyy"),
-                            DayEnd = form.DayEnd.ToString("dd/MM/yyyy"),
+                            DayStart = form.DayStart.ToString("yyyy-MM-dd"),
+                            DayEnd = form.DayEnd.ToString("yyyy-MM-dd"),
                             DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(form.DayOfWeek),
                             TimeStart = form.TimeStart.ToString() + "h",
                             TimeEnd = form.TimeEnd.ToString() + "h",
@@ -148,12 +148,12 @@ namespace API.Controllers
                         select new FormFindTutorVM
                         {
                             FormId = post.FormId,
-                            CreateDay = post.CreateDay.ToString("dd/MM/yyyy HH:mm"),
+                            CreateDay = post.CreateDay.ToString("yyyy-MM-dd HH:mm"),
                             FullName = account.FullName,
                             Avatar = account.Avatar,
                             Title = post.Title,
-                            DayStart = post.DayStart.ToString("dd/MM/yyyy"),
-                            DayEnd = post.DayEnd.ToString("dd/MM/yyyy"),
+                            DayStart = post.DayStart.ToString("yyyy-MM-dd"),
+                            DayEnd = post.DayEnd.ToString("yyyy-MM-dd"),
                             DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(post.DayOfWeek),
                             TimeStart = post.TimeStart.ToString() + "h",
                             TimeEnd = post.TimeEnd.ToString() + "h",
@@ -198,11 +198,11 @@ namespace API.Controllers
                         select new FormFindTutorVM
                         {
                             FormId = post.FormId,
-                            CreateDay = post.CreateDay.ToString("dd/MM/yyyy HH:mm"),
+                            CreateDay = post.CreateDay.ToString("yyyy-MM-dd HH:mm"),
                             FullName = user.FullName,
                             Title = post.Title,
-                            DayStart = post.DayStart.ToString("dd/MM/yyyy"),
-                            DayEnd = post.DayEnd.ToString("dd/MM/yyyy"),
+                            DayStart = post.DayStart.ToString("yyyy-MM-dd"),
+                            DayEnd = post.DayEnd.ToString("yyyy-MM-dd"),
                             DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(post.DayOfWeek),
                             TimeStart = post.TimeStart.ToString() + "h",
                             TimeEnd = post.TimeEnd.ToString() + "h",
@@ -380,7 +380,7 @@ namespace API.Controllers
                              TutorId = form.TutorId,
                              TutorName = account.FullName,
                              TutorAvatar = account.Avatar,
-                             DayApply = form.DayApply,
+                             DayApply = form.DayApply.ToString("yyyy-MM-dd HH:mm"),
                          };
 
             return Ok(result);

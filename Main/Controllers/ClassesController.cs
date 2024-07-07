@@ -150,7 +150,7 @@ namespace API.Controllers
                          on calender.ClassId equals classL.ClassId
                          select new CalenderVM()
                          {
-                             BookDay = calender.DayOfWeek.ToString("dd/MM/yyyy"),
+                             BookDay = calender.DayOfWeek.ToString("yyyy-MM-dd"),
                              Time = calender.TimeStart.ToString() + "h - " + calender.TimeEnd.ToString() + "h",
                              ClassId = calender.ClassId,
                          };
@@ -173,11 +173,11 @@ namespace API.Controllers
                         {
                             Classid = c.ClassId,
                             ClassName = c.ClassName,
-                            Createday = c.CreateDay.ToString("dd/MM/yyyy"),
+                            Createday = c.CreateDay.ToString("yyyy-MM-dd"),
                             Description = c.Description,
                             Price = c.Price,
-                            DayStart = c.DayStart.ToString("dd/MM/yyyy"),
-                            DayEnd = c.DayEnd.ToString("dd/MM/yyyy"),
+                            DayStart = c.DayStart.ToString("yyyy-MM-dd"),
+                            DayEnd = c.DayEnd.ToString("yyyy-MM-dd"),
                             SubjectName = _subjectService.GetSubjects()
                                           .Where(s => s.SubjectId == c.SubjectId)
                                           .Select(s => s.Description)
@@ -220,11 +220,11 @@ namespace API.Controllers
                         {
                             Classid = c.ClassId,
                             ClassName = c.ClassName,
-                            Createday = c.CreateDay.ToString("dd/MM/yyyy"),
+                            Createday = c.CreateDay.ToString("yyyy-MM-dd"),
                             Description = c.Description,
                             Price = c.Price,
-                            DayStart = c.DayStart.ToString("dd/MM/yyyy"),
-                            DayEnd = c.DayEnd.ToString("dd/MM/yyyy"),
+                            DayStart = c.DayStart.ToString("yyyy-MM-dd"),
+                            DayEnd = c.DayEnd.ToString("yyyy-MM-dd"),
                             SubjectName = _subjectService.GetSubjects()
                                          .Where(s => s.SubjectId == c.SubjectId)
                                          .Select(s => s.Description)
@@ -258,7 +258,7 @@ namespace API.Controllers
             var calenders = from calender in _classCalenderService.GetClassCalenders().Where(s => s.ClassId == classid)
                             select new CalenderVM()
                             {
-                                BookDay = calender.DayOfWeek.ToString("dd/MM/yyyy"),
+                                BookDay = calender.DayOfWeek.ToString("yyyy-MM-dd"),
                                 Time = calender.TimeStart.ToString() + "h - " + calender.TimeEnd.ToString() + "h",
                                 ClassId = calender.ClassId,
                             };

@@ -129,9 +129,9 @@ namespace API.Controllers
                         select new FormRequestTutorVM()
                         {
                             FormId = form.FormId,
-                            CreateDay = form.CreateDay.ToString("dd/MM/yyyy HH:mm"),
-                            DayStart = form.DayStart.ToString("dd/MM/yyyy"),
-                            DayEnd = form.DayEnd.ToString("dd/MM/yyyy"),
+                            CreateDay = form.CreateDay.ToString("yyyy-MM-dd HH:mm"),
+                            DayStart = form.DayStart.ToString("yyyy-MM-dd"),
+                            DayEnd = form.DayEnd.ToString("yyyy-MM-dd"),
                             DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(form.DayOfWeek),
                             TimeStart = form.TimeStart.ToString() + "h",
                             TimeEnd = form.TimeEnd.ToString() + "h",
@@ -167,9 +167,9 @@ namespace API.Controllers
                         select new FormRequestTutorVM()
                         {
                             FormId = form.FormId,
-                            CreateDay = form.CreateDay.ToString("dd/MM/yyyy HH:mm"),
-                            DayStart = form.DayStart.ToString("dd/MM/yyyy"),
-                            DayEnd = form.DayEnd.ToString("dd/MM/yyyy"),
+                            CreateDay = form.CreateDay.ToString("yyyy-MM-dd HH:mm"),
+                            DayStart = form.DayStart.ToString("yyyy-MM-dd"),
+                            DayEnd = form.DayEnd.ToString("yyyy-MM-dd"),
                             DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(form.DayOfWeek),
                             TimeStart = form.TimeStart.ToString() + "h",
                             TimeEnd = form.TimeEnd.ToString() + "h",
