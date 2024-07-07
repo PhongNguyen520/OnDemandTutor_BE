@@ -85,19 +85,13 @@ namespace Repositories
                     && tu.TypeOfDegree == requestSearchTutorModel.TypeOfDegree);
             }
 
-            if (allTutor.Count() <= 0)
-            {
-                allTutor = null;
-            }
-
             return allTutor;
         }
 
         public IEnumerable<ResponseSearchTutorModel> Sorting
             (IEnumerable<ResponseSearchTutorModel> query, 
             string? sortBy, 
-            string? sortType,
-            int pageIndex)
+            string? sortType)
         {
             //_____SORT_____
             if (!string.IsNullOrEmpty(sortBy))
@@ -123,17 +117,6 @@ namespace Repositories
             {
                 query = query.OrderBy(t => t.HourlyRate);
             }
-
-            //_____PAGING_____
-            int validPageIndex = pageIndex > 0 ? pageIndex - 1 : 0;
-            int validPageSize = 10;
-
-            if (query.Count() < 10)
-            {
-                validPageSize = query.Count();
-            }
-
-            query = query.Skip(validPageIndex * validPageSize).Take(validPageSize);
 
             return query;
         }

@@ -14,6 +14,7 @@ using BusinessObjects.Models;
 using API.Services;
 using System.Threading.Tasks.Dataflow;
 using NuGet.Protocol;
+using System.Globalization;
 
 namespace API.Controllers
 {
@@ -29,6 +30,8 @@ namespace API.Controllers
         private readonly IAccountService _accountService;
         private readonly IClassCalenderService _classCalenderService;
         private readonly IRequestTutorFormService _requestTutorFormService;
+        private readonly IFindTutorFormService _findTutorFormService;
+        private readonly IPagingListService<ClassVM> _pagingListService;
 
         public ClassesController(ICurrentUserService currentUserService, IAccountService accountService)
         {
@@ -40,14 +43,63 @@ namespace API.Controllers
             _accountService = accountService;
             _classCalenderService = new ClassCalenderService();
             _requestTutorFormService = new RequestTutorFormService();
+            _findTutorFormService = new FindTutorFormService();
+            _pagingListService = new PagingListService<ClassVM>();
         }
 
         // Class tự động tạo sau khi Tutor duyệt form
         [HttpPost("createClassByFormRequest")]
-        public IActionResult Create(CreateRequestTutor request)
+        public IActionResult CreateByRequest(CreateClassByRequestVM request)
         {
-            var form = _requestTutorFormService.GetRequestTutorForms().Where(s => s.FormId == request.FormId).FirstOrDefault();
-            var tutor = _tutorService.GetTutors().Where(s => s.TutorId == form.TutorId).FirstOrDefault();
+            var form = _requestTutorFormService.GetRequestTutorForms().Where(s => s.FormId == request.FormId).First();
+
+            var tutor = _tutorService.GetTutors().Where(s => s.TutorId == form.TutorId).First();
+
+            List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
+
+            List<DateTime> filteredDates = _classCalenderService.GetDatesByDaysOfWeek(form.DayStart, form.DayEnd, desiredDays);
+
+            var newClass = new Class()
+            {
+                ClassId = Guid.NewGuid().ToString(),
+                ClassName = request.ClassName,
+                Price = (float)(tutor.HourlyRate * (form.TimeEnd - form.TimeStart) * filteredDates.Count),
+                Description = request.Description,
+                CreateDay = DateTime.Now,
+                DayStart = form.DayStart,
+                DayEnd = form.DayEnd,
+                Status = true,
+                IsApprove = null,
+                StudentId = form.StudentId,
+                TutorId = tutor.TutorId,
+                SubjectId = form.SubjectId,
+            };
+
+            _classService.AddClass(newClass);
+
+            var newClassCalender = new ClassCalender();
+            foreach (var day in filteredDates)
+            {
+                newClassCalender.CalenderId = Guid.NewGuid().ToString();
+                newClassCalender.DayOfWeek = day;
+                newClassCalender.TimeStart = form.TimeStart;
+                newClassCalender.TimeEnd = form.TimeEnd;
+                newClassCalender.IsActive = true;
+                newClassCalender.ClassId = newClass.ClassId;
+
+                _classCalenderService.AddClassCalender(newClassCalender);
+            }
+
+            return Ok();
+        }
+
+        // Class tự động tạo sau khi Student duyệt Tutor
+        [HttpPost("createClassByFormFind")]
+        public IActionResult CreateByFind(CreateClassByFindVM request)
+        {
+            var form = _findTutorFormService.GetFindTutorForms().Where(s => s.FormId == request.FormId).First();
+
+            var tutor = _tutorService.GetTutors().Where(s => s.TutorId == request.TutorId).First();
 
             List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
 
@@ -91,118 +143,139 @@ namespace API.Controllers
         public IActionResult GetTutorCalender(string tutorId)
         {
             var calenders = _classCalenderService.GetClassCalenders();
-            var classes = _classService.GetClasses().Where(s => s.TutorId == tutorId && s.Status != true);
+            var classes = _classService.GetClasses().Where(s => s.TutorId == tutorId && s.Status == null && s.IsApprove == true);
 
             var result = from calender in calenders
                          join classL in classes
                          on calender.ClassId equals classL.ClassId
                          select new CalenderVM()
                          {
-                             BookDay = calender.DayOfWeek,
-                             TimeStart = calender.TimeStart,
-                             TimeEnd = calender.TimeEnd,
+                             BookDay = calender.DayOfWeek.ToString("yyyy-MM-dd"),
+                             Time = calender.TimeStart.ToString() + "h - " + calender.TimeEnd.ToString() + "h",
                              ClassId = calender.ClassId,
                          };
 
             return Ok(result);
         }
 
-        // Tutor view class
-        [HttpGet("tutor/viewClass")]
-        public IActionResult TutorViewClass(bool action)
+        // Tutor view class List
+        [HttpGet("tutor/viewClassList")]
+        public IActionResult TutorViewClass(bool status, bool isApprove, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
-            var tutor = _tutorService.GetTutors().FirstOrDefault(s => s.AccountId == user);
+            var tutor = _tutorService.GetTutors().First(s => s.AccountId == user);
 
             var classList = _classService.GetClasses()
-                                           .Where(c => c.Status == action && c.TutorId == tutor.TutorId);
+                                           .Where(c => c.Status == status && c.IsApprove == isApprove && c.TutorId == tutor.TutorId);
 
-            var classVMs = from c in classList
-                           select new ClassVM()
-                           {
-                               ClassName = c.ClassName,
-                               Createday = c.CreateDay,
-                               Description = c.Description,
-                               Price = c.Price,
-                               DayStart = c.DayStart,
-                               DayEnd = c.DayEnd,
-                               SubjectName = _subjectService.GetSubjects()
-                                             .Where(s => s.SubjectId == c.SubjectId)
-                                             .Select(s => s.Description)
-                                             .FirstOrDefault(),
-                               StudentName = (from s in _studentService.GetStudents()
-                                              join a in _accountService.GetAccounts()
-                                              on s.AccountId equals a.Id
-                                              where s.StudentId == c.StudentId
-                                              select a.FullName).FirstOrDefault(),
-                               StudentAvatar = (from s in _studentService.GetStudents()
-                                                join a in _accountService.GetAccounts()
-                                              on s.AccountId equals a.Id
-                                                where s.StudentId == c.StudentId
-                                                select a.Avatar).FirstOrDefault(),
-                               TutorName = _accountService.GetAccounts()
-                                             .Where(a => a.Id == tutor.AccountId)
-                                             .Select(a => a.FullName)
-                                             .FirstOrDefault(),
-                               TutorAvatar = _accountService.GetAccounts()
-                                               .Where(a => a.Id == tutor.AccountId)
-                                               .Select(a => a.Avatar)
-                                               .FirstOrDefault(),
-                               ClassCalenders = _classCalenderService.GetClassCalenders().Where(s => s.ClassId == c.ClassId).ToList(),
-                           };
+            var query = from c in classList
+                        select new ClassVM()
+                        {
+                            Classid = c.ClassId,
+                            ClassName = c.ClassName,
+                            Createday = c.CreateDay.ToString("yyyy-MM-dd"),
+                            Description = c.Description,
+                            Price = c.Price,
+                            DayStart = c.DayStart.ToString("yyyy-MM-dd"),
+                            DayEnd = c.DayEnd.ToString("yyyy-MM-dd"),
+                            SubjectName = _subjectService.GetSubjects()
+                                          .Where(s => s.SubjectId == c.SubjectId)
+                                          .Select(s => s.Description)
+                                          .FirstOrDefault(),
+                            UserId = (from s in _studentService.GetStudents()
+                                      join a in _accountService.GetAccounts()
+                                      on s.AccountId equals a.Id
+                                      where s.StudentId == c.StudentId
+                                      select a.Id).FirstOrDefault(),
+                            FullName = (from s in _studentService.GetStudents()
+                                        join a in _accountService.GetAccounts()
+                                        on s.AccountId equals a.Id
+                                        where s.StudentId == c.StudentId
+                                        select a.FullName).FirstOrDefault(),
+                            Avatar = (from s in _studentService.GetStudents()
+                                      join a in _accountService.GetAccounts()
+                                    on s.AccountId equals a.Id
+                                      where s.StudentId == c.StudentId
+                                      select a.Avatar).FirstOrDefault(),
+                        };
 
-            return Ok(classVMs);
+            var result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
+
+            return Ok(result);
         }
 
-        // Student view class
-        [HttpGet("student/viewClass")]
-        public IActionResult StudentViewClass(bool action)
+        // Student view class list
+        [HttpGet("student/viewClassList")]
+        public IActionResult StudentViewClass(bool status, bool isApprove, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
-            var student = _studentService.GetStudents().FirstOrDefault(s => s.AccountId == user);
+            var student = _studentService.GetStudents().First(s => s.AccountId == user);
 
 
             var classList = _classService.GetClasses()
-                                           .Where(c => c.Status == action && c.StudentId == student.StudentId);
+                                           .Where(c => c.Status == status && c.IsApprove == isApprove && c.StudentId == student.StudentId);
 
-            var classVMs = from c in classList
-                           select new ClassVM()
-                           {
-                               ClassName = c.ClassName,
-                               Createday = c.CreateDay,
-                               Description = c.Description,
-                               Price = c.Price,
-                               DayStart = c.DayStart,
-                               DayEnd = c.DayEnd,
-                               SubjectName = _subjectService.GetSubjects()
-                                            .Where(s => s.SubjectId == c.SubjectId)
-                                            .Select(s => s.Description)
-                                            .FirstOrDefault(),
-                               StudentName = _accountService.GetAccounts()
-                                            .Where(a => a.Id == student.AccountId)
-                                            .Select(a => a.FullName)
-                                            .FirstOrDefault(),
-                               StudentAvatar = _accountService.GetAccounts()
-                                              .Where(a => a.Id == student.AccountId)
-                                              .Select(a => a.Avatar)
-                                              .FirstOrDefault(),
-                               TutorName = (from t in _tutorService.GetTutors()
-                                            join a in _accountService.GetAccounts()
-                                            on t.AccountId equals a.Id
-                                            where t.TutorId == c.TutorId
-                                            select a.FullName).FirstOrDefault(),
-                               TutorAvatar = (from t in _tutorService.GetTutors()
-                                              join a in _accountService.GetAccounts()
-                                              on t.AccountId equals a.Id
-                                              where t.TutorId == c.TutorId
-                                              select a.Avatar).FirstOrDefault(),
-                               ClassCalenders = _classCalenderService.GetClassCalenders().Where(s => s.ClassId == c.ClassId).ToList(),
+            var query = from c in classList
+                        select new ClassVM()
+                        {
+                            Classid = c.ClassId,
+                            ClassName = c.ClassName,
+                            Createday = c.CreateDay.ToString("yyyy-MM-dd"),
+                            Description = c.Description,
+                            Price = c.Price,
+                            DayStart = c.DayStart.ToString("yyyy-MM-dd"),
+                            DayEnd = c.DayEnd.ToString("yyyy-MM-dd"),
+                            SubjectName = _subjectService.GetSubjects()
+                                         .Where(s => s.SubjectId == c.SubjectId)
+                                         .Select(s => s.Description)
+                                         .FirstOrDefault(),
+                            UserId = (from t in _tutorService.GetTutors()
+                                      join a in _accountService.GetAccounts()
+                                      on t.AccountId equals a.Id
+                                      where t.TutorId == c.TutorId
+                                      select a.Id).FirstOrDefault(),
+                            FullName = (from t in _tutorService.GetTutors()
+                                        join a in _accountService.GetAccounts()
+                                        on t.AccountId equals a.Id
+                                        where t.TutorId == c.TutorId
+                                        select a.FullName).FirstOrDefault(),
+                            Avatar = (from t in _tutorService.GetTutors()
+                                      join a in _accountService.GetAccounts()
+                                      on t.AccountId equals a.Id
+                                      where t.TutorId == c.TutorId
+                                      select a.Avatar).FirstOrDefault(),
+                        };
 
-                           };
+            var result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
 
-            return Ok(classVMs);
+            return Ok(result);
         }
 
+        [HttpGet("viewClassDetail")]
+        public IActionResult ClassDetail(string classid)
+        {
+            var classDetail = _classService.GetClasses().Where(s => s.ClassId == classid).First();
+            var calenders = from calender in _classCalenderService.GetClassCalenders().Where(s => s.ClassId == classid)
+                            select new CalenderVM()
+                            {
+                                BookDay = calender.DayOfWeek.ToString("yyyy-MM-dd"),
+                                Time = calender.TimeStart.ToString() + "h - " + calender.TimeEnd.ToString() + "h",
+                                ClassId = calender.ClassId,
+                            };
+            var result = new ClassDetail()
+            {
+                ClassId = classid,
+                ClassName = classDetail.ClassName,
+                Description = classDetail.Description,
+                SubjectName = _subjectService.GetSubjects()
+                                         .Where(s => s.SubjectId == classDetail.SubjectId)
+                                         .Select(s => s.Description)
+                                         .FirstOrDefault(),
+                Calenders = calenders.ToList(),
+            };
+
+            return Ok(result);
+        }
 
         //Student browse class
         [HttpPut("student/browseClass")]
@@ -210,7 +283,7 @@ namespace API.Controllers
         {
             if (classId is not null)
             {
-                var getClass = _classService.GetClasses().Where(s => s.ClassId == classId).FirstOrDefault();
+                var getClass = _classService.GetClasses().Where(s => s.ClassId == classId).First();
                 getClass.IsApprove = action;
                 _classService.UpdateClasses(getClass);
             }

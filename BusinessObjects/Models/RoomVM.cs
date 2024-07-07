@@ -17,6 +17,7 @@ namespace BusinessObjects.Models
         public string AccountId { get; set; }
         public string Avatar { get; set; }
         public string Name { get; set; }
+        public string? LastMessage { get; set; }
     }
 
     public class MessageVM
@@ -26,7 +27,7 @@ namespace BusinessObjects.Models
         public string FullName { get; set; }
         public string Content { get; set; }
         public string Avatar { get; set; }
-        public DateTime Time { get; set; }
+        public string Time { get; set; }
         public string RoomId { get; set; }
     }
 

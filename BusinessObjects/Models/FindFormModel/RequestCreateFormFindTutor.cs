@@ -11,6 +11,11 @@ namespace BusinessObjects.Models.FindFormModel
         public string GradeId {  get; set; } = string.Empty;
         public string SubjectGroupId { get; set; } = string.Empty;
         public string Tittle { get; set; } = string.Empty;
+        public DateTime DayStart { get; set; }
+        public DateTime DayEnd { get; set; }
+        public string DayOfWeek {  get; set; } = string.Empty;
+        public int TimeStart { get; set; }
+        public int TimeEnd { get; set; }
         public double? MinHourlyRate { get; set; }
         public double? MaxHourlyRate { get; set; }
         public string? TypeOfDegree { get; set; }

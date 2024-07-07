@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,13 @@ namespace DAOs
 
         public bool UpdateRequestTutorForms(RequestTutorForm form)
         {
+            var trackedEntity = dbContext.RequestTutorForms.Local
+                           .FirstOrDefault(f => f.FormId == form.FormId);
+            if (trackedEntity != null)
+            {
+                dbContext.Entry(trackedEntity).State = EntityState.Detached;
+            }
+
             dbContext.RequestTutorForms.Update(form);
             dbContext.SaveChanges();
             return true;

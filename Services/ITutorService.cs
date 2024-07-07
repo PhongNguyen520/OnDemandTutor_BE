@@ -25,8 +25,7 @@ namespace Services
         public IEnumerable<ResponseSearchTutorModel> Sorting
             (IEnumerable<ResponseSearchTutorModel> query,
             string? sortBy,
-            string? sortType,
-            int pageIndex);
+            string? sortType);
         Task<TutorVM> UpdateTutor(string idAccount, TutorVM tutorVM);
         Task<TutorVM> GetTutorCurrent(string idAccount);
         Task<bool> ChangeStatusTutor(string idAccount);

@@ -44,6 +44,7 @@ namespace BusinessObjects.Models
         public String? PhoneNumber { get; set; }
         public bool Gender { get; set; }
         public int isActive { get; set; } = 1;
+        public string? Avatar { get; set; }
         public List<string> RolesName { get; set; }
     }
 
@@ -66,6 +67,7 @@ namespace BusinessObjects.Models
         [StringLength(10)]
         public String? PhoneNumber { get; set; }
         public bool Gender { get; set; }
+        public string? Avatar { get; set; }
         public int isActive { get; set; } = 1;
     }
 
@@ -141,6 +143,7 @@ namespace BusinessObjects.Models
         [StringLength(10)]
         public String? PhoneNumber { get; set; }
         public bool Gender { get; set; }
+        public string? Avatar { get; set; }
         public int isActive { get; set; } = 1;
 
     }

@@ -37,6 +37,8 @@ namespace API.Services
             var authClaims = new List<Claim>
             {
                 new Claim("UserId", user.Id.ToString()),
+                new Claim("FullName", user.FullName),
+                new Claim("Avatar", user.Avatar),
                 new Claim(ClaimTypes.UserData, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),

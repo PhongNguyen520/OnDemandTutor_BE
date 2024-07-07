@@ -20,5 +20,7 @@ namespace Repositories
         public List<DateTime> GetDatesByDaysOfWeek(DateTime startDate, DateTime endDate, List<DayOfWeek> desiredDays);
 
         public List<DayOfWeek> ParseDaysOfWeek(string input);
+
+        public string ConvertToDaysOfWeeks(string input);
     }
 }

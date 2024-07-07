@@ -71,8 +71,7 @@ namespace Repositories
         public IEnumerable<FormFindTutorVM> Sorting
             (IEnumerable<FormFindTutorVM> query,
             string? sortBy,
-            string? sortType,
-            int pageIndex)
+            string? sortType)
         {
             //_____SORT_____
             if (!string.IsNullOrEmpty(sortType))
@@ -90,17 +89,6 @@ namespace Repositories
             {
                 query = query.OrderBy(t => t.CreateDay);
             }
-
-            //_____PAGING_____
-            int validPageIndex = pageIndex > 0 ? pageIndex - 1 : 0;
-            int validPageSize = 10;
-
-            if (query.Count() < 10)
-            {
-                validPageSize = query.Count();
-            }
-
-            query = query.Skip(validPageIndex * validPageSize).Take(validPageSize);
 
             return query;
         }

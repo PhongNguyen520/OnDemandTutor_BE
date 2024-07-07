@@ -77,5 +77,23 @@ namespace Repositories
 
             return daysOfWeek;
         }
+
+        public string ConvertToDaysOfWeeks(string input)
+        {
+            string result = string.Empty;
+            List<string> daysOfWeek = new List<string>();
+
+            string[] tokens = input.Split(',');
+            foreach (string token in tokens)
+            {
+                if (Enum.TryParse(typeof(DayOfWeek), token.Trim(), true, out var dayOfWeekValue))
+                {
+                    daysOfWeek.Add(((DayOfWeek)dayOfWeekValue).ToString());
+                }
+            }
+
+            result = string.Join(" | ", daysOfWeek);
+            return result;
+        }
     }
 }
