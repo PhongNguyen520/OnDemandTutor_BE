@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models.RequestFormModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,7 @@ namespace Services
         public List<RequestTutorForm> GetRequestTutorForms();
 
         public bool UpdateRequestTutorForms(RequestTutorForm form);
+
+        public FormMember? GetFormMember(string id);
     }
 }

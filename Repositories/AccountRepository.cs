@@ -25,6 +25,14 @@ namespace Repositories
         private IMapper _mapper;
         private readonly DAOs.DbContext _dbContext;
 
+        public AccountRepository()
+        {
+            if (accountDAO == null)
+            {
+                accountDAO = new AccountDAO();
+            }
+        }
+
         public AccountRepository(UserManager<Account> userManager,
             SignInManager<Account> signInManager, IConfiguration configuration,
             RoleManager<IdentityRole> roleManager, IMapper mapper, DAOs.DbContext dbContext)

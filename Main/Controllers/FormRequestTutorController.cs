@@ -23,10 +23,9 @@ namespace API.Controllers
         private readonly IClassCalenderService _classCalenderService;
         private readonly IClassService _classService;
         private readonly ITutorService _tutorService;
-        private readonly IAccountService _accountService;
         private readonly IPagingListService<FormRequestTutorVM> _pagingListService;
 
-        public FormRequestTutorController(ICurrentUserService currentUserService, IAccountService accountService)
+        public FormRequestTutorController(ICurrentUserService currentUserService)
         {
             _formService = new RequestTutorFormService();
             _currentUserService = currentUserService;
@@ -35,7 +34,6 @@ namespace API.Controllers
             _classCalenderService = new ClassCalenderService();
             _classService = new ClassService();
             _tutorService = new TutorService();
-            _accountService = accountService;
             _pagingListService = new PagingListService<FormRequestTutorVM>();
         }
 
@@ -110,21 +108,20 @@ namespace API.Controllers
             return Ok(newRequestForm.FormId);
         }
 
-        // Student view their request tutor form
-        [HttpGet("studentViewForm")]
-        public IActionResult StudentViewForm(int pageIndex)
+        // Tutor/Student view their request tutor form
+        [HttpGet("viewForm")]
+        public IActionResult viewForm(int pageIndex)
         {
             var userId = _currentUserService.GetUserId().ToString();
-            var studentId = _studentService.GetStudents().Where(s => s.AccountId == userId).Select(s => s.StudentId).FirstOrDefault();
-            var tutors = _tutorService.GetTutors();
-            var accounts = _accountService.GetAccounts();
 
-            var formList = _formService.GetRequestTutorForms().Where(s => s.StudentId == studentId);
-            var query = from form in formList
-                        join tutor in tutors
-                        on form.TutorId equals tutor.TutorId
-                        join account in accounts
-                        on tutor.AccountId equals account.Id
+            var memberForm = _formService.GetFormMember(userId);
+
+            if (!memberForm.List.Any())
+            {
+                return Ok("Not have any form");
+            }
+
+            var query = from form in memberForm.List
                         orderby form.CreateDay descending
                         select new FormRequestTutorVM()
                         {
@@ -136,46 +133,8 @@ namespace API.Controllers
                             TimeStart = form.TimeStart.ToString() + "h",
                             TimeEnd = form.TimeEnd.ToString() + "h",
                             SubjectName = _subjectService.GetSubjects().Where(s => s.SubjectId == form.SubjectId).Select(s => s.Description).FirstOrDefault(),
-                            FullName = account.FullName,
-                            Avatar = account.Avatar,
-                            Description = form.Description,
-                            StudentId = form.StudentId,
-                            TutorId = form.TutorId,
-                        };
-
-            var result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
-
-            return Ok(result);
-        }
-
-        // Tutor view their request tutor form
-        [HttpGet("tutorViewForm")]
-        public IActionResult TutorViewForm(int pageIndex)
-        {
-            var userId = _currentUserService.GetUserId().ToString();
-            var tutorId = _tutorService.GetTutors().Where(s => s.AccountId == userId).Select(s => s.TutorId).FirstOrDefault();
-            var students = _studentService.GetStudents();
-            var accounts = _accountService.GetAccounts();
-
-            var formList = _formService.GetRequestTutorForms().Where(s => s.TutorId == tutorId);
-            var query = from form in formList
-                        join student in students
-                        on form.StudentId equals student.StudentId
-                        join account in accounts
-                        on student.AccountId equals account.Id
-                        orderby form.CreateDay descending
-                        select new FormRequestTutorVM()
-                        {
-                            FormId = form.FormId,
-                            CreateDay = form.CreateDay.ToString("yyyy-MM-dd HH:mm"),
-                            DayStart = form.DayStart.ToString("yyyy-MM-dd"),
-                            DayEnd = form.DayEnd.ToString("yyyy-MM-dd"),
-                            DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(form.DayOfWeek),
-                            TimeStart = form.TimeStart.ToString() + "h",
-                            TimeEnd = form.TimeEnd.ToString() + "h",
-                            SubjectName = _subjectService.GetSubjects().Where(s => s.SubjectId == form.SubjectId).Select(s => s.Description).FirstOrDefault(),
-                            FullName = account.FullName,
-                            Avatar = account.Avatar,
+                            FullName = memberForm.FullName,
+                            Avatar = memberForm.Avatar,
                             Description = form.Description,
                             StudentId = form.StudentId,
                             TutorId = form.TutorId,

@@ -51,6 +51,11 @@ namespace API.Controllers
         {
             var forms = _findTutorFormService.GetFindTutorForms()
                                               .Where(s => s.IsActived == null && s.Status == null);
+            if (!forms.Any())
+            {
+                return Ok("Not have any form");
+            }
+
             var students = _studentService.GetStudents();
             // Tạo danh sách các FormVM để trả về
             var query = from form in forms
@@ -97,6 +102,11 @@ namespace API.Controllers
             //List post active 
             var allPost = _findTutorFormService.Filter(requestSearchPostModel);
 
+            if (!allPost.Any())
+            {
+                return Ok("Not have any post");
+            }
+
             var allStudents = _studentService.GetStudents();
             var allAccounts = _accountService.GetAccounts();
 
@@ -108,33 +118,34 @@ namespace API.Controllers
 
                 if (!allSubjectGroup.Any())
                 {
-                    allSubjectGroup = null; 
-                }
-                else
-                {
-                    allSubjectGroup = _subjectGroupService.GetSubjectGroups();
+                    return Ok($"Not found any subject match with '{searchQuery}'");
                 }
 
-                IEnumerable<Subject> allSubject = _subjectService.GetSubjects();
+                var allSubject = _subjectService.GetSubjects();
 
                 // Trường hợp chọn Grade
                 if (!string.IsNullOrEmpty(requestSearchPostModel.GradeId))
                 {
-                    allSubject = allSubject.Where(s => s.GradeId == requestSearchPostModel.GradeId);
+                    allSubject = allSubject.Where(s => s.GradeId == requestSearchPostModel.GradeId).ToList();
                 }// kết thúc
 
 
                 // Lấy danh sách môn học
-                IEnumerable<Subject> subjects = from sg in allSubjectGroup
-                                                join s in allSubject
-                                                on sg.SubjectGroupId equals s.SubjectGroupId
-                                                select s;
+                var subjects = from sg in allSubjectGroup
+                               join s in allSubject
+                               on sg.SubjectGroupId equals s.SubjectGroupId
+                               select s;
 
                 //Lấy danh sách form yêu cầu môn học tìm kiếm
                 allPost = from p in allPost
                           join s in subjects
                           on p.SubjectId equals s.SubjectId
                           select p;
+
+                if (!allSubjectGroup.Any())
+                {
+                    return Ok("Not found any match");
+                }
 
                 allPost = allPost.Distinct();
 
@@ -191,6 +202,11 @@ namespace API.Controllers
             }
 
             var forms = _findTutorFormService.GetFindTutorForms().Where(s => s.StudentId == student.StudentId && s.IsActived == null || s.IsActived == true);
+
+            if (!forms.Any())
+            {
+                return Ok("Not have any form");
+            }
 
             // Tạo danh sách các FormVM để trả về
             var query = from post in forms
@@ -369,9 +385,17 @@ namespace API.Controllers
         [HttpGet("student/viewApplyList")]
         public IActionResult ViewApplyList(string formId)
         {
+            var forms = _tutorApplyService.GetTutorApplies().Where(s => s.FormId == formId);
+            if (!forms.Any())
+            {
+                return Ok("Not have any tutor apply");
+            }
+
             var accounts = _accountService.GetAccounts();
-            var result = from form in _tutorApplyService.GetTutorApplies().Where(s => s.FormId == formId)
-                         join tutor in _tutorService.GetTutors()
+            var tutors = _tutorService.GetTutors();
+
+            var result = from form in forms
+                         join tutor in tutors
                          on form.TutorId equals tutor.TutorId
                          join account in accounts
                          on tutor.AccountId equals account.Id

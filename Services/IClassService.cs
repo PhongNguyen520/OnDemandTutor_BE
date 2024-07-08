@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,7 @@ namespace Services
         public List<Class> GetClasses();
 
         public bool UpdateClasses(Class @class);
+
+        public Form? CheckTypeForm(string id);
     }
 }

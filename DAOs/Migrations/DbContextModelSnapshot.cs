@@ -869,7 +869,7 @@ namespace DAOs.Migrations
 
                     b.HasKey("TransactionId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObjects.Tutor", b =>

@@ -7,24 +7,11 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.Models
 {
-    public class CreateClassByRequestVM
+    public class CreateClassVM
     {
         public string ClassName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        // StudentID == userId của Student
         public string FormId { get; set; } = string.Empty;
-        public string StudentId { get; set; } = string.Empty;
-    }
-
-    public class CreateClassByFindVM
-    {
-        public string ClassName { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        // StudentID == userId của Student
-        public string FormId { get; set; } = string.Empty;
-        public string StudentId { get; set; } = string.Empty;
-
-        public string TutorId {  get; set; } = string.Empty;
     }
 
     public class ClassVM
@@ -56,5 +43,17 @@ namespace BusinessObjects.Models
         public string BookDay { get; set; } = string.Empty;
         public string Time { get; set; } = string.Empty;
         public string ClassId { get; set; } = string.Empty;
+    }
+
+    public class Form
+    {
+        public string FormId { get; set; } = string.Empty;
+        public string DayOfWeek { get; set; } = string.Empty;
+        public DateTime DayStart { get; set; }
+        public DateTime DayEnd { get; set; }
+        public int TimeStart { get; set; }
+        public int TimeEnd { get; set; }
+        public string StudentId { get; set; } = string.Empty;
+        public string SubjectId { get; set; } = string.Empty;
     }
 }
