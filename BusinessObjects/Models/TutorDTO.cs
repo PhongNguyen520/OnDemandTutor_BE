@@ -30,4 +30,10 @@ namespace BusinessObjects.Models
 
         public string AccountId { get; set; } = null!;
     }
+
+    public class IsActiveTutor
+    {
+        public string AccountId { get; set; }
+        public bool Status { get; set; }
+    }
 }

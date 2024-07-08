@@ -18,11 +18,12 @@ namespace BusinessObjects.Models
 
     }
 
-    public class ComlaintClass()
+    public class ComlaintClass
     {
         public string ComplaintId { get; set; } = null!;
         public string ClassId { get; set; } = null!;
         public string? Complainter { get; set; }
     }
+
 }
 
