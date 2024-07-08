@@ -1,4 +1,5 @@
 ﻿using API.Services;
+using BusinessObjects.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -42,11 +43,11 @@ namespace API.Controllers
         }
 
         [HttpPost("ChangeStatusTutor")]
-        public async Task<IActionResult> ChangeStatusTutor(List<string> idAccount)
+        public async Task<IActionResult> ChangeStatusTutor(List<IsActiveTutor> acccount)
         {
-            foreach (var account in idAccount)
+            foreach (var x in acccount)
             {
-                if (await _tutorService.ChangeStatusTutor(account))
+                if (await _tutorService.ChangeStatusTutor(x))
                 {
                     return Ok("Successful");
                 }

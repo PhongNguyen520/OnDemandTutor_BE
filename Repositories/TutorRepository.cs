@@ -164,12 +164,12 @@ namespace Repositories
             }
         }
 
-        public async Task<bool> UpdateIsActiveTutor (string idAccount)
+        public async Task<bool> UpdateIsActiveTutor (IsActiveTutor model)
         {
-            var tutor = await _dbContext.Tutors.FirstOrDefaultAsync(t => t.AccountId == idAccount);
+            var tutor = await _dbContext.Tutors.FirstOrDefaultAsync(t => t.AccountId == model.AccountId);
             if(tutor != null)
             {
-                tutor.IsActive = true;
+                tutor.IsActive = model.Status;
                 tutorDAO.UpdateTutors(tutor);
                 return true;
             }
