@@ -25,7 +25,7 @@ public partial class Tutor
 
     public string? Address { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
     public string AccountId { get; set; } = null!;
 

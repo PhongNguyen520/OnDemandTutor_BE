@@ -42,11 +42,14 @@ namespace API.Controllers
         }
 
         [HttpPost("ChangeStatusTutor")]
-        public async Task<IActionResult> ChangeStatusTutor(string idAccount)
+        public async Task<IActionResult> ChangeStatusTutor(List<string> idAccount)
         {
-            if (await _tutorService.ChangeStatusTutor(idAccount))
+            foreach (var account in idAccount)
             {
-                return Ok("Successful");
+                if (await _tutorService.ChangeStatusTutor(account))
+                {
+                    return Ok("Successful");
+                }
             }
             return BadRequest("No Found!!!");
         }
@@ -60,6 +63,13 @@ namespace API.Controllers
                 return Ok(result);
             }
             return BadRequest();
+        }
+
+        [HttpGet("ShowListComplaint")]
+        public async Task<IActionResult> ShowListComplaint()
+        {
+            var list = await _complaintService.ShowListComplaintClass();
+            return Ok(list);
         }
     }
 }

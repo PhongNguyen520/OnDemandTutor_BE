@@ -102,5 +102,18 @@ namespace Repositories
             var result = _mapper.Map<ComplaintVM>(complaintDb);
             return result;
         }
+
+        public async Task<IQueryable<ComlaintClass>> GetAllComplaintStatusNull()
+        {
+            var listCom = _dbContext.Complaints.Where(_ => _.Status == null);
+            var enList = new List<ComlaintClass>();
+
+            foreach (var x in listCom)
+            {
+                var comcla = _mapper.Map<ComlaintClass>(x);
+                enList.Add(comcla);
+            }
+            return enList.AsQueryable();
+        }
     }
 }
