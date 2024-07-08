@@ -67,9 +67,9 @@ namespace Services
             return await _repository.GetTutorCurrent(idAccount);
         }
 
-        public async Task<bool> ChangeStatusTutor(string idAccount)
+        public async Task<bool> ChangeStatusTutor(IsActiveTutor model)
         {
-            return await _repository.UpdateIsActiveTutor(idAccount);
+            return await _repository.UpdateIsActiveTutor(model);
         }
     }
 }

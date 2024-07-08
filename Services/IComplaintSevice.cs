@@ -24,5 +24,7 @@ namespace Services
         Task<IQueryable<ComplaintVM>> ViewAllComplaintInClass(string classId);
 
         Task<ComplaintVM> ModeratorComplaint(string complaintId, string proce, bool sta);
+
+        Task<IQueryable<ComlaintClass>> ShowListComplaintClass();
     }
 }

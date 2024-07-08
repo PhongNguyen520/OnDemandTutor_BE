@@ -28,6 +28,6 @@ namespace Services
             string? sortType);
         Task<TutorVM> UpdateTutor(string idAccount, TutorVM tutorVM);
         Task<TutorVM> GetTutorCurrent(string idAccount);
-        Task<bool> ChangeStatusTutor(string idAccount);
+        Task<bool> ChangeStatusTutor(IsActiveTutor model);
     }
 }
