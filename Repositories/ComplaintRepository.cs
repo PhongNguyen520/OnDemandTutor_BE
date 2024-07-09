@@ -67,6 +67,7 @@ namespace Repositories
             complaintEn.StudentId = student.StudentId;
             complaintEn.Complainter = model.Complainter;
             complaintEn.Processnote = null;
+            complaintEn.CreateDay = DateTime.Now;
 
             _dbContext.Add(complaintEn);
             _dbContext.SaveChanges();

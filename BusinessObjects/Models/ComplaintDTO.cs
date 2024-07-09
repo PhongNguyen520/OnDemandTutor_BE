@@ -8,8 +8,6 @@ namespace BusinessObjects.Models
 {
     public class ComplaintDTO
     {
-        public DateTime CreateDay { get; set; }
-
         public string Description { get; set; } = null!;
 
         public string ClassId { get; set; } = null!;
