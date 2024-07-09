@@ -1,4 +1,5 @@
 ﻿using API.Services;
+using BusinessObjects.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -42,11 +43,14 @@ namespace API.Controllers
         }
 
         [HttpPost("ChangeStatusTutor")]
-        public async Task<IActionResult> ChangeStatusTutor(string idAccount)
+        public async Task<IActionResult> ChangeStatusTutor(List<IsActiveTutor> acccount)
         {
-            if (await _tutorService.ChangeStatusTutor(idAccount))
+            foreach (var x in acccount)
             {
-                return Ok("Successful");
+                if (await _tutorService.ChangeStatusTutor(x))
+                {
+                    return Ok("Successful");
+                }
             }
             return BadRequest("No Found!!!");
         }
@@ -60,6 +64,13 @@ namespace API.Controllers
                 return Ok(result);
             }
             return BadRequest();
+        }
+
+        [HttpGet("ShowListComplaint")]
+        public async Task<IActionResult> ShowListComplaint()
+        {
+            var list = await _complaintService.ShowListComplaintClass();
+            return Ok(list);
         }
     }
 }

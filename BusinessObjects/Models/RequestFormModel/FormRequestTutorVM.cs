@@ -22,4 +22,11 @@ namespace BusinessObjects.Models.RequestFormModel
         public string StudentId { get; set; } = string.Empty;
         public string TutorId { get; set; } = string.Empty;
     }
+
+    public class FormMember
+    {
+        public string? FullName { get; set; }
+        public string? Avatar { get; set; }
+        public List<RequestTutorForm> List { get; set; } = new List<RequestTutorForm>();
+    }
 }

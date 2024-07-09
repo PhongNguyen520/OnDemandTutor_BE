@@ -145,6 +145,10 @@ namespace API.Controllers
                                  TopFeedback = iFeedbackService.GetFeedbacks(t.TutorId).Select(s => s.Description).LastOrDefault(),
                                  TitleFeedback = iFeedbackService.GetFeedbacks(t.TutorId).Select(s => s.Title).LastOrDefault(),
                              });
+                if (!query.Any())
+                {
+                    return Ok("Not found any match");
+                }
 
                 query = iTutorService.Sorting(query, sortBy, sortType);
 

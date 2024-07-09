@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240708081549_null-IsActive-Tutor")]
+    partial class nullIsActiveTutor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -869,7 +872,7 @@ namespace DAOs.Migrations
 
                     b.HasKey("TransactionId");
 
-                    b.ToTable("Transactions", (string)null);
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("BusinessObjects.Tutor", b =>
@@ -1021,8 +1024,8 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("AccountID");
 
-                    b.Property<int?>("Balance")
-                        .HasColumnType("int");
+                    b.Property<float>("Balance")
+                        .HasColumnType("real");
 
                     b.Property<string>("BankName")
                         .IsRequired()

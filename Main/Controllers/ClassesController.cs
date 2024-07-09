@@ -29,8 +29,6 @@ namespace API.Controllers
         private readonly IStudentService _studentService;
         private readonly IAccountService _accountService;
         private readonly IClassCalenderService _classCalenderService;
-        private readonly IRequestTutorFormService _requestTutorFormService;
-        private readonly IFindTutorFormService _findTutorFormService;
         private readonly IPagingListService<ClassVM> _pagingListService;
 
         public ClassesController(ICurrentUserService currentUserService, IAccountService accountService)
@@ -42,64 +40,18 @@ namespace API.Controllers
             _studentService = new StudentService();
             _accountService = accountService;
             _classCalenderService = new ClassCalenderService();
-            _requestTutorFormService = new RequestTutorFormService();
-            _findTutorFormService = new FindTutorFormService();
             _pagingListService = new PagingListService<ClassVM>();
         }
 
-        // Class tự động tạo sau khi Tutor duyệt form
-        [HttpPost("createClassByFormRequest")]
-        public IActionResult CreateByRequest(CreateClassByRequestVM request)
-        {
-            var form = _requestTutorFormService.GetRequestTutorForms().Where(s => s.FormId == request.FormId).First();
-
-            var tutor = _tutorService.GetTutors().Where(s => s.TutorId == form.TutorId).First();
-
-            List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
-
-            List<DateTime> filteredDates = _classCalenderService.GetDatesByDaysOfWeek(form.DayStart, form.DayEnd, desiredDays);
-
-            var newClass = new Class()
-            {
-                ClassId = Guid.NewGuid().ToString(),
-                ClassName = request.ClassName,
-                Price = (float)(tutor.HourlyRate * (form.TimeEnd - form.TimeStart) * filteredDates.Count),
-                Description = request.Description,
-                CreateDay = DateTime.Now,
-                DayStart = form.DayStart,
-                DayEnd = form.DayEnd,
-                Status = true,
-                IsApprove = null,
-                StudentId = form.StudentId,
-                TutorId = tutor.TutorId,
-                SubjectId = form.SubjectId,
-            };
-
-            _classService.AddClass(newClass);
-
-            var newClassCalender = new ClassCalender();
-            foreach (var day in filteredDates)
-            {
-                newClassCalender.CalenderId = Guid.NewGuid().ToString();
-                newClassCalender.DayOfWeek = day;
-                newClassCalender.TimeStart = form.TimeStart;
-                newClassCalender.TimeEnd = form.TimeEnd;
-                newClassCalender.IsActive = true;
-                newClassCalender.ClassId = newClass.ClassId;
-
-                _classCalenderService.AddClassCalender(newClassCalender);
-            }
-
-            return Ok();
-        }
-
         // Class tự động tạo sau khi Student duyệt Tutor
-        [HttpPost("createClassByFormFind")]
-        public IActionResult CreateByFind(CreateClassByFindVM request)
+        [HttpPost("createClass")]
+        public IActionResult CreateClass(CreateClassVM request)
         {
-            var form = _findTutorFormService.GetFindTutorForms().Where(s => s.FormId == request.FormId).First();
+            var form = _classService.CheckTypeForm(request.FormId);
 
-            var tutor = _tutorService.GetTutors().Where(s => s.TutorId == request.TutorId).First();
+            var userId = _currentUserService.GetUserId().ToString();
+
+            var tutor = _tutorService.GetTutors().Where(s => s.AccountId == userId).First();
 
             List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
 
@@ -114,7 +66,7 @@ namespace API.Controllers
                 CreateDay = DateTime.Now,
                 DayStart = form.DayStart,
                 DayEnd = form.DayEnd,
-                Status = true,
+                Status = null,
                 IsApprove = null,
                 StudentId = form.StudentId,
                 TutorId = tutor.TutorId,
@@ -168,6 +120,11 @@ namespace API.Controllers
             var classList = _classService.GetClasses()
                                            .Where(c => c.Status == status && c.IsApprove == isApprove && c.TutorId == tutor.TutorId);
 
+            if (!classList.Any())
+            {
+                return Ok("Not have any class");
+            }
+
             var query = from c in classList
                         select new ClassVM()
                         {
@@ -214,6 +171,11 @@ namespace API.Controllers
 
             var classList = _classService.GetClasses()
                                            .Where(c => c.Status == status && c.IsApprove == isApprove && c.StudentId == student.StudentId);
+
+            if (!classList.Any())
+            {
+                return Ok("Not have any class");
+            }
 
             var query = from c in classList
                         select new ClassVM()
