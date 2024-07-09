@@ -106,6 +106,7 @@ namespace API.Controllers
                     IsValid = true,
                     PaymentId = id
                 };
+
                 if (response.vnp_ResponseCode == "00")
                 {
                     transactionService.AddTransaction(transaction);
