@@ -18,10 +18,10 @@ namespace DAOs
             }
         }
 
-        public bool AddSubjectTutor(SubjectTutor subjectTutor)
+        public async Task<bool> AddSubjectTutor(SubjectTutor subjectTutor)
         {
-            dbContext.SubjectTutors.Add(subjectTutor);
-            dbContext.SaveChanges();
+            await dbContext.SubjectTutors.AddAsync(subjectTutor);
+            await dbContext.SaveChangesAsync();
             return true;
         }
 

@@ -18,6 +18,6 @@ namespace Services
 
         public bool UpdateRequestTutorForms(RequestTutorForm form);
 
-        public FormMember? GetFormMember(string id);
+        public FormMember? GetFormMember(bool? status, string id);
     }
 }

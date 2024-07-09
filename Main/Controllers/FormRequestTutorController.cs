@@ -9,6 +9,8 @@ using Repositories;
 using Microsoft.AspNetCore.Components.Forms;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Microsoft.Extensions.Hosting;
+using BusinessObjects.Models.FindFormModel;
+using BusinessObjects.Models;
 
 namespace API.Controllers
 {
@@ -97,7 +99,7 @@ namespace API.Controllers
                 TimeEnd = form.TimeEnd,
                 Description = form.Description,
                 Status = null,
-                IsActive = null,
+                IsActive = true,
                 SubjectId = subject.SubjectId,
                 TutorId = form.TutorId,
                 StudentId = student.StudentId,
@@ -110,15 +112,17 @@ namespace API.Controllers
 
         // Tutor/Student view their request tutor form
         [HttpGet("viewForm")]
-        public IActionResult viewForm(int pageIndex)
+        public IActionResult viewForm(bool? status, int pageIndex)
         {
             var userId = _currentUserService.GetUserId().ToString();
 
-            var memberForm = _formService.GetFormMember(userId);
+            var memberForm = _formService.GetFormMember(status, userId);
+
+            PagingResult<FormRequestTutorVM> result = new PagingResult<FormRequestTutorVM>();
 
             if (!memberForm.List.Any())
             {
-                return Ok("Not have any form");
+                return Ok(result);
             }
 
             var query = from form in memberForm.List
@@ -136,11 +140,12 @@ namespace API.Controllers
                             FullName = memberForm.FullName,
                             Avatar = memberForm.Avatar,
                             Description = form.Description,
+                            Status = form.Status,
                             StudentId = form.StudentId,
                             TutorId = form.TutorId,
                         };
 
-            var result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
+            result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
 
             return Ok(result);
         }

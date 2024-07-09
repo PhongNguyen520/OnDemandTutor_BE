@@ -46,7 +46,7 @@ namespace Services
             return _requestTutorFormRepository.UpdateRequestTutorForms(form);
         }
 
-        public FormMember? GetFormMember(string id)
+        public FormMember? GetFormMember(bool? status, string id)
         {
             FormMember? result = null;
             var student = _studentRepository.GetStudents().Where(s => s.AccountId == id);
@@ -57,7 +57,8 @@ namespace Services
                 {
                     Avatar = account.Avatar,
                     FullName = account.FullName,
-                    List = _requestTutorFormRepository.GetRequestTutorForms().Where(s => s.StudentId == student.First().StudentId).ToList(),
+                    List = _requestTutorFormRepository.GetRequestTutorForms()
+                            .Where(s => s.StudentId == student.First().StudentId && s.Status == status).ToList(),
                 };
             }
 
@@ -69,7 +70,8 @@ namespace Services
                 {
                     Avatar = account.Avatar,
                     FullName = account.FullName,
-                    List = _requestTutorFormRepository.GetRequestTutorForms().Where(s => s.TutorId == tutor.First().TutorId).ToList(),
+                    List = _requestTutorFormRepository.GetRequestTutorForms()
+                            .Where(s => s.TutorId == tutor.First().TutorId && s.Status == status).ToList(),
                 };
             }
             return result;

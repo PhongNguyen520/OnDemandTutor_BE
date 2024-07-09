@@ -15,6 +15,7 @@ using System.Net;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Identity;
 using API.Services;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers
 {
@@ -70,6 +71,8 @@ namespace API.Controllers
                 searchQuery = requestSearchTutorModel.Search.ToLower();
             }
 
+            PagingResult<ResponseSearchTutorModel> result = new PagingResult<ResponseSearchTutorModel>();
+
             //List tutors active 
             var allTutor = iTutorService.Filter(requestSearchTutorModel);
 
@@ -85,7 +88,7 @@ namespace API.Controllers
 
                 if (!allSubjectGroup.Any() && !allAccount.Any())
                 {
-                    return Ok("Not found any match");
+                    return Ok(result);
                 }
                 else if (!allSubjectGroup.Any())
                 {
@@ -147,17 +150,17 @@ namespace API.Controllers
                              });
                 if (!query.Any())
                 {
-                    return Ok("Not found any match");
+                    return Ok(result);
                 }
 
                 query = iTutorService.Sorting(query, sortBy, sortType);
 
-                var result = pagingListService.Paging(query.ToList(), requestSearchTutorModel.pageIndex, 5);
+                result = pagingListService.Paging(query.ToList(), requestSearchTutorModel.pageIndex, 5);
 
                 return Ok(result);
             }
 
-            return Ok("Not found any match");
+            return Ok(result);
         }
 
         [HttpGet("Id/{id}")]
@@ -237,6 +240,48 @@ namespace API.Controllers
             }
             var result = await iTutorService.GetTutorCurrent(accountId);
             return Ok(result);
+        }
+
+        [HttpPost("RegistrateTutorSubject")]
+        public async Task<IActionResult> RegistrateTutorSubject(RegistrateSubject registrateSubject)
+        {
+            List<SubjectTutor> list = new List<SubjectTutor>();
+            foreach (var grade in registrateSubject.GradeId)
+            {
+                var subject = iSubjectService.GetSubjects().Where(s => s.SubjectGroupId == registrateSubject.SubjectGroupId && s.GradeId == grade);
+                var tutorSubject = new SubjectTutor()
+                {
+                    TutorId = registrateSubject.TutorId,
+                    SubjectId = subject.First().SubjectId,
+                    IsActive = true,
+                };
+
+                var check = iSubjectTutorService.GetAllSubjectTutors()
+                            .Where(s => s.TutorId == registrateSubject.TutorId
+                            && s.SubjectId == subject.First().SubjectId);
+                if (check.Any())
+                {
+                    if (check.First().IsActive == false)
+                    {
+                        check.First().IsActive = true;
+                    } else
+                    {
+                        return BadRequest($"You registrated {subject.First().Description} before!");
+                    }
+                }
+
+                list.Add(tutorSubject);
+            }
+
+            if (list.Count > 0)
+            {
+                foreach (var tutor in list)
+                {
+                    await iSubjectTutorService.AddSubjectTutor(tutor);
+                }
+            }
+            
+            return Ok();
         }
     }
 }
