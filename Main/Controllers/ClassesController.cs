@@ -15,6 +15,7 @@ using API.Services;
 using System.Threading.Tasks.Dataflow;
 using NuGet.Protocol;
 using System.Globalization;
+using BusinessObjects.Models.FindFormModel;
 
 namespace API.Controllers
 {
@@ -112,7 +113,7 @@ namespace API.Controllers
 
         // Tutor view class List
         [HttpGet("tutor/viewClassList")]
-        public IActionResult TutorViewClass(bool status, bool isApprove, int pageIndex)
+        public IActionResult TutorViewClass(bool? status, bool? isApprove, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
             var tutor = _tutorService.GetTutors().First(s => s.AccountId == user);
@@ -120,9 +121,10 @@ namespace API.Controllers
             var classList = _classService.GetClasses()
                                            .Where(c => c.Status == status && c.IsApprove == isApprove && c.TutorId == tutor.TutorId);
 
+            PagingResult<ClassVM> result = new PagingResult<ClassVM>();
             if (!classList.Any())
             {
-                return Ok("Not have any class");
+                return Ok(result);
             }
 
             var query = from c in classList
@@ -154,16 +156,18 @@ namespace API.Controllers
                                     on s.AccountId equals a.Id
                                       where s.StudentId == c.StudentId
                                       select a.Avatar).FirstOrDefault(),
+                            Status = c.Status,
+                            IsApprove = c.IsApprove,
                         };
 
-            var result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
+            result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
 
             return Ok(result);
         }
 
         // Student view class list
         [HttpGet("student/viewClassList")]
-        public IActionResult StudentViewClass(bool status, bool isApprove, int pageIndex)
+        public IActionResult StudentViewClass(bool? status, bool? isApprove, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
             var student = _studentService.GetStudents().First(s => s.AccountId == user);
@@ -172,9 +176,10 @@ namespace API.Controllers
             var classList = _classService.GetClasses()
                                            .Where(c => c.Status == status && c.IsApprove == isApprove && c.StudentId == student.StudentId);
 
+            PagingResult<ClassVM> result = new PagingResult<ClassVM>();
             if (!classList.Any())
             {
-                return Ok("Not have any class");
+                return Ok(result);
             }
 
             var query = from c in classList
@@ -206,9 +211,11 @@ namespace API.Controllers
                                       on t.AccountId equals a.Id
                                       where t.TutorId == c.TutorId
                                       select a.Avatar).FirstOrDefault(),
+                            Status = c.Status,
+                            IsApprove = c.IsApprove,
                         };
 
-            var result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
+            result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
 
             return Ok(result);
         }

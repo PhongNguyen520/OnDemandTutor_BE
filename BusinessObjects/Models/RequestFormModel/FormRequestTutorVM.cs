@@ -19,6 +19,7 @@ namespace BusinessObjects.Models.RequestFormModel
         public string? Avatar { get; set; }
         public string? SubjectName { get; set; }
         public string? Description { get; set; }
+        public bool? Status { get; set; }
         public string StudentId { get; set; } = string.Empty;
         public string TutorId { get; set; } = string.Empty;
     }

@@ -23,6 +23,8 @@ namespace BusinessObjects.Models.FindFormModel
         public string SubjectName { get; set; } = string.Empty ;
         public string? Description { get; set; }
         public bool? TutorGender { get; set; }
+        public bool? Status { get; set; }
+        public bool? IsActived { get; set; }
         public string SubjectId { get; set; } = string.Empty;
         public string StudentId { get; set; } = string.Empty;
     }
@@ -33,5 +35,22 @@ namespace BusinessObjects.Models.FindFormModel
         public string TutorName { get; set; } = string.Empty;
         public string? TutorAvatar { get; set; }
         public string DayApply { get; set; } = string.Empty;
+    }
+
+    public class UpdateFormVM
+    {
+        public required string FormId { get; set; }
+        public DateTime DayStart { get; set; }
+        public DateTime DayEnd { get; set; }
+        public string DayOfWeek { get; set; } = string.Empty;
+        public int TimeStart { get; set; }
+        public int TimeEnd { get; set; }
+        public string? Title { get; set; }
+        public double? MinHourlyRate { get; set; }
+        public double? MaxHourlyRate { get; set; }
+        public string GradeId { get; set; } = string.Empty;
+        public string SubjectGroupId {  get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public bool? TutorGender { get; set; }
     }
 }

@@ -23,6 +23,8 @@ namespace BusinessObjects.Models
         public string DayEnd { get; set; } = string.Empty;
         public string? Description { get; set; }
         public double Price { get; set; }
+        public bool? Status { get; set; }
+        public bool? IsApprove { get; set; }
         public string? SubjectName { get; set; }
         public string? UserId { get; set; }
         public string? FullName { get; set; }

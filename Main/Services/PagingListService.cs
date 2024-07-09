@@ -12,11 +12,17 @@ namespace API.Services
         public PagingResult<T> Paging(List<T> list, int pageIndex, int validPageSize)
         {
             int validPageIndex = pageIndex > 0 ? pageIndex - 1 : 0;
-            int totalPage = list.Count();
+            int totalItems = list.Count();
+            int limitPage = 0;
 
             if (list.Count() < validPageSize)
             {
                 validPageSize = list.Count();
+            }
+
+            if (totalItems != 0)
+            {
+                limitPage = (int)Math.Ceiling((double)totalItems / validPageSize);
             }
 
             list = list.Skip(validPageIndex * validPageSize).Take(validPageSize).ToList();
@@ -24,7 +30,7 @@ namespace API.Services
             var result = new PagingResult<T>()
             {
                 ListResult = list,
-                LimitPage = (int)Math.Ceiling((double)totalPage / validPageSize),
+                LimitPage = limitPage,
             };
 
             return result;

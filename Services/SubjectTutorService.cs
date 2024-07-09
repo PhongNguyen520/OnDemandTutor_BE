@@ -19,9 +19,9 @@ namespace Services
                 iSubjectTutorRepository = new SubjectTutorRepository();
             }
         }
-        public bool AddSubjectTutor(SubjectTutor subjectTutor)
+        public async Task<bool> AddSubjectTutor(SubjectTutor subjectTutor)
         {
-            return iSubjectTutorRepository.AddSubjectTutor(subjectTutor);
+            return await iSubjectTutorRepository.AddSubjectTutor(subjectTutor);
         }
 
         public bool DelSubjectTutors(int id)

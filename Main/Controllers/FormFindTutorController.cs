@@ -49,11 +49,13 @@ namespace API.Controllers
         [HttpGet("moderator/viewformlist")]
         public IActionResult GetRequestList(int pageIndex)
         {
+            PagingResult<FormFindTutorVM> result = new PagingResult<FormFindTutorVM>();
+
             var forms = _findTutorFormService.GetFindTutorForms()
                                               .Where(s => s.IsActived == null && s.Status == null);
             if (!forms.Any())
             {
-                return Ok("Not have any form");
+                return Ok(result);
             }
 
             var students = _studentService.GetStudents();
@@ -78,10 +80,12 @@ namespace API.Controllers
                             MaxHourlyRate = form.MaxHourlyRate,
                             Description = form.DescribeTutor,
                             TutorGender = form.TutorGender,
+                            Status = form.Status,
+                            IsActived = form.IsActived,
                             SubjectId = form.SubjectId,
                             StudentId = student.StudentId,
                         };
-            var result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
+            result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
 
             return Ok(result);
         }
@@ -99,12 +103,14 @@ namespace API.Controllers
                 searchQuery = requestSearchPostModel.Search.ToLower();
             }
 
+            PagingResult<FormFindTutorVM> result = new PagingResult<FormFindTutorVM>();
+
             //List post active 
             var allPost = _findTutorFormService.Filter(requestSearchPostModel);
 
             if (!allPost.Any())
             {
-                return Ok("Not have any post");
+                return Ok(result);
             }
 
             var allStudents = _studentService.GetStudents();
@@ -118,7 +124,7 @@ namespace API.Controllers
 
                 if (!allSubjectGroup.Any())
                 {
-                    return Ok($"Not found any subject match with '{searchQuery}'");
+                    return Ok(result);
                 }
 
                 var allSubject = _subjectService.GetSubjects();
@@ -144,7 +150,7 @@ namespace API.Controllers
 
                 if (!allSubjectGroup.Any())
                 {
-                    return Ok("Not found any match");
+                    return Ok(result);
                 }
 
                 allPost = allPost.Distinct();
@@ -172,12 +178,14 @@ namespace API.Controllers
                             MaxHourlyRate = post.MaxHourlyRate,
                             Description = post.DescribeTutor,
                             TutorGender = post.TutorGender,
+                            Status = post.Status,
+                            IsActived = post.IsActived,
                             SubjectId = post.SubjectId,
                             StudentId = post.StudentId,
                         };
             query = _findTutorFormService.Sorting(query, sortBy, sortType);
 
-            var result = _pagingListService.Paging(query.ToList(), requestSearchPostModel.pageIndex, 7);
+            result = _pagingListService.Paging(query.ToList(), requestSearchPostModel.pageIndex, 7);
 
             return Ok(result);
         }
@@ -185,9 +193,11 @@ namespace API.Controllers
         // STUDENT XEM DANH SÁCH FORM ĐÃ ĐĂNG KÍ
         [HttpGet("student/viewformlist")]
         // Show Student's post list
-        public IActionResult GetList(int pageIndex)
+        public IActionResult GetList(bool status, bool isActive, int pageIndex)
         {
             var userId = _currentUserService.GetUserId().ToString();
+
+            PagingResult<FormFindTutorVM> result = new PagingResult<FormFindTutorVM>();
 
             var user = _accountService.GetAccounts().First(s => s.Id == userId);
             if (user == null)
@@ -201,11 +211,13 @@ namespace API.Controllers
                 return NotFound("Student not found");
             }
 
-            var forms = _findTutorFormService.GetFindTutorForms().Where(s => s.StudentId == student.StudentId && s.IsActived == null || s.IsActived == true);
+            var forms = _findTutorFormService.GetFindTutorForms().Where(s => s.StudentId == student.StudentId 
+                                                                            && s.IsActived == isActive 
+                                                                            && s.Status == status);
 
             if (!forms.Any())
             {
-                return Ok("Not have any form");
+                return Ok(result);
             }
 
             // Tạo danh sách các FormVM để trả về
@@ -226,11 +238,13 @@ namespace API.Controllers
                             MaxHourlyRate = post.MaxHourlyRate,
                             Description = post.DescribeTutor,
                             TutorGender = post.TutorGender,
+                            Status = post.Status,
+                            IsActived = post.IsActived,
                             SubjectId = post.SubjectId,
                             StudentId = student.StudentId,
                         };
 
-            var result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
+            result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
 
             return Ok(result);
         }
@@ -370,14 +384,38 @@ namespace API.Controllers
 
         // STUDENT UPDATE FORM
         [HttpPut("student/updateform")]
-        public IActionResult UpdateForm(FindTutorForm form)
+        public IActionResult UpdateForm(UpdateFormVM form)
         {
             if (form == null)
             {
                 return BadRequest("Form data is null");
             }
 
-            var updatedForm = _findTutorFormService.UpdateFindTutorForms(form);
+            var updatedForm = _findTutorFormService.GetFindTutorForms().Where(s => s.FormId == form.FormId).FirstOrDefault();
+
+            if (updatedForm == null)
+            {
+                return BadRequest("Form not found");
+            } else if (updatedForm.Status == true)
+            {
+                return BadRequest("Form was browsered, you can't edit!");
+            }
+
+            updatedForm.Title = form.Title;
+            updatedForm.TutorGender = form.TutorGender;
+            updatedForm.DescribeTutor = form.Description;
+            updatedForm.DayStart = form.DayStart;
+            updatedForm.DayEnd = form.DayEnd;
+            updatedForm.TimeStart = form.TimeStart;
+            updatedForm.TimeEnd = form.TimeEnd;
+            updatedForm.DayOfWeek = form.DayOfWeek;
+            updatedForm.MinHourlyRate = form.MinHourlyRate;
+            updatedForm.MaxHourlyRate = form.MaxHourlyRate;
+            updatedForm.SubjectId = _subjectService.GetSubjects()
+                .Where(s => s.GradeId == form.GradeId && s.SubjectGroupId == form.SubjectGroupId)
+                .Select(s => s.SubjectId).First();
+
+            _findTutorFormService.UpdateFindTutorForms(updatedForm);
 
             return Ok(updatedForm);
         }
@@ -386,9 +424,10 @@ namespace API.Controllers
         public IActionResult ViewApplyList(string formId)
         {
             var forms = _tutorApplyService.GetTutorApplies().Where(s => s.FormId == formId);
+
             if (!forms.Any())
             {
-                return Ok("Not have any tutor apply");
+                return Ok(forms);
             }
 
             var accounts = _accountService.GetAccounts();
