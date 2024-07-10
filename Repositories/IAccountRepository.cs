@@ -22,7 +22,7 @@ namespace Repositories
         Task<Account> GetAccountById(string id);
         Task<String> GetAccountByEmail(string email);
         Task<String> SignUpAsync(AccountDTO model);
-        Task<int> TutorSignUpAsync(TutorDTO model);
+        Task<string> TutorSignUpAsync(TutorDTO model);
         Task<int> StudentSignUpAsync(StudentDTO model);
         Task<Account> SignInAsync(UserSignIn model);
         Task<IList<String>> GetRolesAsync(Account user);

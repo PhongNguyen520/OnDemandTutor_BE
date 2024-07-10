@@ -22,7 +22,7 @@ namespace Services
 
         Task<String> GetAccountByEmail(string email);
         public bool UpdateAccounts(Account account);
-        Task<int> TutorSignUpAsync(TutorDTO model);
+        Task<string> TutorSignUpAsync(TutorDTO model);
         Task<int> StudentSignUpAsync(StudentDTO model);
         Task<String> SignUpAsync(AccountDTO model);
         Task<Account> SignInAsync(UserSignIn model);
