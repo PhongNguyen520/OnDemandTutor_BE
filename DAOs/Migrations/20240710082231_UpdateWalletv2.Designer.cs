@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240710082231_UpdateWalletv2")]
+    partial class UpdateWalletv2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -575,8 +578,8 @@ namespace DAOs.Migrations
                     b.Property<string>("PaymentDestinationId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double>("RequiredAmount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("RequiredAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Signature")
                         .HasColumnType("nvarchar(max)");

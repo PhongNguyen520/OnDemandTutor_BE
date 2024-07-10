@@ -9,12 +9,12 @@ namespace BusinessObjects
     public class Payment
     {
         public string Id { get; set; } = string.Empty;
-        public decimal RequiredAmount { get; set; }
+        public double RequiredAmount { get; set; }
         public string Description { get; set; } = string.Empty;
         public string CurrencyCode { get; set; } = string.Empty;
         public string TxnRef { get; set; } = string.Empty;
         public DateTime? CreateDate { get; set; } = DateTime.Now;
-        public DateTime? ExpireDate { get; set; } 
+        public DateTime? ExpireDate { get; set; } = DateTime.Now.AddMinutes(30);
         public string? Signature { get; set; } = string.Empty;
         public bool? Status { get; set; } 
         public string? WalletId { get; set; } = string.Empty;

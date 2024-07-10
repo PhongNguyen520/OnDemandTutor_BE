@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace DAOs
 
         public List<Payment> GetPayments()
         {
-            return dbContext.Payments.OrderByDescending(x => x.Id).ToList();
+            return dbContext.Payments.ToList();
         }
 
         public bool UpdatePayment(Payment payment)
