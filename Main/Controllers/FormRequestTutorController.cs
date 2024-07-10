@@ -80,7 +80,7 @@ namespace API.Controllers
                              || form.TimeStart >= day.TimeStart && form.TimeStart < day.TimeEnd
                              || form.TimeEnd > day.TimeStart && form.TimeEnd <= day.TimeEnd)
                             {
-                                return BadRequest("The calender is not suiable");
+                                return Ok("The calender is not suiable");
                             }
                         }
                     }

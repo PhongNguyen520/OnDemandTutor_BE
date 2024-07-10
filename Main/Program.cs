@@ -1,4 +1,4 @@
-using API.Hubs;
+﻿using API.Hubs;
 using API.Services;
 using BusinessObjects;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

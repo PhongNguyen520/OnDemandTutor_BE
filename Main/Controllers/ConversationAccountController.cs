@@ -93,7 +93,7 @@ namespace API.Controllers
 
             if (!list.IsNullOrEmpty())
             {
-                return BadRequest();
+                return Ok();
             }
 
             // Get user logging

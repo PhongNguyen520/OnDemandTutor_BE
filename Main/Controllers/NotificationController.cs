@@ -20,23 +20,52 @@ namespace API.Controllers
             _currentUserService = currentUserService;
         }
 
-        [HttpGet("viewNotification")]
+        [HttpGet("viewNotificationList")]
         public IActionResult Get()
         {
             var user = _currentUserService.GetUserId().ToString();
             var resultList = _notificationService.GetNotifications()
-                                                 .Where(s => s.AccountId == user && s.IsActive == true)
-                                                 .OrderByDescending(s => s.CreateDay);
-            return Ok(resultList);
+                                                 .Where(s => s.AccountId == user && s.IsActive == true);
+            var result = from item in resultList
+                         select new NotiListVM()
+                         {
+                             FullName = item.FullName,
+                             Avatar = item.Avatar,
+                             Title = item.Title,
+                             CreateDay = item.CreateDay.ToString("yyyy-MM-dd HH:mm"),
+                         };
+
+            return Ok(result);
+        }
+
+        [HttpGet("viewNotificationDetail")]
+        public IActionResult GetDetail(string id)
+        {
+            var noti = _notificationService.GetNotifications()
+                                                 .Where(s => s.NotificationId == id).First();
+            var result = new NotificationVM()
+                         {
+                             Url = noti.Url,
+                             FullName = noti.FullName,
+                             Avatar = noti.Avatar,
+                             Title = noti.Title,
+                             Description = noti.Description,
+                         };
+
+            return Ok(result);
         }
 
         [HttpPost("createNotification")]
-        public IActionResult CreateNotification(NotificationVM request)
+        public IActionResult CreateNotification(CreateNotiVM request)
         {
+            var user = _currentUserService.GetUser();
+
             var result = new Notification()
             {
                 NotificationId = Guid.NewGuid().ToString(),
                 CreateDay = DateTime.Now,
+                Avatar = user.Result.Avatar,
+                FullName = user.Result.FullName,
                 Title = request.Title,
                 Description = request.Description,
                 Url = request.Url,

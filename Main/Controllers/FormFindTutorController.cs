@@ -197,8 +197,7 @@ namespace API.Controllers
         // Show Student's post list
         public IActionResult GetList(bool? status, bool? isActive, int pageIndex)
         {
-            var user = _currentUserService.GetUser();
-
+            var user = _currentUserService.GetUserId().ToString();
             PagingResult<FormFindTutorVM> result = new PagingResult<FormFindTutorVM>();
 
             if (user == null)
@@ -206,7 +205,8 @@ namespace API.Controllers
                 return NotFound("User not found");
             }
 
-            var student = _studentService.GetStudents().First(s => s.AccountId == user.Id.ToString());
+            
+            var student = _studentService.GetStudents().First(s => s.AccountId == user);
             if (student == null)
             {
                 return NotFound("Student not found");
@@ -383,6 +383,11 @@ namespace API.Controllers
 
             var form = _findTutorFormService.GetFindTutorForms().Where(s => s.FormId == formId).First();
 
+            if (_tutorApplyService.GetTutorApplies().Where(s => s.TutorId == tutor.TutorId && s.FormId == formId).Any())
+            {
+                return Ok("You applied this post before");
+            }
+
             //Handle To Avoid Conflict With Tutor Calender
             //1.Get all booking day
             List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
@@ -410,7 +415,7 @@ namespace API.Controllers
                              || form.TimeStart >= day.TimeStart && form.TimeStart < day.TimeEnd
                              || form.TimeEnd > day.TimeStart && form.TimeEnd <= day.TimeEnd)
                             {
-                                return BadRequest("The calender is not suiable");
+                                return Ok("The calender is not suiable");
                             }
                         }
                     }
