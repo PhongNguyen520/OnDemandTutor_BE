@@ -29,6 +29,7 @@ namespace API.Controllers
             var result = from item in resultList
                          select new NotiListVM()
                          {
+                             NotificationId = item.NotificationId,
                              FullName = item.FullName,
                              Avatar = item.Avatar,
                              Title = item.Title,

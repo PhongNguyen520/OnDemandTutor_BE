@@ -518,6 +518,7 @@ namespace API.Controllers
                              TutorName = account.FullName,
                              TutorAvatar = account.Avatar,
                              DayApply = form.DayApply.ToString("yyyy-MM-dd HH:mm"),
+                             UserIdTutor = account.Id,
                          };
 
             return Ok(result);
