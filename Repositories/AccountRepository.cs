@@ -238,7 +238,7 @@ namespace Repositories
             var tutor = _mapper.Map<Tutor>(model);
             tutor.TutorId = userId; 
             _dbContext.Add(tutor);
-            _dbContext.SaveChangesAsync();
+            _dbContext.SaveChanges();
             return userId;
         }
 
