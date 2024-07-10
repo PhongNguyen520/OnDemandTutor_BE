@@ -11,9 +11,9 @@ public partial class Wallet
 
     public int? Balance { get; set; }
 
-    public string BankName { get; set; } = null!;
+    public string? BankName { get; set; }
 
-    public int BankNumber { get; set; }
+    public int? BankNumber { get; set; }
 
     public string AccountId { get; set; } = null!;
 

@@ -1,4 +1,5 @@
-﻿using BusinessObjects;
+﻿using API.Services;
+using BusinessObjects;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,13 @@ namespace API.Controllers
     [ApiController]
     public class WalletController : ControllerBase
     {
-        private readonly IWalletService walletService;
+        private readonly IWalletService _walletService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public WalletController()
+        public WalletController(ICurrentUserService currentUserService)
         {
-            walletService = new WalletService();
+            _walletService = new WalletService();
+            _currentUserService = currentUserService;
         }
 
         [HttpGet]
@@ -22,34 +25,32 @@ namespace API.Controllers
 
         public IActionResult GetList()
         {
-            return Ok(walletService.GetWallets());
+            return Ok(_walletService.GetWallets());
         }
 
 
         [HttpPost]
         [Route("create_wallet/{id}")]
 
-        public IActionResult Create(string id, [FromBody] CreateWallet request)
+        public IActionResult Create(string id)
         {
             var wallet = new Wallet()
             {
                 WalletId = Guid.NewGuid().ToString(),
-                Balance = request.Balance,
-                BankName = request.BankName,
-                BankNumber = request.BankNumber,
-                CreateDay = request.CreateDay,
+                CreateDay = DateTime.Now,
+                Balance = 0,
                 AccountId = id,
             };
 
-
-            return Ok(walletService.AddWallet(wallet));
+            return Ok(_walletService.AddWallet(wallet));
         }
 
-        [HttpPost]
-        [Route("getwallet/{id}")]
-        public IActionResult Get(string id)
+        [HttpGet]
+        [Route("getwallet")]
+        public IActionResult Get()
         {
-            var response = walletService.GetWallets().FirstOrDefault(w => w.AccountId == id);
+            var userId = _currentUserService.GetUserId().ToString();
+            var response = _walletService.GetWallets().FirstOrDefault(w => w.AccountId == userId);
             return Ok(response);
         }
 

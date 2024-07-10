@@ -36,7 +36,7 @@ namespace DAOs
 
         public List<PaymentTransaction> GetTransactions()
         {
-            return dbContext.PaymentTransactions.OrderByDescending(x => x.Id).ToList();
+            return dbContext.PaymentTransactions.ToList();
         }
 
         public bool UpdateTransaction(PaymentTransaction transaction)

@@ -25,7 +25,7 @@ namespace API.Controllers
         private readonly string vnp_TmnCode = "WX3Z3JAI";
         private readonly string vnp_HashSecret = "TI56EMVNTQM55D9JT08D93N4N825CE05";
         private readonly string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        private readonly string returnUrl = "http://localhost:3000/notifications";
+        private readonly string returnUrl = "http://localhost:3000/classes";
 
         public VnPayController()
         {
@@ -93,10 +93,11 @@ namespace API.Controllers
 
             if (requestPayment != null)
             {
+                var amount = response.vnp_Amount/100;
                 var transaction = new PaymentTransaction()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    Amount = response.vnp_Amount,
+                    Amount = amount,
                     Description = response.vnp_OrderInfo,
                     CardType = response.vnp_CardType,
                     TxnRef = response.vnp_TxnRef,
@@ -115,7 +116,7 @@ namespace API.Controllers
                    if (payment != null)
                     {
                         var wallet = walletService.GetWallets().FirstOrDefault(w => w.WalletId == payment.WalletId);
-                        wallet.Balance = wallet.Balance + response.vnp_Amount;
+                        wallet.Balance = wallet.Balance + amount;
                         walletService.UpdateWallets(wallet);
                     }
                 }
