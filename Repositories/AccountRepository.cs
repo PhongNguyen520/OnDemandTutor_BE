@@ -232,13 +232,14 @@ namespace Repositories
             return 0;
         }
 
-        public async Task<int> TutorSignUpAsync(TutorDTO model)
+        public async Task<string> TutorSignUpAsync(TutorDTO model)
         {
             var userId = Guid.NewGuid().ToString();
             var tutor = _mapper.Map<Tutor>(model);
             tutor.TutorId = userId; 
             _dbContext.Add(tutor);
-            return await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChangesAsync();
+            return userId;
         }
 
         public async Task<int> StudentSignUpAsync(StudentDTO model)
