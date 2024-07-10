@@ -42,5 +42,12 @@ namespace API.Controllers
             var result = await _iStudentService.GetStudentCurrent(accountId);
             return Ok(result);
         }
+
+        [HttpGet("ListSubjectName")]
+        public async Task<IActionResult> ListSubjectName(string nameFind)
+        {
+            var rusult = await _iStudentService.ListNameSupsectGroup(nameFind);
+            return Ok(rusult);
+        }
     }
 }

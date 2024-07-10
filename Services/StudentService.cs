@@ -52,5 +52,10 @@ namespace Services
         {
             return await iStudentRepository.GetStudentCurrent(accountId);
         }
+
+        public Task<IQueryable<string>> ListNameSupsectGroup(string textFind)
+        {
+            return iStudentRepository.GetNameSupsectGroup(textFind);
+        }
     }
 }
