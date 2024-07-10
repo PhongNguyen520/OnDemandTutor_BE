@@ -100,5 +100,17 @@ namespace Repositories
                 return studentVM;
             }
         }
+
+        public async Task<IQueryable<string>> GetNameSupsectGroup(string textFind)
+        {
+            textFind = textFind.ToUpper();
+            
+            var listSupj = _dbContext
+                            .SubjectGroups
+                            .Where(_ => _.SubjectName.ToUpper().Contains(textFind))
+                            .Select(_ => _.SubjectName)
+                            .ToList().AsQueryable();
+            return listSupj;
+        }
     }
 }
