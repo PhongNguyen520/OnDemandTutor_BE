@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace DAOs
 
         public List<PaymentTransaction> GetTransactions()
         {
-            return dbContext.PaymentTransactions.OrderByDescending(x => x.Id).ToList();
+            return dbContext.PaymentTransactions.ToList();
         }
 
         public bool UpdateTransaction(PaymentTransaction transaction)

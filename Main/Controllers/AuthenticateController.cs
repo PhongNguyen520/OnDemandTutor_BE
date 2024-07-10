@@ -45,7 +45,7 @@ namespace API.Controller
         public async Task<IActionResult> TutorSignUp(TutorDTO signUpModel)
         {
             var result = await _accountService.TutorSignUpAsync(signUpModel);
-            if (result > 0) return Ok();
+            if (result != null) return Ok(result);
             return BadRequest();
         }
 

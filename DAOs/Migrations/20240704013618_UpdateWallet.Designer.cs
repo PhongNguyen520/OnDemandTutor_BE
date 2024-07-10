@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240704013618_UpdateWallet")]
+    partial class UpdateWallet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -575,8 +578,8 @@ namespace DAOs.Migrations
                     b.Property<string>("PaymentDestinationId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double>("RequiredAmount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("RequiredAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Signature")
                         .HasColumnType("nvarchar(max)");
@@ -849,6 +852,29 @@ namespace DAOs.Migrations
                     b.ToTable("Subject_Tutor", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObjects.Transaction", b =>
+                {
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreateDay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<float>("TransactionMoney")
+                        .HasColumnType("real");
+
+                    b.HasKey("TransactionId");
+
+                    b.ToTable("Transactions");
+                });
+
             modelBuilder.Entity("BusinessObjects.Tutor", b =>
                 {
                     b.Property<string>("TutorId")
@@ -895,7 +921,7 @@ namespace DAOs.Migrations
                     b.Property<float>("HourlyRate")
                         .HasColumnType("real");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Photo")
@@ -1002,11 +1028,12 @@ namespace DAOs.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("BankName")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int?>("BankNumber")
+                    b.Property<int>("BankNumber")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDay")

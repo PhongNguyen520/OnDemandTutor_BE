@@ -46,8 +46,6 @@ public partial class DbContext : IdentityDbContext<Account>
 
     public virtual DbSet<SubjectTutor> SubjectTutors { get; set; }
 
-    public virtual DbSet<Transaction> Transactions { get; set; }
-
     public virtual DbSet<Tutor> Tutors { get; set; }
 
     public virtual DbSet<TutorAd> TutorAds { get; set; }
