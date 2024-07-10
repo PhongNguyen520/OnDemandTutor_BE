@@ -54,12 +54,16 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        //[HttpPut]
-        //[Route("update_amount/{id}")]
+        [HttpPut]
+        [Route("update_wallet")]
 
-        //public IActionResult Update(string id)
-        //{
-        //    var response = walletService.GetWallets().FirstOrDefault(w => w.AccountId == id);
-        //}
+        public IActionResult Update(string BankName, string BankNumber)
+        {
+            var userId = _currentUserService.GetUserId().ToString();
+            var wallet = _walletService.GetWallets().FirstOrDefault(w => w.AccountId == userId);
+            wallet.BankName = BankName;
+            wallet.BankNumber = BankNumber;
+            return Ok(_walletService.UpdateWallets(wallet));
+        }
     }
 }

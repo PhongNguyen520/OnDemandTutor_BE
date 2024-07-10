@@ -13,7 +13,7 @@ public partial class Wallet
 
     public string? BankName { get; set; }
 
-    public int? BankNumber { get; set; }
+    public string? BankNumber { get; set; }
 
     public string AccountId { get; set; } = null!;
 
