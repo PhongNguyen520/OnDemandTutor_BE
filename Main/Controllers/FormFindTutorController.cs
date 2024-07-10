@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Services;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace API.Controllers
@@ -68,22 +69,24 @@ namespace API.Controllers
                         {
                             FormId = form.FormId,
                             CreateDay = form.CreateDay.ToString("yyyy-MM-dd HH:mm"),
-                            FullName = _accountService.GetAccounts().Where(s => s.Id == student.AccountId).Select(s => s.FullName).First(),
-                            Avatar = _accountService.GetAccounts().Where(s => s.Id == student.AccountId).Select(s => s.Avatar).First(),
+                            FullName = student.Account.FullName,
+                            Avatar = student.Account.Avatar,
                             Title = form.Title,
                             DayStart = form.DayStart.ToString("yyyy-MM-dd"),
                             DayEnd = form.DayEnd.ToString("yyyy-MM-dd"),
                             DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(form.DayOfWeek),
-                            TimeStart = form.TimeStart.ToString() + "h",
-                            TimeEnd = form.TimeEnd.ToString() + "h",
+                            TimeStart = form.TimeStart,
+                            TimeEnd = form.TimeEnd,
                             MinHourlyRate = form.MinHourlyRate,
                             MaxHourlyRate = form.MaxHourlyRate,
                             Description = form.DescribeTutor,
+                            SubjectName = _subjectService.GetSubjects().Where(s => s.SubjectId == form.SubjectId).Select(s => s.Description).First(),
                             TutorGender = form.TutorGender,
                             Status = form.Status,
                             IsActived = form.IsActived,
                             SubjectId = form.SubjectId,
                             StudentId = student.StudentId,
+                            UserIdStudent = student.AccountId,
                         };
             result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
 
@@ -114,7 +117,6 @@ namespace API.Controllers
             }
 
             var allStudents = _studentService.GetStudents();
-            var allAccounts = _accountService.GetAccounts();
 
 
             // TÌM KIẾM THEO TÊN NHÓM MÔN HỌC
@@ -160,28 +162,28 @@ namespace API.Controllers
             var query = from post in allPost
                         join student in allStudents
                         on post.StudentId equals student.StudentId
-                        join account in allAccounts
-                        on student.AccountId equals account.Id
                         select new FormFindTutorVM
                         {
                             FormId = post.FormId,
                             CreateDay = post.CreateDay.ToString("yyyy-MM-dd HH:mm"),
-                            FullName = account.FullName,
-                            Avatar = account.Avatar,
+                            FullName = student.Account.FullName,
+                            Avatar = student.Account.Avatar,
                             Title = post.Title,
                             DayStart = post.DayStart.ToString("yyyy-MM-dd"),
                             DayEnd = post.DayEnd.ToString("yyyy-MM-dd"),
                             DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(post.DayOfWeek),
-                            TimeStart = post.TimeStart.ToString() + "h",
-                            TimeEnd = post.TimeEnd.ToString() + "h",
+                            TimeStart = post.TimeStart,
+                            TimeEnd = post.TimeEnd,
                             MinHourlyRate = post.MinHourlyRate,
                             MaxHourlyRate = post.MaxHourlyRate,
                             Description = post.DescribeTutor,
+                            SubjectName = _subjectService.GetSubjects().Where(s => s.SubjectId == post.SubjectId).Select(s => s.Description).First(),
                             TutorGender = post.TutorGender,
                             Status = post.Status,
                             IsActived = post.IsActived,
                             SubjectId = post.SubjectId,
                             StudentId = post.StudentId,
+                            UserIdStudent = student.AccountId,
                         };
             query = _findTutorFormService.Sorting(query, sortBy, sortType);
 
@@ -193,19 +195,18 @@ namespace API.Controllers
         // STUDENT XEM DANH SÁCH FORM ĐÃ ĐĂNG KÍ
         [HttpGet("student/viewformlist")]
         // Show Student's post list
-        public IActionResult GetList(bool status, bool isActive, int pageIndex)
+        public IActionResult GetList(bool? status, bool? isActive, int pageIndex)
         {
-            var userId = _currentUserService.GetUserId().ToString();
+            var user = _currentUserService.GetUser();
 
             PagingResult<FormFindTutorVM> result = new PagingResult<FormFindTutorVM>();
 
-            var user = _accountService.GetAccounts().First(s => s.Id == userId);
             if (user == null)
             {
                 return NotFound("User not found");
             }
 
-            var student = _studentService.GetStudents().First(s => s.AccountId == userId);
+            var student = _studentService.GetStudents().First(s => s.AccountId == user.Id.ToString());
             if (student == null)
             {
                 return NotFound("Student not found");
@@ -227,21 +228,89 @@ namespace API.Controllers
                         {
                             FormId = post.FormId,
                             CreateDay = post.CreateDay.ToString("yyyy-MM-dd HH:mm"),
-                            FullName = user.FullName,
+                            FullName = student.Account.FullName,
+                            Avatar = student.Account.Avatar,
                             Title = post.Title,
                             DayStart = post.DayStart.ToString("yyyy-MM-dd"),
                             DayEnd = post.DayEnd.ToString("yyyy-MM-dd"),
                             DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(post.DayOfWeek),
-                            TimeStart = post.TimeStart.ToString() + "h",
-                            TimeEnd = post.TimeEnd.ToString() + "h",
+                            TimeStart = post.TimeStart,
+                            TimeEnd = post.TimeEnd,
                             MinHourlyRate = post.MinHourlyRate,
                             MaxHourlyRate = post.MaxHourlyRate,
                             Description = post.DescribeTutor,
+                            SubjectName = _subjectService.GetSubjects().Where(s => s.SubjectId == post.SubjectId).Select(s => s.Description).First(),
                             TutorGender = post.TutorGender,
                             Status = post.Status,
                             IsActived = post.IsActived,
                             SubjectId = post.SubjectId,
                             StudentId = student.StudentId,
+                            UserIdStudent = student.AccountId,
+                        };
+
+            result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
+
+            return Ok(result);
+        }
+
+        [HttpGet("tutor/viewApplyForm")]
+        public IActionResult GetApplyForm(bool? isApprove, int pageIndex)
+        {
+            var userId = _currentUserService.GetUserId().ToString();
+
+            PagingResult<FormFindTutorVM> result = new PagingResult<FormFindTutorVM>();
+
+            var user = _accountService.GetAccounts().First(s => s.Id == userId);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var tutor = _tutorService.GetTutors().First(s => s.AccountId == userId);
+            if (tutor == null)
+            {
+                return NotFound("Tutor not found");
+            }
+            var allStudents = _studentService.GetStudents();
+            var formApply = _tutorApplyService.GetTutorApplies().Where(s => s.TutorId == tutor.TutorId && s.IsApprove == isApprove).ToList();
+
+            var forms = from form in _findTutorFormService.GetFindTutorForms()
+                           join tutorApply in formApply
+                           on form.FormId equals tutorApply.FormId
+                           select form;
+
+            if (!forms.Any())
+            {
+                return Ok(result);
+            }
+
+            // Tạo danh sách các FormVM để trả về
+            var query = from post in forms
+                        join student in allStudents
+                        on post.StudentId equals student.StudentId
+                        orderby post.CreateDay descending
+                        select new FormFindTutorVM
+                        {
+                            FormId = post.FormId,
+                            CreateDay = post.CreateDay.ToString("yyyy-MM-dd HH:mm"),
+                            FullName = student.Account.FullName,
+                            Avatar = student.Account.Avatar,
+                            Title = post.Title,
+                            DayStart = post.DayStart.ToString("yyyy-MM-dd"),
+                            DayEnd = post.DayEnd.ToString("yyyy-MM-dd"),
+                            DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(post.DayOfWeek),
+                            TimeStart = post.TimeStart,
+                            TimeEnd = post.TimeEnd,
+                            MinHourlyRate = post.MinHourlyRate,
+                            MaxHourlyRate = post.MaxHourlyRate,
+                            Description = post.DescribeTutor,
+                            SubjectName = _subjectService.GetSubjects().Where(s => s.SubjectId == post.SubjectId).Select(s => s.Description).First(),
+                            TutorGender = post.TutorGender,
+                            Status = post.Status,
+                            IsActived = post.IsActived,
+                            SubjectId = post.SubjectId,
+                            StudentId = post.StudentId,
+                            UserIdStudent = student.AccountId,
                         };
 
             result = _pagingListService.Paging(query.ToList(), pageIndex, 7);

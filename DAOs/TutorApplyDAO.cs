@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace DAOs
 
         public List<TutorApply> GetTutorApplies()
         {
-            return dbContext.TutorApplies.OrderByDescending(x => x.DayApply).ToList();
+            return dbContext.TutorApplies.Include("Tutor").ToList();
         }
 
         public bool UpdateTutorApplies(TutorApply tutorApply)

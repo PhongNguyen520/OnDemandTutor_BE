@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace DAOs
 
         public List<Student> GetStudents()
         {
-            return dbContext.Students.OrderByDescending(x => x.StudentId).ToList();
+            return dbContext.Students.Include("Account").ToList();
         }
 
         public bool UpdateStudents(Student student)
