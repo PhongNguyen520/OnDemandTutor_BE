@@ -142,7 +142,9 @@ namespace API.Controllers
                             Description = form.Description,
                             Status = form.Status,
                             StudentId = form.StudentId,
+                            UserIdStudent = _studentService.GetStudents().Where(s => s.StudentId == form.StudentId).Select(s => s.AccountId).First(),
                             TutorId = form.TutorId,
+                            UserIdTutor = _tutorService.GetTutors().Where(s => s.TutorId == form.TutorId).Select(s => s.AccountId).First(),
                         };
 
             result = _pagingListService.Paging(query.ToList(), pageIndex, 7);

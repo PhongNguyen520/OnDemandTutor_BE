@@ -21,7 +21,9 @@ namespace BusinessObjects.Models.RequestFormModel
         public string? Description { get; set; }
         public bool? Status { get; set; }
         public string StudentId { get; set; } = string.Empty;
+        public string UserIdStudent { get; set; } = string.Empty;
         public string TutorId { get; set; } = string.Empty;
+        public string UserIdTutor { get; set; } = string.Empty;
     }
 
     public class FormMember
