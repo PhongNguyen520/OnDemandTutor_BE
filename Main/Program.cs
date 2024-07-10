@@ -24,7 +24,8 @@ namespace Main
                 options.AddPolicy("AllowReactApp",
                     builder =>
                     {
-                        builder.WithOrigins("https://ondemandtutor-64f20.web.app")
+                        //builder.WithOrigins("https://ondemandtutor-64f20.web.app")
+                        builder.WithOrigins("http://localhost:3000")
                                .AllowAnyHeader()
                                .AllowAnyMethod()
                                .AllowCredentials();
