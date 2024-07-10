@@ -8,13 +8,7 @@ namespace BusinessObjects.Models
 {
     public class CreateWallet
     {
-        public DateTime CreateDay { get; set; }
-
-        public int? Balance { get; set; }
-
-        public string? BankName { get; set; } = null!;
-
-        public int BankNumber { get; set; }
+        public string Id { get; set; }
 
     }
 }
