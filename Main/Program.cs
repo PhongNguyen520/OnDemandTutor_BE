@@ -24,13 +24,12 @@ namespace Main
                 options.AddPolicy("AllowReactApp",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000")
+                        builder.WithOrigins("https://ondemandtutor-64f20.web.app")
                                .AllowAnyHeader()
                                .AllowAnyMethod()
                                .AllowCredentials();
                     });
             });
-
 
             // Add services to the container.
             builder.Services.AddAutoMapper(typeof(Program));
@@ -56,11 +55,7 @@ namespace Main
             builder.Services.AddIdentity<Account, IdentityRole>()
                 .AddEntityFrameworkStores<DAOs.DbContext>().AddDefaultTokenProviders();
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            // Cấu hình đồng bộ LifeTime
+            // Configure JWT Authentication
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -70,26 +65,23 @@ namespace Main
             {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero,
-
-                    ValidAudience = builder.Configuration["JWT:ValidAudience"],
                     ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+                    ValidAudience = builder.Configuration["JWT:ValidAudience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
                 };
             });
 
-
-
-
-            builder.Services.AddSwaggerGen(option =>
+            // Configure Swagger
+            builder.Services.AddSwaggerGen(options =>
             {
-                option.SwaggerDoc("v1", new OpenApiInfo { Title = "Unimarket.System API", Version = "v1" });
-                option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Unimarket.System API", Version = "v1" });
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
@@ -98,28 +90,17 @@ namespace Main
                     BearerFormat = "JWT",
                     Scheme = "Bearer"
                 });
-                option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            new string[]{}
-        }
-    });
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
-
-            builder.Services.AddAutoMapper(typeof(Program));
-            builder.Services.AddInfrastructureServices(builder.Configuration);
-
-            builder.Services.AddAuthentication();
-            builder.Services.AddAuthorization();
-            builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
 
@@ -127,26 +108,20 @@ namespace Main
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Unimarket.System API v1"));
+
                 app.UseDeveloperExceptionPage();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
-
-
-                // Set up CORS
                 app.UseCors("AllowReactApp");
-
-                app.UseHttpsRedirection();
-
-                app.UseAuthentication();
-
-                app.UseAuthorization();
-
-                app.MapControllers();
-
-                app.MapHub<ChatHub>("/chatHub");
-
-                app.Run();
             }
+
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.MapControllers();
+            app.MapHub<ChatHub>("/chatHub");
+
+            app.Run();
         }
     }
 }
