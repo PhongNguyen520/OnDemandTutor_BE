@@ -266,7 +266,7 @@ namespace API.Controllers
                         check.First().IsActive = true;
                     } else
                     {
-                        return BadRequest($"You registrated {subject.First().Description} before!");
+                        return Ok($"You registrated {subject.First().Description} before!");
                     }
                 }
 
