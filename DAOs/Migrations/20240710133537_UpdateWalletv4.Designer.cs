@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240710133537_UpdateWalletv4")]
+    partial class UpdateWalletv4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -467,38 +470,6 @@ namespace DAOs.Migrations
                     b.ToTable("Grade", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObjects.HistoryTransaction", b =>
-                {
-                    b.Property<string>("HistoryId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<float?>("Amount")
-                        .HasColumnType("real");
-
-                    b.Property<string>("BackTranNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CardType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WalletId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("HistoryId")
-                        .HasName("PK__HistoryTransaction__77C70FC2A16C5PHUC");
-
-                    b.HasIndex("WalletId");
-
-                    b.ToTable("HistoryTransaction", (string)null);
-                });
-
             modelBuilder.Entity("BusinessObjects.Message", b =>
                 {
                     b.Property<string>("MessageId")
@@ -668,8 +639,8 @@ namespace DAOs.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<float?>("Amount")
-                        .HasColumnType("real");
+                    b.Property<int?>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<string>("BankTranNo")
                         .HasColumnType("nvarchar(max)");
@@ -1037,8 +1008,8 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("AccountID");
 
-                    b.Property<float?>("Balance")
-                        .HasColumnType("real");
+                    b.Property<int?>("Balance")
+                        .HasColumnType("int");
 
                     b.Property<string>("BankName")
                         .HasMaxLength(255)
@@ -1320,17 +1291,6 @@ namespace DAOs.Migrations
                     b.Navigation("Student");
 
                     b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("BusinessObjects.HistoryTransaction", b =>
-                {
-                    b.HasOne("BusinessObjects.Wallet", "Wallet")
-                        .WithMany("HistoryTransactions")
-                        .HasForeignKey("WalletId")
-                        .IsRequired()
-                        .HasConstraintName("FKTutor3875333");
-
-                    b.Navigation("Wallet");
                 });
 
             modelBuilder.Entity("BusinessObjects.Message", b =>
@@ -1668,8 +1628,6 @@ namespace DAOs.Migrations
 
             modelBuilder.Entity("BusinessObjects.Wallet", b =>
                 {
-                    b.Navigation("HistoryTransactions");
-
                     b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618

@@ -18,6 +18,7 @@ namespace BusinessObjects.Models
 
     public class NotiListVM
     {
+        public string NotificationId { get; set; } = string.Empty ;
         public string FullName { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string? Avatar {  get; set; }

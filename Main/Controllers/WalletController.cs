@@ -40,16 +40,16 @@ namespace API.Controllers
 
 
         [HttpPost]
-        [Route("create_wallet/{id}")]
+        [Route("create_wallet")]
 
-        public IActionResult Create(string id)
+        public IActionResult Create([FromBody] CreateWallet _wallet)
         {
             var wallet = new Wallet()
             {
                 WalletId = Guid.NewGuid().ToString(),
                 CreateDay = DateTime.Now,
                 Balance = 0,
-                AccountId = id,
+                AccountId = _wallet.Id,
             };
 
             return Ok(_walletService.AddWallet(wallet));
@@ -64,14 +64,8 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        //[HttpPut]
-        //[Route("update_amount/{id}")]
-
-        //public IActionResult Update(string id)
-        //{
-        //    var response = walletService.GetWallets().FirstOrDefault(w => w.AccountId == id);
-        //}
-
+        [HttpPut]
+        [Route("update_wallet")]
         [HttpPost("ReloadBalance")]
         public async Task<IActionResult> ReloadBalance()
         {
@@ -108,6 +102,5 @@ namespace API.Controllers
             _dbContext.SaveChanges();
             return Ok(wit);
         }
-
     }
 }

@@ -518,6 +518,7 @@ namespace API.Controllers
                              TutorName = account.FullName,
                              TutorAvatar = account.Avatar,
                              DayApply = form.DayApply.ToString("yyyy-MM-dd HH:mm"),
+                             UserIdTutor = account.Id,
                          };
 
             return Ok(result);
@@ -525,10 +526,18 @@ namespace API.Controllers
 
         // STUDENT DUYỆT TUTOR
         [HttpPut("student/browsertutor")]
-        public IActionResult SubmitForm(string formId, string tutorId)
+        public IActionResult SubmitForm(bool? action, string formId, string tutorId)
         {
-            var tutorApply = _tutorApplyService.GetTutorApplies();
+            var tutorApply = _tutorApplyService.GetTutorApplies().Where(s => s.FormId == formId);
             var form = _findTutorFormService.GetFindTutorForms().First(s => s.FormId == formId);
+
+            if (action == false)
+            {
+                var tutor = tutorApply.First(s => s.FormId == formId && s.TutorId == tutorId);
+                tutor.IsApprove = false;
+                _tutorApplyService.UpdateTutorApplies(tutor);
+                return Ok(tutor);
+            }
             
             foreach ( var tutor in tutorApply)
             {
