@@ -80,7 +80,7 @@ namespace API.Controllers
                              || form.TimeStart >= day.TimeStart && form.TimeStart < day.TimeEnd
                              || form.TimeEnd > day.TimeStart && form.TimeEnd <= day.TimeEnd)
                             {
-                                return Ok("The calender is not suiable");
+                                return Ok(false);
                             }
                         }
                     }
@@ -105,9 +105,8 @@ namespace API.Controllers
                 StudentId = student.StudentId,
             };
 
-            _formService.AddRequestTutorForm(newRequestForm);
 
-            return Ok(newRequestForm.FormId);
+            return Ok(_formService.AddRequestTutorForm(newRequestForm));
         }
 
         // Tutor/Student view their request tutor form
