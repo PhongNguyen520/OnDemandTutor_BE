@@ -19,5 +19,7 @@ namespace Services
         public bool UpdateClasses(Class @class);
 
         public Form? CheckTypeForm(string id);
+
+        Task<ReturnBalance> PaymentTutor(string userId);
     }
 }

@@ -29,6 +29,12 @@ namespace Services.Dependency
             services.AddScoped<IComplaintRepository, ComplaintRepository>();
             services.AddScoped<IComplaintService, ComplaintService>();
 
+            services.AddScoped<IWalletRepository, WalletRepository>();
+            services.AddScoped<IWalletService, WalletService>();
+
+            services.AddScoped<IClassRepository, ClassRepository>();
+            services.AddScoped<IClassService, ClassService>();
+
             return services;
         }
     }

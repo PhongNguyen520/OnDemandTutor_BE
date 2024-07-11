@@ -64,6 +64,8 @@ public partial class DbContext : IdentityDbContext<Account>
 
     public virtual DbSet<PaymentTransaction> PaymentTransactions { get; set; }
 
+    public virtual DbSet<HistoryTransaction> HistoryTransactions { get; set; }
+
     private string? GetConnectionString()
     {
         IConfiguration configuration = new ConfigurationBuilder()
@@ -636,6 +638,18 @@ public partial class DbContext : IdentityDbContext<Account>
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKPaymentTransaction3171253");
             
+        });
+
+        modelBuilder.Entity<HistoryTransaction>(entity =>
+        {
+            entity.HasKey(e => e.HistoryId).HasName("PK__HistoryTransaction__77C70FC2A16C5PHUC");
+
+            entity.ToTable("HistoryTransaction");
+
+            entity.HasOne(d => d.Wallet).WithMany(p => p.HistoryTransactions)
+                .HasForeignKey(d => d.WalletId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKTutor3875333");
         });
 
         base.OnModelCreating(modelBuilder);

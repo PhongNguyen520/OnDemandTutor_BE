@@ -16,5 +16,11 @@ namespace Services
         public List<Wallet> GetWallets();
 
         public bool UpdateWallets(Wallet wallet);
+
+        Task<float?> CreaterHistoryTransaction(HistoryTransaction transaction);
+
+        Task<float?> UpdateBalance(string userId, float plusMoney);
+
+        Task<float?> WithdrawMoney(string userId, float money);
     }
 }
