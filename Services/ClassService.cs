@@ -24,6 +24,11 @@ namespace Services
             _requestTutorFormRepository = new RequestTutorFormRepository();
         }
 
+        public ClassService(IClassRepository classRepository)
+        {
+            _classRepository = classRepository;
+        }
+
         public bool AddClass(Class @class)
         {
             return _classRepository.AddClass(@class);
@@ -80,6 +85,11 @@ namespace Services
             }
 
             return result;
+        }
+
+        public async Task<ReturnBalance> PaymentTutor(string userId)
+        {
+            return await _classRepository.PaymentTutor(userId);
         }
     }
 }

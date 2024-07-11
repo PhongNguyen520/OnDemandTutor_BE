@@ -1,5 +1,7 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,7 @@ namespace Repositories
     public class WalletRepository : IWalletRepository
     {
         private readonly WalletDAO walletDAO = null;
+        private readonly DAOs.DbContext _dbContext;
 
         public WalletRepository()
         {
@@ -18,6 +21,11 @@ namespace Repositories
             {
                 walletDAO = new WalletDAO();
             }
+        }
+
+        public WalletRepository(DAOs.DbContext dbContext)
+        {
+            _dbContext = dbContext;
         }
 
         public bool AddWallet(Wallet wallet)
@@ -38,6 +46,39 @@ namespace Repositories
         public bool UpdateWallets(Wallet wallet)
         {
             return walletDAO.UpdateWallets(wallet);
+        }
+
+        public async Task<float?> CreaterHistoryTransaction(HistoryTransaction transaction)
+        {
+            if (transaction == null)
+            {
+                return null;
+            }
+            _dbContext.Add(transaction);
+            _dbContext.SaveChanges();
+            return transaction.Amount;
+        }
+
+        public async Task<float?> UpdateBalance(string userId, float plusMoney)
+        {
+            var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.AccountId == userId);
+            wallet.Balance += plusMoney;
+            _dbContext.Update(wallet);
+            _dbContext.SaveChanges();
+            return wallet.Balance;
+        }
+
+        public async Task<float?> WithdrawMoney(string userId, float money)
+        {
+            var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.AccountId == userId);
+            if (wallet == null) return null;
+
+            if (money > wallet.Balance) return null;
+
+            wallet.Balance -= money;
+            _dbContext.Update(wallet);
+            _dbContext.SaveChanges();
+            return wallet.Balance;
         }
     }
 }

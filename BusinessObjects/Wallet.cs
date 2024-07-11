@@ -9,7 +9,7 @@ public partial class Wallet
 
     public DateTime CreateDay { get; set; }
 
-    public int? Balance { get; set; }
+    public float? Balance { get; set; }
 
     public string? BankName { get; set; }
 
@@ -20,4 +20,6 @@ public partial class Wallet
     public virtual Account Account { get; set; } = null!;
 
     public virtual ICollection<Payment> Payments{ get; set; } = new List<Payment>();
+
+    public virtual ICollection<HistoryTransaction> HistoryTransactions { get; set; } = new List<HistoryTransaction>();
 }

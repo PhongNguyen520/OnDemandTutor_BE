@@ -118,6 +118,18 @@ namespace API.Controllers
                         var wallet = walletService.GetWallets().FirstOrDefault(w => w.WalletId == payment.WalletId);
                         wallet.Balance = wallet.Balance + amount;
                         walletService.UpdateWallets(wallet);
+
+                        //----HistoryTable
+                        HistoryTransaction historyTransaction = new();
+                        historyTransaction.HistoryId = Guid.NewGuid().ToString();
+                        historyTransaction.DateCreate = DateTime.Now;
+                        historyTransaction.Amount = amount;
+                        historyTransaction.Description = response.vnp_OrderInfo;
+                        historyTransaction.CardType = response.vnp_CardType;
+                        historyTransaction.BackTranNo = response.vnp_BankTranNo;
+                        historyTransaction.WalletId = wallet.WalletId;
+
+                        var money = walletService.CreaterHistoryTransaction(historyTransaction);
                     }
                 }
                 else

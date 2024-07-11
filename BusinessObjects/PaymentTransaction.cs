@@ -9,7 +9,7 @@ namespace BusinessObjects
     public class PaymentTransaction
     {
         public string Id { get; set; } = string.Empty;
-        public int? Amount { get; set; }
+        public float? Amount { get; set; }
         public string? Description { get; set; } = string.Empty;
         public DateTime? TranDate { get; set; } = DateTime.Now;
         public string? CardType { get; set; } = string.Empty;
