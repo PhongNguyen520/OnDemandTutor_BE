@@ -11,7 +11,7 @@ namespace Services
 {
     public class WalletService : IWalletService
     {
-        private readonly IWalletRepository iWalletRepository = null;
+        private readonly IWalletRepository iWalletRepository;
 
         public WalletService()
         {
@@ -19,6 +19,10 @@ namespace Services
             {
                 iWalletRepository = new WalletRepository();
             }
+        }
+        public WalletService(IWalletRepository _iWalletRepository)
+        {
+            this.iWalletRepository = _iWalletRepository;
         }
 
         public bool AddWallet(Wallet wallet)
@@ -39,6 +43,21 @@ namespace Services
         public bool UpdateWallets(Wallet wallet)
         {
             return iWalletRepository.UpdateWallets(wallet);
+        }
+
+        public async Task<float?> CreaterHistoryTransaction(HistoryTransaction transaction)
+        {
+            return await iWalletRepository.CreaterHistoryTransaction(transaction);
+        }
+
+        public async Task<float?> UpdateBalance(string userId, float plusMoney)
+        {
+            return await iWalletRepository.UpdateBalance(userId, plusMoney);
+        }
+
+        public async Task<float?> WithdrawMoney(string userId, float money)
+        {
+            return await iWalletRepository.WithdrawMoney(userId, money);
         }
     }
 }

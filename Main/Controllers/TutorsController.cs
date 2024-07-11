@@ -32,6 +32,7 @@ namespace API.Controllers
         private readonly ISubjectTutorService iSubjectTutorService;
         private readonly ICurrentUserService currentUserService;
         private readonly IPagingListService<ResponseSearchTutorModel> pagingListService;
+        private readonly IClassService _classService;
 
 
         //public TutorsController(IAccountService accountService)
@@ -44,10 +45,11 @@ namespace API.Controllers
         //    iSubjectService = new SubjectService();
         //    iSubjectTutorService = new SubjectTutorService();
         //}
-        public TutorsController(IAccountService accountService, ITutorService _iTutorService, ICurrentUserService _currentUserServiece)
+        public TutorsController(IAccountService accountService, ITutorService _iTutorService, ICurrentUserService _currentUserServiece, IClassService classService)
         {
             iTutorService = _iTutorService;
             currentUserService = _currentUserServiece;
+            _classService = classService;
 
             iAccountService = accountService;
             iFeedbackService = new FeedbackService();
@@ -266,7 +268,7 @@ namespace API.Controllers
                         check.First().IsActive = true;
                     } else
                     {
-                        return BadRequest($"You registrated {subject.First().Description} before!");
+                        return Ok($"You registrated {subject.First().Description} before!");
                     }
                 }
 

@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240710215227_History-Transaction")]
+    partial class HistoryTransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -472,8 +475,8 @@ namespace DAOs.Migrations
                     b.Property<string>("HistoryId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<float?>("Amount")
-                        .HasColumnType("real");
+                    b.Property<int?>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<string>("BackTranNo")
                         .HasColumnType("nvarchar(max)");
@@ -668,8 +671,8 @@ namespace DAOs.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<float?>("Amount")
-                        .HasColumnType("real");
+                    b.Property<int?>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<string>("BankTranNo")
                         .HasColumnType("nvarchar(max)");
@@ -1037,16 +1040,16 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("AccountID");
 
-                    b.Property<float?>("Balance")
-                        .HasColumnType("real");
+                    b.Property<int?>("Balance")
+                        .HasColumnType("int");
 
                     b.Property<string>("BankName")
                         .HasMaxLength(255)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("BankNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("BankNumber")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDay")
                         .HasColumnType("datetime2");
