@@ -9,6 +9,7 @@ namespace BusinessObjects.Models
     public class ComplaintVM
     {
         public string? ComplaintId { get; set; }
+
         public DateTime CreateDay { get; set; }
 
         public string Description { get; set; } = null!;
@@ -20,5 +21,7 @@ namespace BusinessObjects.Models
         public bool? Status { get; set; }
 
         public string? Processnote { get; set; }
+
+        public DateTime? ProcessDate { get; set; }
     }
 }

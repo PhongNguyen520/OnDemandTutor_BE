@@ -28,4 +28,6 @@ public partial class Complaint
     public string? Complainter { get; set; }
 
     public string? Processnote { get; set; }
+
+    public DateTime? ProcessDate { get; set; }
 }
