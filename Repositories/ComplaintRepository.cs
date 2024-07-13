@@ -68,6 +68,7 @@ namespace Repositories
             complaintEn.Complainter = model.Complainter;
             complaintEn.Processnote = null;
             complaintEn.CreateDay = DateTime.Now;
+            complaintEn.ProcessDate = DateTime.Now;
 
             _dbContext.Add(complaintEn);
             _dbContext.SaveChanges();

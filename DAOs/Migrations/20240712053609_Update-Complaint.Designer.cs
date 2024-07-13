@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240712053609_Update-Complaint")]
+    partial class UpdateComplaint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -194,7 +197,7 @@ namespace DAOs.Migrations
                     b.Property<DateTime>("DayOfWeek")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<int>("TimeEnd")
@@ -408,9 +411,6 @@ namespace DAOs.Migrations
 
                     b.Property<double?>("MinHourlyRate")
                         .HasColumnType("float");
-
-                    b.Property<string>("RejectReason")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("Status")
                         .HasColumnType("bit");
@@ -1016,9 +1016,6 @@ namespace DAOs.Migrations
 
                     b.Property<DateTime>("DayApply")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsActived")
-                        .HasColumnType("bit");
 
                     b.Property<bool?>("IsApprove")
                         .HasColumnType("bit");
