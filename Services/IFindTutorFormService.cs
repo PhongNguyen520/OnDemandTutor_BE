@@ -24,5 +24,7 @@ namespace Services
            (IEnumerable<FormFindTutorVM> query,
            string? sortBy,
            string? sortType);
+
+        public IEnumerable<FormFindTutorVM> GetFormList(IEnumerable<FindTutorForm>? allPosts, IEnumerable<Student>? allStudents);
     }
 }

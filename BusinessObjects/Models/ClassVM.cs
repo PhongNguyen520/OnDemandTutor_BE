@@ -42,6 +42,7 @@ namespace BusinessObjects.Models
 
     public class CalenderVM
     {
+        public string Id { get; set; } = string.Empty;
         public string BookDay { get; set; } = string.Empty;
         public string Time { get; set; } = string.Empty;
         public string ClassId { get; set; } = string.Empty;
@@ -57,5 +58,15 @@ namespace BusinessObjects.Models
         public int TimeEnd { get; set; }
         public string StudentId { get; set; } = string.Empty;
         public string SubjectId { get; set; } = string.Empty;
+    }
+
+    public class HandleCreateForm
+    {
+        public string DayOfWeek { get; set; } = string.Empty;
+        public DateTime DayStart { get; set; }
+        public DateTime DayEnd { get; set; }
+        public int TimeStart { get; set; }
+        public int TimeEnd { get; set; }
+        public string StudentId { get; set; } = string.Empty;
     }
 }

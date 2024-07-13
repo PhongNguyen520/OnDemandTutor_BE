@@ -46,13 +46,20 @@ namespace API.Controllers
 
         // Class tự động tạo sau khi Student duyệt Tutor
         [HttpPost("createClass")]
-        public IActionResult CreateClass(CreateClassVM request)
+        public async Task<IActionResult> CreateClass(CreateClassVM request)
         {
             var form = _classService.CheckTypeForm(request.FormId);
 
             var userId = _currentUserService.GetUserId().ToString();
 
             var tutor = _tutorService.GetTutors().Where(s => s.AccountId == userId).First();
+
+            var check = await _classCalenderService.HandleAvoidConflictCalendar(form.DayOfWeek, form.DayStart, form.DayEnd, form.TimeStart, form.TimeEnd, tutor.TutorId, 1);
+
+            if (check == false)
+            {
+                return Ok("You can't create new class! You have class that coincide with this schedual!");
+            }
 
             List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
 
@@ -227,6 +234,7 @@ namespace API.Controllers
             var calenders = from calender in _classCalenderService.GetClassCalenders().Where(s => s.ClassId == classid)
                             select new CalenderVM()
                             {
+                                Id = calender.CalenderId,
                                 BookDay = calender.DayOfWeek.ToString("yyyy-MM-dd"),
                                 Time = calender.TimeStart.ToString() + "h - " + calender.TimeEnd.ToString() + "h",
                                 ClassId = calender.ClassId,
@@ -261,6 +269,16 @@ namespace API.Controllers
                 return NoContent();
             }
             return Ok();
+        }
+
+        //Student checking teaching day
+        [HttpPut("student/checkingDay")]
+        public IActionResult Checking(string calenderId)
+        {
+            var calender = _classCalenderService.GetClassCalenders().Where(s => s.CalenderId == calenderId).FirstOrDefault();
+            calender.IsActive = true;
+
+            return Ok("Checked!");
         }
     }
 }

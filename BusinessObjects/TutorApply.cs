@@ -14,5 +14,6 @@ namespace BusinessObjects
         public bool? IsApprove { get; set; }
         public virtual FindTutorForm FindTutorForm { get; set; } = null!;
         public virtual Tutor Tutor { get; set; } = null!;
+        public bool? IsActived { get; set; }
     }
 }

@@ -19,6 +19,7 @@ namespace API.Controllers
     public class FormRequestTutorController : ControllerBase
     {
         private readonly IRequestTutorFormService _formService;
+        private readonly IFindTutorFormService _formFindService;
         private readonly ICurrentUserService _currentUserService;
         private readonly ISubjectService _subjectService;
         private readonly IStudentService _studentService;
@@ -26,6 +27,7 @@ namespace API.Controllers
         private readonly IClassService _classService;
         private readonly ITutorService _tutorService;
         private readonly IPagingListService<FormRequestTutorVM> _pagingListService;
+        private readonly ITutorApplyService _tutorApplyService;
 
         public FormRequestTutorController(ICurrentUserService currentUserService)
         {
@@ -37,11 +39,13 @@ namespace API.Controllers
             _classService = new ClassService();
             _tutorService = new TutorService();
             _pagingListService = new PagingListService<FormRequestTutorVM>();
+            _formFindService = new FindTutorFormService();
+            _tutorApplyService = new TutorApplyService();
         }
 
         // Create Form Request Tutor + Handle To Avoid Conflict With Tutor Calender
         [HttpPost("createForm")]
-        public IActionResult CreateRequest(RequestCreateFormRequestTutor form)
+        public async Task<IActionResult> CreateRequest(RequestCreateFormRequestTutor form)
         {
             var userId = _currentUserService.GetUserId().ToString();
 
@@ -54,38 +58,20 @@ namespace API.Controllers
                                         .First();
 
             //Handle To Avoid Conflict With Tutor Calender
-            //1.Get all booking day
-            List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
+            var check = await _classCalenderService.HandleAvoidConflictCalendar(form.DayOfWeek,
+                                                                          form.DayStart,
+                                                                          form.DayEnd,
+                                                                          form.TimeStart,
+                                                                          form.TimeEnd,
+                                                                          form.TutorId,
+                                                                          1);
 
-            var filteredDates = _classCalenderService.GetDatesByDaysOfWeek(form.DayStart, form.DayEnd, desiredDays);
-
-            //2.Select tutor's calender
-            var tutorClass = _classService.GetClasses().Where(s => s.Status == null && s.IsApprove == true);
-
-            if (tutorClass.Any())
+            if (check == false)
             {
-                var calender = from a in tutorClass
-                               join b in _classCalenderService.GetClassCalenders()
-                               on a.ClassId equals b.ClassId
-                               select b;
-
-                // 3. Checking
-                foreach (var day in calender)
-                {
-                    for (int i = 0; i < filteredDates.Count; i++)
-                    {
-                        if (day.DayOfWeek == filteredDates[i])
-                        {
-                            if (form.TimeStart <= day.TimeStart && form.TimeEnd >= day.TimeEnd
-                             || form.TimeStart >= day.TimeStart && form.TimeStart < day.TimeEnd
-                             || form.TimeEnd > day.TimeStart && form.TimeEnd <= day.TimeEnd)
-                            {
-                                return Ok(false);
-                            }
-                        }
-                    }
-                }
+                return Ok("The registration schedule coincides with the tutor's teaching schedule!");
             }
+
+
 
             // Create form
             var newRequestForm = new RequestTutorForm()
@@ -135,15 +121,15 @@ namespace API.Controllers
                             DayOfWeek = _classCalenderService.ConvertToDaysOfWeeks(form.DayOfWeek),
                             TimeStart = form.TimeStart.ToString() + "h",
                             TimeEnd = form.TimeEnd.ToString() + "h",
-                            SubjectName = _subjectService.GetSubjects().Where(s => s.SubjectId == form.SubjectId).Select(s => s.Description).FirstOrDefault(),
+                            SubjectName = form.Subject.Description,
                             FullName = memberForm.FullName,
                             Avatar = memberForm.Avatar,
                             Description = form.Description,
                             Status = form.Status,
                             StudentId = form.StudentId,
-                            UserIdStudent = _studentService.GetStudents().Where(s => s.StudentId == form.StudentId).Select(s => s.AccountId).First(),
+                            UserIdStudent = form.Student.AccountId,
                             TutorId = form.TutorId,
-                            UserIdTutor = _tutorService.GetTutors().Where(s => s.TutorId == form.TutorId).Select(s => s.AccountId).First(),
+                            UserIdTutor = form.Tutor.AccountId,
                         };
 
             result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
@@ -160,38 +146,101 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
-            if (action == false)
-            {
-                form.Status = action;
-            }
-            else
-            {
-                var list = _classCalenderService.HandleCalendar(formId).ToList();
-                foreach (var item in list)
-                {
-                    item.Status = false;
-                    _formService.UpdateRequestTutorForms(item);
-                }
-                form.Status = true;
-            }
 
+            form.Status = action;
             _formService.UpdateRequestTutorForms(form);
+
+            if (action)
+            {
+                Form formContainer = new Form()
+                {
+                    FormId = formId,
+                    DayOfWeek = form.DayOfWeek,
+                    DayStart = form.DayStart,
+                    DayEnd = form.DayEnd,
+                    TimeStart = form.TimeStart,
+                    TimeEnd = form.TimeEnd,
+                };
+
+                _classCalenderService.HandleTutorBrowserForm(formContainer, form.TutorId);
+            }
 
             return Ok(form.Status);
         }
 
+        // Handle form request and form class
         [HttpGet("handleBrowserForm")]
-        public IActionResult HandleBrowserForm(string formId, bool action)
+        public async Task<IActionResult> HandleBrowserForm(string formId, bool action)
         {
+            var tutor = _tutorService.GetTutors().Where(s => s.AccountId == _currentUserService.GetUserId().ToString());
+            var form = _formService.GetRequestTutorForms().Where(s => s.FormId == formId).FirstOrDefault();
             if (action == false)
             {
-                return Ok();
+                return Ok("Are you sure you want to reject this form?");
+            }
+            bool checkFormFind = true;
+            bool checkFormRequest = true;
+            Form formContainer = new Form()
+            {
+                FormId = formId,
+                DayOfWeek = form.DayOfWeek,
+                DayStart = form.DayStart,
+                DayEnd = form.DayEnd,
+                TimeStart = form.TimeStart,
+                TimeEnd = form.TimeEnd,
+            };
+
+            var formRequestList = _formService.GetRequestTutorForms().Where(s => s.TutorId == tutor.First().TutorId && s.Status == null);
+            if (formRequestList.Any())
+            {
+                checkFormFind = await _classCalenderService.HandleAvoidConflictFormRequest(formRequestList, formContainer);
+            }
+            var formFindList = _tutorApplyService.GetTutorApplies().Where(s => s.TutorId == tutor.First().TutorId && s.IsApprove == null);
+            if (formFindList.Any())
+            {
+                checkFormRequest = await _classCalenderService.HandleAvoidConflictFormFind(formFindList, formContainer);
             }
 
-            var list = _classCalenderService.HandleCalendar(formId);
+            if (checkFormFind == false && checkFormRequest == false)
+            {
+                return Ok("You have applied for find forms previously, and there are other request forms with schedules that coincide with this form. Accepting this form will result in all other forms with overlapping schedules being rejected or canceled.\r\n\r\nAre you sure you want to accept this form?");
+            }
 
-            return Ok(list.Count);
+            if (checkFormFind == false)
+            {
+                return Ok("You have applied for find forms previously with schedules that coincide with this form. Accepting this form will result in all other forms with overlapping schedules being rejected or canceled.\r\n\r\nAre you sure you want to accept this form?");
+            }
 
+            if (checkFormRequest == false)
+            {
+                return Ok("You have request forms with schedules that coincide with this form. Accepting this form will result in all other forms with overlapping schedules being rejected or canceled.\r\n\r\nAre you sure you want to accept this form?");
+            }            
+
+            return Ok("Are you sure you want to accept this form?");
+
+        }
+
+        // Handle Create Form 
+        [HttpPost("handleCreateForm")]
+        public async Task<IActionResult> HandleCreateForm(HandleCreateForm form)
+        {
+            var checkForm = await _classCalenderService.HandleStudentCreateForm(form.DayOfWeek, form.DayStart, form.DayEnd, form.TimeStart, form.TimeEnd, form.StudentId);
+            var checkClass = await _classCalenderService.HandleAvoidConflictCalendar(form.DayOfWeek, form.DayStart, form.DayEnd, form.TimeStart, form.TimeEnd, form.StudentId, 2);
+
+            if (checkForm == false && checkClass == false)
+            {
+                return Ok("You have forms and classes that coincide with your registration schedule. Are you sure to create this form?");
+            }
+            if (checkForm == false)
+            {
+                return Ok("You have forms that coincide with your registration schedule. Are you sure to create this form?");
+            }
+            if (checkClass == false)
+            {
+                return Ok("You have classes that coincide with your registration schedule. Are you sure to create this form?");
+            }
+
+            return Ok("Are you sure to create this form?");
         }
     }
 }

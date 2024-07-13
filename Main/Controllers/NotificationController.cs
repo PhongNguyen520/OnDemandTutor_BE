@@ -1,8 +1,10 @@
-﻿using API.Services;
+﻿using API.Hubs;
+using API.Services;
 using BusinessObjects;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Services;
 
 namespace API.Controllers
@@ -13,11 +15,13 @@ namespace API.Controllers
     {
         private readonly INotificationService _notificationService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IHubContext<ChatHub> _hubContext;
 
-        public NotificationController(ICurrentUserService currentUserService)
+        public NotificationController(ICurrentUserService currentUserService, IHubContext<ChatHub> hubContext)
         {
             _notificationService = new NotificationService();
             _currentUserService = currentUserService;
+            _hubContext = hubContext;
         }
 
         [HttpGet("viewNotificationList")]
@@ -57,7 +61,7 @@ namespace API.Controllers
         }
 
         [HttpPost("createNotification")]
-        public IActionResult CreateNotification(CreateNotiVM request)
+        public async Task<ActionResult> CreateNotification(CreateNotiVM request)
         {
             var user = _currentUserService.GetUser();
 
@@ -74,7 +78,7 @@ namespace API.Controllers
                 AccountId = request.AccountId,
             };
             _notificationService.AddNotification(result);
-
+            await _hubContext.Clients.Group(request.AccountId).SendAsync("ReceiveNotification", request.AccountId, "New notification");
             return Ok(result);
         }
 
