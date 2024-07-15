@@ -82,6 +82,7 @@ namespace Services
                             SubjectId = post.SubjectId,
                             StudentId = post.StudentId,
                             UserIdStudent = post.Student.AccountId,
+                            ReasonReject = post.RejectReason,
                         };
 
             return query;
