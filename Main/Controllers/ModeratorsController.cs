@@ -45,14 +45,15 @@ namespace API.Controllers
         [HttpPost("ChangeStatusTutor")]
         public async Task<IActionResult> ChangeStatusTutor(List<IsActiveTutor> acccount)
         {
+            var listResult = new List<string>();
             foreach (var x in acccount)
             {
                 if (await _tutorService.ChangeStatusTutor(x))
                 {
-                    return Ok("Successful");
+                    listResult.Add(x.AccountId);
                 }
             }
-            return BadRequest("No Found!!!");
+            return Ok(listResult);
         }
 
         [HttpPut("ModerComplaint")]
