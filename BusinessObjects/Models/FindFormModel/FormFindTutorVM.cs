@@ -31,6 +31,7 @@ namespace BusinessObjects.Models.FindFormModel
         public string SubjectId { get; set; } = string.Empty;
         public string StudentId { get; set; } = string.Empty;
         public string UserIdStudent { get; set; } = string.Empty;
+        public string? ReasonReject { get; set; }
     }
 
     public class TutorApplyVM
