@@ -17,10 +17,10 @@ namespace API.Controllers
         private readonly ISubjectTutorService _subjectTutorService;
         private readonly ISubjectService _subjectService;
 
-        public SystemHandlerController(IAccountService accountService)
+        public SystemHandlerController(IAccountService accountService, IClassService classService)
         {
             _tutorService = new TutorService();
-            _classService = new ClassService();
+            _classService = classService;
             _classCalenderService = new ClassCalenderService();
             _accountService = accountService;
             _subjectTutorService = new SubjectTutorService();

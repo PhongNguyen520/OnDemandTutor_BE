@@ -32,7 +32,7 @@ namespace API.Controllers
         private readonly IPagingListService<FormFindTutorVM> _pagingListService;
         private readonly IRequestTutorFormService _requestTutorFormService;
 
-        public FormFindTutorController(ICurrentUserService currentUserService, IAccountService accountService)
+        public FormFindTutorController(ICurrentUserService currentUserService, IAccountService accountService, IClassService classService)
         {
             _findTutorFormService = new FindTutorFormService();
             _currentUserService = currentUserService;
@@ -43,7 +43,7 @@ namespace API.Controllers
             _tutorService = new TutorService();
             _tutorApplyService = new TutorApplyService();
             _classCalenderService = new ClassCalenderService();
-            _classService = new ClassService();
+            _classService = classService;
             _pagingListService = new PagingListService<FormFindTutorVM>();
             _requestTutorFormService = new RequestTutorFormService();
         }

@@ -20,5 +20,9 @@ namespace Repositories
         public bool UpdateClasses(Class @class);
 
         Task<ReturnBalance> PaymentTutor(string userId);
+
+        Task<List<ListClassVMPhuc>> GetClassByDay();
+
+        Task<List<ListClassVMPhucMonthYear>> GetClassByMonth();
     }
 }

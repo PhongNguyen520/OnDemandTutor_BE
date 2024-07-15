@@ -81,6 +81,8 @@ namespace API.Helper
             CreateMap<Complaint, ComplaintVM>().ReverseMap();
             CreateMap<Complaint, ComlaintClass>().ReverseMap();
 
+            CreateMap<Class, ClassVMPhuc>().ReverseMap();
+
             #endregion
         }
     }

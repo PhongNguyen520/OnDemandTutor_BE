@@ -69,4 +69,31 @@ namespace BusinessObjects.Models
         public int TimeEnd { get; set; }
         public string StudentId { get; set; } = string.Empty;
     }
+
+    public class ClassVMPhuc
+    {
+        public string ClassId { get; set; } = null!;
+
+        public string ClassName { get; set; } = null!;
+
+        public float Price { get; set; }
+
+        public string Description { get; set; } = null!;
+
+        public bool? Status { get; set; }
+
+        public string TutorId { get; set; } = null!;
+
+        public string StudentId { get; set; } = null!;
+
+        public string SubjectId { get; set; } = null!;
+
+        public DateTime CreateDay { get; set; }
+
+        public bool? IsApprove { get; set; }
+
+        public DateTime DayStart { get; set; }
+
+        public DateTime DayEnd { get; set; }
+    }
 }
