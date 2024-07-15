@@ -79,6 +79,7 @@ namespace API.Controllers
                 StudentId = form.StudentId,
                 TutorId = tutor.TutorId,
                 SubjectId = form.SubjectId,
+                IsCancel = false,
             };
 
             _classService.AddClass(newClass);
@@ -165,6 +166,8 @@ namespace API.Controllers
                                       select a.Avatar).FirstOrDefault(),
                             Status = c.Status,
                             IsApprove = c.IsApprove,
+                            IsCancel = c.IsCancel,
+                            CancelDay = c.CancelDay,
                         };
 
             result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
@@ -220,6 +223,8 @@ namespace API.Controllers
                                       select a.Avatar).FirstOrDefault(),
                             Status = c.Status,
                             IsApprove = c.IsApprove,
+                            IsCancel = c.IsCancel,
+                            CancelDay = c.CancelDay,
                         };
 
             result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
