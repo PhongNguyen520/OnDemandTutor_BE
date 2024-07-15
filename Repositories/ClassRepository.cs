@@ -73,6 +73,6 @@ namespace Repositories
                 return returnBalance;
             } 
             return null;
-        }
+        } 
     }
 }

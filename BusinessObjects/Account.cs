@@ -31,4 +31,6 @@ public partial class Account : IdentityUser
     public virtual ICollection<Wallet> Wallets { get; set; } = new List<Wallet>();
 
     public virtual ICollection<ConversationAccount> ConversationAccounts { get; set; } = new List<ConversationAccount>();
+
+    public DateTime CreateDay { get; set; } = DateTime.Now;
 }

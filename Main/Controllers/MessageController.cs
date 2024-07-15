@@ -45,6 +45,18 @@ namespace API.Controllers
                 .Reverse()
                 .ToList();
 
+            if (listMessages.Any())
+            {
+                foreach(var message in listMessages)
+                {
+                    if (message.IsRead == false)
+                    {
+                        message.IsRead = true;
+                        messageService.UpdateMessages(message);
+                    }
+                }
+            }
+
             //var messageVM = _mapper.Map<IEnumerable<Message>, IEnumerable<MessageVM>>(listMessages);
 
             var listAccount = _accountService.GetAccounts();
@@ -81,6 +93,7 @@ namespace API.Controllers
                 ConversationId = room,
                 Time = DateTime.Now,
                 IsActive = true,
+                IsRead = false,
             };
 
             _dbContext.Add(msg);

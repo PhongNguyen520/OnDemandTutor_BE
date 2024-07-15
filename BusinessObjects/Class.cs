@@ -39,4 +39,6 @@ public partial class Class
     public DateTime DayEnd { get; set; }
 
     public virtual ICollection<Complaint> Complaints { get; set; } = new List<Complaint>();
+    public bool? IsCancel { get; set; }
+    public DateTime? CancelDay { get; set; }
 }
