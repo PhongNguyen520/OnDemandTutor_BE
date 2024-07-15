@@ -38,6 +38,7 @@ namespace API.Controllers
                              Avatar = item.Avatar,
                              Title = item.Title,
                              CreateDay = item.CreateDay.ToString("yyyy-MM-dd HH:mm"),
+                             IsRead = item.IsRead,
                          };
 
             return Ok(result);
@@ -56,6 +57,9 @@ namespace API.Controllers
                              Title = noti.Title,
                              Description = noti.Description,
                          };
+
+            noti.IsRead = true;
+            _notificationService.UpdateNotifications(noti);
 
             return Ok(result);
         }
@@ -76,6 +80,7 @@ namespace API.Controllers
                 Url = request.Url,
                 IsActive = true,
                 AccountId = request.AccountId,
+                IsRead = false,
             };
             _notificationService.AddNotification(result);
             await _hubContext.Clients.Group(request.AccountId).SendAsync("ReceiveNotification", request.AccountId, "New notification");

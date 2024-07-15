@@ -13,12 +13,8 @@ public partial class Notification
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
     public string? Url { get; set; }
-
- //   public bool Status { get; set; }
-
     public bool IsActive { get; set; }
-
     public string AccountId { get; set; } = null!;
-
     public virtual Account Account { get; set; } = null!;
+    public bool IsRead { get; set; }
 }
