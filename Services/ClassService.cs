@@ -17,17 +17,15 @@ namespace Services
         private readonly IFindTutorFormRepository _findTutorFormRepository;
         private readonly IRequestTutorFormRepository _requestTutorFormRepository;
 
-        public ClassService()
+        public ClassService(IClassRepository classRepository)
         {
-            _classRepository = new ClassRepository();
+            _classRepository = classRepository;
             _findTutorFormRepository = new FindTutorFormRepository();
             _requestTutorFormRepository = new RequestTutorFormRepository();
         }
 
-        public ClassService(IClassRepository classRepository)
-        {
-            _classRepository = classRepository;
-        }
+
+        
 
         public bool AddClass(Class @class)
         {
@@ -90,6 +88,16 @@ namespace Services
         public async Task<ReturnBalance> PaymentTutor(string userId)
         {
             return await _classRepository.PaymentTutor(userId);
+        }
+
+        public async Task<List<ListClassVMPhucMonthYear>> GetClassByMonth()
+        {
+            return await _classRepository.GetClassByMonth();
+        }
+
+        public async Task<List<ListClassVMPhuc>> GetClassByDay()
+        {
+            return await _classRepository.GetClassByDay();
         }
     }
 }

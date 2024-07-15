@@ -29,18 +29,20 @@ namespace API.Controllers
         private readonly IPagingListService<FormRequestTutorVM> _pagingListService;
         private readonly ITutorApplyService _tutorApplyService;
 
-        public FormRequestTutorController(ICurrentUserService currentUserService)
+        public FormRequestTutorController(ICurrentUserService currentUserService, IClassService classService)
         {
             _formService = new RequestTutorFormService();
             _currentUserService = currentUserService;
             _subjectService = new SubjectService();
             _studentService = new StudentService();
             _classCalenderService = new ClassCalenderService();
-            _classService = new ClassService();
+
             _tutorService = new TutorService();
             _pagingListService = new PagingListService<FormRequestTutorVM>();
             _formFindService = new FindTutorFormService();
             _tutorApplyService = new TutorApplyService();
+
+            _classService = classService;
         }
 
         // Create Form Request Tutor + Handle To Avoid Conflict With Tutor Calender

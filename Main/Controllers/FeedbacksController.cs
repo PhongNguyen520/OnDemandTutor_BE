@@ -27,12 +27,12 @@ namespace API.Controllers
         private readonly ICurrentUserService _currentUserService;
         private readonly IPagingListService<FeedbackVM> _pagingListService;
 
-        public FeedbacksController(IAccountService accountService, ICurrentUserService currentUserService)
+        public FeedbacksController(IAccountService accountService, ICurrentUserService currentUserService, IClassService classService)
         {
             _feedbackService = new FeedbackService();
             _studentService = new StudentService();
             _accountService = accountService;
-            _classService = new ClassService();
+            _classService = classService;
             _subjectService = new SubjectService();
             _currentUserService = currentUserService;
             _pagingListService = new PagingListService<FeedbackVM>();

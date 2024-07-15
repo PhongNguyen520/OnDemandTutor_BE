@@ -32,9 +32,9 @@ namespace API.Controllers
         private readonly IClassCalenderService _classCalenderService;
         private readonly IPagingListService<ClassVM> _pagingListService;
 
-        public ClassesController(ICurrentUserService currentUserService, IAccountService accountService)
+        public ClassesController(ICurrentUserService currentUserService, IAccountService accountService, IClassService classService)
         {
-            _classService = new ClassService();
+            _classService = classService;
             _currentUserService = currentUserService;
             _tutorService = new TutorService();
             _subjectService = new SubjectService();
@@ -284,6 +284,22 @@ namespace API.Controllers
             calender.IsActive = true;
 
             return Ok("Checked!");
+        }
+
+        [HttpGet("ShowClassByMonthOrDay")]
+        public async Task<IActionResult> ShowClassByMonthOrDay(string timeChoice)
+        {
+            if (timeChoice.ToUpper() == "DAY")
+            {
+                var list = await _classService.GetClassByDay();
+                return Ok(list);
+            }
+            if(timeChoice.ToUpper() == "MONTH")
+            {
+                var list2 = await _classService.GetClassByMonth();
+                return Ok(list2);
+            }
+            return BadRequest("NoNo!!!");
         }
     }
 }
