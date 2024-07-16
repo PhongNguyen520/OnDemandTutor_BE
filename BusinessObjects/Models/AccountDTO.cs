@@ -101,6 +101,8 @@ namespace BusinessObjects.Models
 
         public bool IsActive { get; set; }
 
+        public DateTime CreateDay { get; set; }
+
     }
 
     public class StudentVM
@@ -120,6 +122,8 @@ namespace BusinessObjects.Models
         public int? Age { get; set; }
 
         public bool IsParent { get; set; }
+
+        public DateTime CreateDay { get; set; }
 
     }
 
@@ -188,6 +192,32 @@ namespace BusinessObjects.Models
 
         public bool IsActive { get; set; }
 
+        public DateTime CreateDay { get; set; }
+
+    }
+
+    public class Student10VM
+    {
+        public string AccountId { get; set; }
+        public string FullName { get; set; } = null!;
+
+        public bool Gender { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public string Email { get; set; }
+
+        public string? Avatar { get; set; }
+
+        public string? SchoolName { get; set; }
+
+        public string? Address { get; set; }
+
+        public int? Age { get; set; }
+
+        public bool IsParent { get; set; }
+
+        public DateTime CreateDay { get; set; }
     }
 
 }

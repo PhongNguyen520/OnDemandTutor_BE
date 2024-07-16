@@ -119,5 +119,19 @@ namespace API.Controllers
         //{
         //    return _context.Accounts.Any(e => e.AccountId == id);
         //}
+
+        [HttpGet("Show10TutorNew")]
+        public async Task<IActionResult> Show10TutorNew()
+        {
+            var list = await iAccountService.Get10TutorNew();
+            return Ok(list);
+        }
+
+        [HttpGet("Show10StudentNew")]
+        public async Task<IActionResult> Show10StudentNew()
+        {
+            var list = await iAccountService.Get10StudentNew();
+            return Ok(list);
+        }
     }
 }

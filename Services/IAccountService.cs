@@ -36,5 +36,7 @@ namespace Services
         Task<IQueryable<TutorInterVM>> GetAccountTutorIsActiveFalse();
         Task<bool> CheckAccountByEmail(string email);
         Task<IQueryable<UserRolesVM>> ListAccountIsActive();
+        Task<List<Student10VM>> Get10StudentNew();
+        Task<List<TutorInterVM>> Get10TutorNew();
     }
 }

@@ -34,6 +34,7 @@ namespace API.Helper
                 .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Account.Gender))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Account.PhoneNumber))
                 .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Account.Avatar))
+                .ForMember(dest => dest.CreateDay, opt => opt.MapFrom(src => src.Account.CreateDay))
                 .ReverseMap();
 
             CreateMap<Account, TutorVM>()
@@ -49,6 +50,7 @@ namespace API.Helper
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.Age))
                 .ForMember(dest => dest.IsParent, opt => opt.MapFrom(src => src.IsParent))
+                .ForMember(dest => dest.CreateDay, opt => opt.MapFrom(src => src.Account.CreateDay))
                 .ReverseMap();
 
             CreateMap<Account,StudentVM>()
@@ -75,7 +77,23 @@ namespace API.Helper
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Account.Email))
                 .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Account.Avatar))
                 .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId))
+                .ForMember(dest => dest.CreateDay, opt => opt.MapFrom(src => src.Account.CreateDay))
                 .ReverseMap();
+
+            CreateMap<Student, Student10VM>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Account.FullName))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Account.Gender))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Account.PhoneNumber))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Account.Email))
+                .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Account.Avatar))
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId))
+                .ForMember(dest => dest.CreateDay, opt => opt.MapFrom(src => src.Account.CreateDay))
+                .ForMember(dest => dest.SchoolName, opt => opt.MapFrom(src => src.SchoolName))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.Age))
+                .ForMember(dest => dest.IsParent, opt => opt.MapFrom(src => src.IsParent))
+                .ReverseMap();
+
 
             CreateMap<Complaint, ComplaintDTO>().ReverseMap();
             CreateMap<Complaint, ComplaintVM>().ReverseMap();
