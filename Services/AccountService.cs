@@ -120,5 +120,15 @@ namespace Services
         {
             return iAccountRepository.GetAllIsActive();
         }
+
+        public async Task<List<Student10VM>> Get10StudentNew()
+        {
+            return await iAccountRepository.Get10StudentNew();
+        }
+
+        public async Task<List<TutorInterVM>> Get10TutorNew()
+        {
+            return await iAccountRepository.Get10TutorNew();
+        }
     }
 }
