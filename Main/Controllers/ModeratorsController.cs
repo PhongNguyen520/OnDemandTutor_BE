@@ -15,13 +15,15 @@ namespace API.Controllers
         private IMailService _mailService;
         private readonly ITutorService _tutorService;
         private readonly IComplaintService _complaintService;
+        private readonly ITutorAdService _tutorAdService;
 
-        public ModeratorsController(IAccountService accountService, IMailService mailService, ITutorService tutorService, IComplaintService complaintService)
+        public ModeratorsController(IAccountService accountService, IMailService mailService, ITutorService tutorService, IComplaintService complaintService, ITutorAdService tutorAdService)
         {
             _accountService = accountService;
             _mailService = mailService;
             _tutorService = tutorService;
             _complaintService = complaintService;
+            _tutorAdService = tutorAdService;
         }
 
         [HttpGet("get_tutors")]
@@ -72,6 +74,24 @@ namespace API.Controllers
         {
             var list = await _complaintService.ShowListComplaintClass();
             return Ok(list);
+        }
+
+        [HttpGet("ShowTutorAdBrowse")]
+        public async Task<IActionResult> ShowTutorAdBrowse()
+        {
+            var result = await _tutorAdService.GetAllTutorAdIsActive();
+            return Ok(result);
+        }
+
+        [HttpPost("changeisactivead")]
+        public async Task<IActionResult> ChangeIsActiveAd(TutorAdIsAc model)
+        {
+            var result = await _tutorAdService.UpdateIsActiveTutorAd(model);
+            if (result == false)
+            {
+                return BadRequest("No ADS!!!");
+            }
+            return Ok(model.IsActive);
         }
     }
 }

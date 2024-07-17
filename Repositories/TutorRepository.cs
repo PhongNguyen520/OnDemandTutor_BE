@@ -176,5 +176,27 @@ namespace Repositories
             return false;
         }
 
+        public async Task<List<AccountTutorAdVM>> GetAccountHaveAd()
+        {
+            var listTutorHaveAd = await _dbContext.Tutors
+                                   .Include(_ => _.Account)
+                                   .Where(_ => _.Account.IsActive == true
+                                          && _.IsActive == true
+                                          && _.TutorAds.Any(_ => _.IsActived == true))
+                                   .ToListAsync();
+            var result = _mapper.Map<List<AccountTutorAdVM>>(listTutorHaveAd);
+
+            foreach(var x in result)
+            {
+                var listAd = await _dbContext.TutorAds
+                                       .Where(_ => _.TutorId == x.TutorId
+                                              && _.IsActived == true)
+                                       .ToListAsync();
+                x.TutorAds = _mapper.Map<List<TutorAdsModel>>(listAd);
+            }
+
+            return result;
+        }
+
     }
 }

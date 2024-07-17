@@ -13,7 +13,7 @@ public partial class Tutor
 
     public string TypeOfDegree { get; set; } = null!;
 
-    public int CardId { get; set; }
+    public string CardId { get; set; }
 
     public float HourlyRate { get; set; }
 

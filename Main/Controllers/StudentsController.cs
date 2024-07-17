@@ -49,5 +49,16 @@ namespace API.Controllers
             var rusult = await _iStudentService.ListNameSupsectGroup(nameFind);
             return Ok(rusult);
         }
+
+        [HttpGet("find_student_byid")]
+        public async Task<IActionResult> FindStudentById(string idStudent)
+        {
+            var result = await _iStudentService.GetStudentById(idStudent);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }

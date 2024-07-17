@@ -11,7 +11,7 @@ namespace API.Controller
 
     [Route("api/admin")]
     [ApiController]
-    
+
     public class AdminController : ControllerBase
     {
 
@@ -22,7 +22,7 @@ namespace API.Controller
         {
             iRoleService = _iRoleService;
             iAccountService = _iAccountService;
-    }
+        }
         [Authorize(Roles = AppRole.Tutor)]
         [HttpGet("get_role")]
         public async Task<IActionResult> GetAccounts()
@@ -34,7 +34,7 @@ namespace API.Controller
                 _.Name
             });
             return Ok(listRoles);
-}
+        }
 
         [HttpGet("get_role/{id}")]
         public async Task<IActionResult> GetRoleById(String id)
@@ -44,8 +44,10 @@ namespace API.Controller
             return BadRequest("Cannot found");
         }
 
+
         [HttpPost("create_role")]
         public async Task<IActionResult> CreateRole(String roleName)
+
         {
             var result = await iRoleService.CreateRole(roleName);
             return Ok(result);
@@ -82,15 +84,19 @@ namespace API.Controller
         }
 
 
+
         [HttpPost("create_user-role")]
         public async Task<IActionResult> AddRoleUser(List<string> roleNames, String userId)
+
         {
             var result = await iRoleService.AddRoleUser(roleNames, userId);
             return Ok(result);
         }
 
+
         [HttpPost("update_user-status")]
         public async Task<IActionResult> EnalbleUser(String userId)
+
         {
             return Ok(await iAccountService.EnalbleUser(userId));
         }

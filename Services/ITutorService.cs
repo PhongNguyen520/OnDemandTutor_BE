@@ -35,5 +35,7 @@ namespace Services
         Task<DashBoardTutor> NumberOfHour(string id, DateTime createDay);
 
         Task<DashBoardTutor> NumberOfClassesIsCancel(string id, DateTime createDay);
+
+        Task<List<AccountTutorAdVM>> GetAccountHaveAd();
     }
 }
