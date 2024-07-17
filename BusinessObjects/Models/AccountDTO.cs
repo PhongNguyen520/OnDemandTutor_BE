@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessObjects.Models.TutorModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -101,6 +102,10 @@ namespace BusinessObjects.Models
 
         public bool IsActive { get; set; }
 
+        public DateTime CreateDay { get; set; }
+
+        public string TutorId { get; set; }
+
     }
 
     public class StudentVM
@@ -120,6 +125,8 @@ namespace BusinessObjects.Models
         public int? Age { get; set; }
 
         public bool IsParent { get; set; }
+
+        public DateTime CreateDay { get; set; }
 
     }
 
@@ -188,6 +195,77 @@ namespace BusinessObjects.Models
 
         public bool IsActive { get; set; }
 
+        public DateTime CreateDay { get; set; }
+
+        public string TutorId { get; set; }
+
+    }
+
+    public class Student10VM
+    {
+        public string AccountId { get; set; }
+        public string FullName { get; set; } = null!;
+
+        public bool Gender { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public string Email { get; set; }
+
+        public string? Avatar { get; set; }
+
+        public string? SchoolName { get; set; }
+
+        public string? Address { get; set; }
+
+        public int? Age { get; set; }
+
+        public bool IsParent { get; set; }
+
+        public DateTime CreateDay { get; set; }
+
+        public string StudentId { get; set; }
+
+    }
+
+    public class AccountTutorAdVM
+    {
+        public string AccountId { get; set; }
+        public string FullName { get; set; } = null!;
+
+        public bool Gender { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public string Email { get; set; }
+
+        public string? Avatar { get; set; }
+
+        public DateTime Dob { get; set; }
+
+        public string Education { get; set; } = null!;
+
+        public string TypeOfDegree { get; set; } = null!;
+
+        public int CardId { get; set; }
+
+        public float HourlyRate { get; set; }
+
+        public string? Photo { get; set; }
+
+        public string? Headline { get; set; }
+
+        public string? Description { get; set; }
+
+        public string? Address { get; set; }
+
+        public bool IsActive { get; set; }
+
+        public DateTime CreateDay { get; set; }
+
+        public string TutorId { get; set; }
+
+        public List<TutorAdsModel> TutorAds { get; set; }
     }
 
 }

@@ -328,5 +328,20 @@ namespace Repositories
             return listUserRolesVM.AsQueryable();
         }
 
+        public async Task<List<TutorInterVM>> Get10TutorNew()
+        {
+            var list = await _dbContext.Tutors.Include(_ => _.Account)
+                             .OrderByDescending(_ => _.Account.CreateDay)
+                             .Take(10).ToListAsync();
+            return _mapper.Map<List<TutorInterVM>>(list);
+        }
+
+        public async Task<List<Student10VM>> Get10StudentNew()
+        {
+            var list = await _dbContext.Students.Include(_ => _.Account)
+                             .OrderByDescending(_ => _.Account.CreateDay)
+                             .Take(10).ToListAsync();
+            return _mapper.Map<List<Student10VM>>(list);
+        }
     }
 }

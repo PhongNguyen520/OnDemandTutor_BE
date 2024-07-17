@@ -9,12 +9,12 @@ namespace BusinessObjects
 {
     public class ClassCalender
     {
-        public string CalenderId { get; set; }
+        public string CalenderId { get; set; } = string.Empty;
         public DateTime DayOfWeek { get; set; }
         public int TimeStart { get; set; }
         public int TimeEnd { get; set; }
-        public bool IsActive { get; set; }
-        public string ClassId { get; set; }
+        public bool? IsActive { get; set; }
+        public string ClassId { get; set; } = string.Empty;
         public virtual Class Classes { get; set; } = null!;
     }
 }

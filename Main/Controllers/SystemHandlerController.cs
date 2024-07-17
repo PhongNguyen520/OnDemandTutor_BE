@@ -6,7 +6,7 @@ using System.Threading.Tasks.Dataflow;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/system-handler")]
     [ApiController]
     public class SystemHandlerController : ControllerBase
     {
@@ -17,17 +17,17 @@ namespace API.Controllers
         private readonly ISubjectTutorService _subjectTutorService;
         private readonly ISubjectService _subjectService;
 
-        public SystemHandlerController(IAccountService accountService)
+        public SystemHandlerController(IAccountService accountService, IClassService classService)
         {
             _tutorService = new TutorService();
-            _classService = new ClassService();
+            _classService = classService;
             _classCalenderService = new ClassCalenderService();
             _accountService = accountService;
             _subjectTutorService = new SubjectTutorService();
             _subjectService = new SubjectService();
         }
 
-        [HttpGet("top10Tutor")]
+        [HttpGet("get_top-10-tutor")]
         public IActionResult GetTopTutor()
         {
             var tutors = _tutorService.GetTutors();

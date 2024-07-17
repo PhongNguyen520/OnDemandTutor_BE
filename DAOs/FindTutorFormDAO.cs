@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,8 @@ namespace DAOs
 
         public List<FindTutorForm> GetFindTutorForms()
         {
-            return dbContext.FindTutorForms.OrderByDescending(x => x.FormId).ToList();
+            return dbContext.FindTutorForms.Include("Student")
+                                           .Include("Subject").ToList();
         }
 
         public bool UpdateFindTutorForms(FindTutorForm form)

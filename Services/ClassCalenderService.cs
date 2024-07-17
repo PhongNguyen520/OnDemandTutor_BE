@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using Microsoft.SqlServer.Server;
 using Repositories;
 using System;
@@ -12,16 +13,16 @@ namespace Services
     public class ClassCalenderService : IClassCalenderService
     {
         private readonly IClassCalenderRepository classCalenderRepository = null;
-        private readonly IRequestTutorFormRepository requestTutorFormRepository = null;
-        private readonly IClassRepository classRepository = null;
+        private readonly IRequestTutorFormRepository requestTutorFormRepository = new RequestTutorFormRepository();
+        private readonly IFindTutorFormRepository findTutorFormRepository = new FindTutorFormRepository();
+        private readonly IClassRepository classRepository = new ClassRepository();
+        private readonly ITutorApplyRepository tutorApplyRepository = new TutorApplyRepository();
 
         public ClassCalenderService()
         {
             if (classCalenderRepository == null)
             {
                 classCalenderRepository = new ClassCalenderRepository();
-                requestTutorFormRepository = new RequestTutorFormRepository();
-                classRepository = new ClassRepository();
             }
         }
 
@@ -55,17 +56,123 @@ namespace Services
             return classCalenderRepository.UpdateClassCalenders(calender);
         }
 
-        public List<RequestTutorForm> HandleCalendar(string formId)
+        public void HandleTutorBrowserForm(Form form, string tutorId)
         {
-            var form = requestTutorFormRepository.GetRequestTutorForms().Where(s => s.FormId == formId).FirstOrDefault();
-            var formList = requestTutorFormRepository.GetRequestTutorForms().Where(s => s.Status == null && s.FormId != formId);
+            var formRequestList = requestTutorFormRepository.GetRequestTutorForms().Where(s => s.Status == null && s.FormId != form.FormId && s.TutorId == tutorId);
+            var formFindList = tutorApplyRepository.GetTutorApplies().Where(s => s.IsApprove == null && s.FormId != form.FormId && s.TutorId == tutorId);
             List<RequestTutorForm> list = new List<RequestTutorForm>();
 
             List<DayOfWeek> formDays = classCalenderRepository.ParseDaysOfWeek(form.DayOfWeek);
 
             var filteredDates = classCalenderRepository.GetDatesByDaysOfWeek(form.DayStart, form.DayEnd, formDays);
 
-            foreach (var f in formList)
+            if (formRequestList.Any())
+            {
+                foreach (var f in formRequestList)
+                {
+                    List<DayOfWeek> fDays = classCalenderRepository.ParseDaysOfWeek(f.DayOfWeek);
+                    var fDates = classCalenderRepository.GetDatesByDaysOfWeek(f.DayStart, f.DayEnd, fDays);
+                    foreach (var d in fDates)
+                    {
+                        if (filteredDates.Contains(d))
+                        {
+                            if (form.TimeStart <= f.TimeStart && form.TimeEnd >= f.TimeEnd
+                             || form.TimeStart >= f.TimeStart && form.TimeStart < f.TimeEnd
+                             || form.TimeEnd > f.TimeStart && form.TimeEnd <= f.TimeEnd)
+                            {
+                                f.Status = false;
+                                requestTutorFormRepository.UpdateRequestTutorForms(f);
+                                break;
+                            }
+
+                        }
+                    }
+                }
+            }
+            if (formFindList.Any())
+            {
+                foreach (var f in formFindList)
+                {
+                    List<DayOfWeek> fDays = classCalenderRepository.ParseDaysOfWeek(f.FindTutorForm.DayOfWeek);
+                    var fDates = classCalenderRepository.GetDatesByDaysOfWeek(f.FindTutorForm.DayStart, f.FindTutorForm.DayEnd, fDays);
+                    foreach (var d in fDates)
+                    {
+                        if (filteredDates.Contains(d))
+                        {
+                            if (form.TimeStart <= f.FindTutorForm.TimeStart && form.TimeEnd >= f.FindTutorForm.TimeEnd
+                             || form.TimeStart >= f.FindTutorForm.TimeStart && form.TimeStart < f.FindTutorForm.TimeEnd
+                             || form.TimeEnd > f.FindTutorForm.TimeStart && form.TimeEnd <= f.FindTutorForm.TimeEnd)
+                            {
+                                f.IsActived = false;
+                                tutorApplyRepository.UpdateTutorApplies(f);
+                                break;
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
+        //Handle To Avoid Conflict With Class Calender
+        public async Task<bool> HandleAvoidConflictCalendar(string dayOfWeek, DateTime dayStart, DateTime dayEnd, int timeStart, int timeEnd, string id, int typeActor)
+        {
+
+            //1.Get all booking day
+            List<DayOfWeek> desiredDays = classCalenderRepository.ParseDaysOfWeek(dayOfWeek);
+
+            var filteredDates = classCalenderRepository.GetDatesByDaysOfWeek(dayStart, dayEnd, desiredDays);
+
+            //2.Select tutor's / student's calender
+            List<Class> classList = new();
+            if (typeActor == 1)
+            {
+                classList = classRepository.GetClasses().Where(s => s.Status == null && s.IsApprove != false && s.TutorId == id).ToList();
+                if (!classList.Any())
+                {
+                    return true;
+                }
+            }
+            if (typeActor == 2)
+            {
+                classList = classRepository.GetClasses().Where(s => s.Status == null && s.IsApprove != false && s.StudentId == id).ToList();
+                if (!classList.Any())
+                {
+                    return true;
+                }
+            }
+            var calender = from a in classList
+                           join b in classCalenderRepository.GetClassCalenders()
+                           on a.ClassId equals b.ClassId
+                           select b;
+
+            // 3. Checking
+            foreach (var day in calender)
+            {
+                for (int i = 0; i < filteredDates.Count; i++)
+                {
+                    if (day.DayOfWeek == filteredDates[i])
+                    {
+                        if (timeStart <= day.TimeStart && timeEnd >= day.TimeEnd
+                        || timeStart >= day.TimeStart && timeStart < day.TimeEnd
+                         || timeEnd > day.TimeStart && timeEnd <= day.TimeEnd)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public async Task<bool> HandleAvoidConflictFormRequest(IEnumerable<RequestTutorForm> list, Form form)
+        {
+            List<DayOfWeek> formDays = classCalenderRepository.ParseDaysOfWeek(form.DayOfWeek);
+
+            var filteredDates = classCalenderRepository.GetDatesByDaysOfWeek(form.DayStart, form.DayEnd, formDays);
+
+            foreach (var f in list)
             {
                 List<DayOfWeek> fDays = classCalenderRepository.ParseDaysOfWeek(f.DayOfWeek);
                 var fDates = classCalenderRepository.GetDatesByDaysOfWeek(f.DayStart, f.DayEnd, fDays);
@@ -77,14 +184,100 @@ namespace Services
                          || form.TimeStart >= f.TimeStart && form.TimeStart < f.TimeEnd
                          || form.TimeEnd > f.TimeStart && form.TimeEnd <= f.TimeEnd)
                         {
-                            list.Add(f);
-                            break;
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        public async Task<bool> HandleAvoidConflictFormFind(IEnumerable<TutorApply> list, Form form)
+        {
+            List<DayOfWeek> formDays = classCalenderRepository.ParseDaysOfWeek(form.DayOfWeek);
+
+            var filteredDates = classCalenderRepository.GetDatesByDaysOfWeek(form.DayStart, form.DayEnd, formDays);
+
+            foreach (var f in list)
+            {
+                List<DayOfWeek> fDays = classCalenderRepository.ParseDaysOfWeek(f.FindTutorForm.DayOfWeek);
+                var fDates = classCalenderRepository.GetDatesByDaysOfWeek(f.FindTutorForm.DayStart, f.FindTutorForm.DayEnd, fDays);
+                foreach (var d in fDates)
+                {
+                    if (filteredDates.Contains(d))
+                    {
+                        if (form.TimeStart <= f.FindTutorForm.TimeStart && form.TimeEnd >= f.FindTutorForm.TimeEnd
+                         || form.TimeStart >= f.FindTutorForm.TimeStart && form.TimeStart < f.FindTutorForm.TimeEnd
+                         || form.TimeEnd > f.FindTutorForm.TimeStart && form.TimeEnd <= f.FindTutorForm.TimeEnd)
+                        {
+                            return false;
                         }
 
                     }
                 }
             }
-            return list;
+            return true;
+        }
+
+        public async Task<bool> HandleStudentCreateForm(string dayOfWeek, DateTime dayStart, DateTime dayEnd, int timeStart, int timeEnd, string studentId)
+        {
+            var formFindList = findTutorFormRepository.GetFindTutorForms().Where(s => s.Status == null && s.StudentId == studentId);
+            var formRequestList = requestTutorFormRepository.GetRequestTutorForms().Where(s => s.Status == null && s.StudentId == studentId);
+
+            List<DayOfWeek> formDays = classCalenderRepository.ParseDaysOfWeek(dayOfWeek);
+
+            var filteredDates = classCalenderRepository.GetDatesByDaysOfWeek(dayStart, dayEnd, formDays);
+
+            if (!formFindList.Any() && !formRequestList.Any())
+            {
+                return true;
+            }
+
+            if (formFindList.Any())
+            {
+                foreach (var f in formFindList)
+                {
+                    List<DayOfWeek> fDays = classCalenderRepository.ParseDaysOfWeek(f.DayOfWeek);
+                    var fDates = classCalenderRepository.GetDatesByDaysOfWeek(f.DayStart, f.DayEnd, fDays);
+                    foreach (var d in fDates)
+                    {
+                        if (filteredDates.Contains(d))
+                        {
+                            if (timeStart <= f.TimeStart && timeEnd >= f.TimeEnd
+                             || timeStart >= f.TimeStart && timeStart < f.TimeEnd
+                             || timeEnd > f.TimeStart && timeEnd <= f.TimeEnd)
+                            {
+                                return false;
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            if (formRequestList.Any())
+            {
+                foreach (var f in formRequestList)
+                {
+                    List<DayOfWeek> fDays = classCalenderRepository.ParseDaysOfWeek(f.DayOfWeek);
+                    var fDates = classCalenderRepository.GetDatesByDaysOfWeek(f.DayStart, f.DayEnd, fDays);
+                    foreach (var d in fDates)
+                    {
+                        if (filteredDates.Contains(d))
+                        {
+                            if (timeStart <= f.TimeStart && timeEnd >= f.TimeEnd
+                             || timeStart >= f.TimeStart && timeStart < f.TimeEnd
+                             || timeEnd > f.TimeStart && timeEnd <= f.TimeEnd)
+                            {
+                                return false;
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            return true;
         }
 
         public int TotalHourByMonth(IEnumerable<Class> classList, string tutorId)

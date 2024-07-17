@@ -23,6 +23,7 @@ namespace BusinessObjects.Models
         public string Title { get; set; } = string.Empty;
         public string? Avatar {  get; set; }
         public string CreateDay { get; set; } = string.Empty;
+        public bool IsRead { get; set; }
     }
 
     public class CreateNotiVM

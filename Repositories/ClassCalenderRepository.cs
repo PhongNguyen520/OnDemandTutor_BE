@@ -40,10 +40,6 @@ namespace Repositories
             return dao.UpdateClassCalenders(calender);
         }
 
-
-
-
-
         public List<DateTime> GetDatesByDaysOfWeek(DateTime startDate, DateTime endDate, List<DayOfWeek> desiredDays)
         {
             List<DateTime> dates = new List<DateTime>();

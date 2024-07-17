@@ -58,6 +58,20 @@ namespace API.Hubs
             }
         }
 
+        public async Task SendNotification(string userId)
+        {
+            try
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+            await Clients.Group(userId).SendAsync("ReceiveNotification", "You have new notification");
+            }
+            catch (Exception ex)
+            {
+                await Clients.Caller.SendAsync("onError", "You failed to join the chat room!" + ex.Message);
+            }
+        }
+
+
         //private string IdentityName
         //{
         //    get { return _currentUserService.GetUserId().ToString(); }

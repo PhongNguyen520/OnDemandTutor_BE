@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240713070548_update-findform")]
+    partial class updatefindform
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,9 +39,6 @@ namespace DAOs.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateDay")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateExpireRefreshToken")
                         .HasColumnType("datetime2");
@@ -122,9 +122,6 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("ClassID");
 
-                    b.Property<DateTime?>("CancelDay")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("ClassName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -145,9 +142,6 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<bool?>("IsApprove")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsCancel")
                         .HasColumnType("bit");
 
                     b.Property<float>("Price")
@@ -243,9 +237,6 @@ namespace DAOs.Migrations
                         .HasMaxLength(500)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime?>("ProcessDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Processnote")
                         .HasColumnType("nvarchar(max)");
@@ -545,9 +536,6 @@ namespace DAOs.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("Time")
                         .HasColumnType("datetime2");
 
@@ -593,9 +581,6 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
                     b.Property<string>("Title")
@@ -929,9 +914,8 @@ namespace DAOs.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("CardId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                    b.Property<int>("CardId")
+                        .HasColumnType("int")
                         .HasColumnName("CardID");
 
                     b.Property<string>("Description")
@@ -1032,9 +1016,6 @@ namespace DAOs.Migrations
 
                     b.Property<DateTime>("DayApply")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsActived")
-                        .HasColumnType("bit");
 
                     b.Property<bool?>("IsApprove")
                         .HasColumnType("bit");

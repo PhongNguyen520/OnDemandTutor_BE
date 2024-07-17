@@ -56,7 +56,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("getwallet")]
+        [Route("get_wallet")]
         public IActionResult Get()
         {
             var userId = _currentUserService.GetUserId().ToString();
@@ -66,7 +66,7 @@ namespace API.Controllers
 
         [HttpPut]
         [Route("update_wallet")]
-        [HttpPost("ReloadBalance")]
+        [HttpPost("reload_balance")]
         public async Task<IActionResult> ReloadBalance()
         {
             var userId = _currentUserService.GetUserId().ToString();
@@ -80,7 +80,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("WithdrawMoney")]
+        [HttpPost("withdraw_money")]
         public async Task<IActionResult> WithdrawMoney([FromBody] string password, float withdrawMoney)
         {
             var userId = _currentUserService.GetUserId().ToString();

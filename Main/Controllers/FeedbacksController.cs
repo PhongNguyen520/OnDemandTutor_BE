@@ -15,7 +15,7 @@ using API.Services;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/feedback")]
     [ApiController]
     public class FeedbacksController : ControllerBase
     {
@@ -27,19 +27,19 @@ namespace API.Controllers
         private readonly ICurrentUserService _currentUserService;
         private readonly IPagingListService<FeedbackVM> _pagingListService;
 
-        public FeedbacksController(IAccountService accountService, ICurrentUserService currentUserService)
+        public FeedbacksController(IAccountService accountService, ICurrentUserService currentUserService, IClassService classService)
         {
             _feedbackService = new FeedbackService();
             _studentService = new StudentService();
             _accountService = accountService;
-            _classService = new ClassService();
+            _classService = classService;
             _subjectService = new SubjectService();
             _currentUserService = currentUserService;
             _pagingListService = new PagingListService<FeedbackVM>();
         }
 
         // GET: api/Feedbacks
-        [HttpGet("{id}")]
+        [HttpGet("get_feedbacks/{id}")]
         public IActionResult GetFeedbackList(string id, int pageIndex)
         {
             var tbFB = _feedbackService.GetFeedbacks(id);
@@ -74,7 +74,7 @@ namespace API.Controllers
         }
 
         //Student Create FeedBack
-        [HttpPost("createFeedback")]
+        [HttpPost("create_feedback")]
         public IActionResult createFeedback(CreateFeedback request)
         {
             var userId = _currentUserService.GetUserId().ToString();

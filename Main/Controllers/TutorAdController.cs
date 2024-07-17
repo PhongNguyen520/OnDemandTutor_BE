@@ -1,5 +1,6 @@
 ﻿using API.Services;
 using BusinessObjects;
+using BusinessObjects.Models;
 using BusinessObjects.Models.TutorModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,19 +8,21 @@ using Services;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/tutor-ad")]
     [ApiController]
     public class TutorAdController : ControllerBase
     {
         private readonly ITutorAdService _tutorAdService;
         private readonly ICurrentUserService _currentUserService;
         private readonly ITutorService _tutorService;
+        private readonly DAOs.DbContext _dbContext;
 
-        public TutorAdController(ICurrentUserService currentUserService)
+        public TutorAdController(ICurrentUserService currentUserService, ITutorAdService tutorAdService, ITutorService tutorService, DAOs.DbContext dbContext)
         {
-            _tutorAdService = new TutorAdService();
+            _tutorAdService = tutorAdService;
             _currentUserService = currentUserService;
-            _tutorService = new TutorService();
+            _tutorService = tutorService;
+            _dbContext = dbContext;
         }
 
         [HttpGet("{id}")]
@@ -31,26 +34,30 @@ namespace API.Controllers
             return Ok(tbAds);
         }
 
-        [HttpPost("tutor/CreateAds")]
+        [HttpPost("create_ads")]
         public IActionResult PostAds(TutorAdsModel tutorAds)
         {
             var userId = _currentUserService.GetUserId().ToString();
-            var tutor = _tutorService.GetTutors().Where(s => s.AccountId == userId).First();
+            var tutor = _dbContext.TutorAds.FirstOrDefault(t => t.Tutor.AccountId == userId);
 
-            var result = new TutorAd()
+            if (tutor != null)
             {
-                AdsId = Guid.NewGuid().ToString(),
-                CreateDay = DateTime.Now,
-                Title = tutorAds.Title,
-                Image = tutorAds.ImageUrl,
-                Video = tutorAds.VideoUrl,
-                IsActived = true,
-                TutorId = tutor.TutorId,
-            };
+                var result = new TutorAd()
+                {
+                    AdsId = Guid.NewGuid().ToString(),
+                    CreateDay = DateTime.Now,
+                    Title = tutorAds.Title,
+                    Image = tutorAds.ImageUrl,
+                    Video = tutorAds.VideoUrl,
+                    IsActived = null,
+                    TutorId = tutor.TutorId,
+                };
 
-            _tutorAdService.AddTutorAd(result);
+                _tutorAdService.CeateAd(result);
 
-            return Ok(result);
+                return Ok(result);
+            }
+            return BadRequest();
         }
     }
 }

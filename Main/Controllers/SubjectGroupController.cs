@@ -5,7 +5,7 @@ using Services;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/subject-group")]
     [ApiController]
     public class SubjectGroupController : ControllerBase
     {
@@ -37,6 +37,18 @@ namespace API.Controllers
                           select subjectGroup).ToList();
             }
 
+            return Ok(result);
+        }
+
+        [HttpGet("suggest")]
+        public IActionResult SuggestSubject(string? search)
+        {
+            List<string> result = new List<string>();
+            if (search == null)
+            {
+                return Ok(result);
+            }
+            result = _subjectGroupService.GetSubjectGroups().Where(s => s.SubjectName.ToLower().Contains(search.ToLower())).Select(s => s.SubjectName).ToList();
             return Ok(result);
         }
     }

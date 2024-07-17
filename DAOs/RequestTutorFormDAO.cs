@@ -36,21 +36,37 @@ namespace DAOs
 
         public List<RequestTutorForm> GetRequestTutorForms()
         {
-            return dbContext.RequestTutorForms.OrderByDescending(x => x.FormId).ToList();
+            return dbContext.RequestTutorForms.Include("Student")
+                                              .Include("Subject")
+                                              .Include("Tutor").ToList();
         }
 
         public bool UpdateRequestTutorForms(RequestTutorForm form)
         {
-            var trackedEntity = dbContext.RequestTutorForms.Local
-                           .FirstOrDefault(f => f.FormId == form.FormId);
-            if (trackedEntity != null)
+            using (var transaction = dbContext.Database.BeginTransaction())
             {
-                dbContext.Entry(trackedEntity).State = EntityState.Detached;
-            }
+                try
+                {
+                    var trackedEntity = dbContext.RequestTutorForms.Local
+                                       .FirstOrDefault(f => f.FormId == form.FormId);
+                    if (trackedEntity != null)
+                    {
+                        dbContext.Entry(trackedEntity).State = EntityState.Detached;
+                    }
 
-            dbContext.RequestTutorForms.Update(form);
-            dbContext.SaveChanges();
-            return true;
+                    dbContext.RequestTutorForms.Update(form);
+                    dbContext.SaveChanges();
+
+                    transaction.Commit();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    // Log the exception or handle it as needed
+                    return false;
+                }
+            }
         }
     }
 }

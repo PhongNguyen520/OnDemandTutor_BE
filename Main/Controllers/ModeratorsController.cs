@@ -7,7 +7,7 @@ using Services;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/moderator")]
     [ApiController]
     public class ModeratorsController : ControllerBase
     {
@@ -15,23 +15,25 @@ namespace API.Controllers
         private IMailService _mailService;
         private readonly ITutorService _tutorService;
         private readonly IComplaintService _complaintService;
+        private readonly ITutorAdService _tutorAdService;
 
-        public ModeratorsController(IAccountService accountService, IMailService mailService, ITutorService tutorService, IComplaintService complaintService)
+        public ModeratorsController(IAccountService accountService, IMailService mailService, ITutorService tutorService, IComplaintService complaintService, ITutorAdService tutorAdService)
         {
             _accountService = accountService;
             _mailService = mailService;
             _tutorService = tutorService;
             _complaintService = complaintService;
+            _tutorAdService = tutorAdService;
         }
 
-        [HttpGet("ShowListTutorInter")]
+        [HttpGet("get_tutors")]
         public async Task<IActionResult> ShowListTutorInter()
         {
             var result = await _accountService.GetAccountTutorIsActiveFalse();
             return Ok(result);
         }
 
-        [HttpGet("SendEmailInterTutor")]
+        [HttpGet("create_email")]
         public async Task<IActionResult> SendEmailInterTutor(string email, string content)
         {
             if (await _accountService.CheckAccountByEmail(email))
@@ -42,20 +44,21 @@ namespace API.Controllers
             return BadRequest("No Account");
         }
 
-        [HttpPost("ChangeStatusTutor")]
+        [HttpPost("update_status")]
         public async Task<IActionResult> ChangeStatusTutor(List<IsActiveTutor> acccount)
         {
+            var listResult = new List<string>();
             foreach (var x in acccount)
             {
                 if (await _tutorService.ChangeStatusTutor(x))
                 {
-                    return Ok("Successful");
+                    listResult.Add(x.AccountId);
                 }
             }
-            return BadRequest("No Found!!!");
+            return Ok(listResult);
         }
 
-        [HttpPut("ModerComplaint")]
+        [HttpPut("get_complaint-detail")]
         public async Task<IActionResult> ModerComplaint (string complaintId, string pro, bool stu)
         {
             var result = await _complaintService.ModeratorComplaint(complaintId, pro, stu);
@@ -66,11 +69,29 @@ namespace API.Controllers
             return BadRequest();
         }
 
-        [HttpGet("ShowListComplaint")]
+        [HttpGet("get_complaints")]
         public async Task<IActionResult> ShowListComplaint()
         {
             var list = await _complaintService.ShowListComplaintClass();
             return Ok(list);
+        }
+
+        [HttpGet("show_tutorAd_browse")]
+        public async Task<IActionResult> ShowTutorAdBrowse()
+        {
+            var result = await _tutorAdService.GetAllTutorAdIsActive();
+            return Ok(result);
+        }
+
+        [HttpPost("changeisactivead")]
+        public async Task<IActionResult> ChangeIsActiveAd(TutorAdIsAc model)
+        {
+            var result = await _tutorAdService.UpdateIsActiveTutorAd(model);
+            if (result == false)
+            {
+                return BadRequest("No ADS!!!");
+            }
+            return Ok(model.IsActive);
         }
     }
 }

@@ -24,5 +24,7 @@ namespace Repositories
         Task<StudentVM> GetStudentCurrent(string  accountId);
 
         Task<IQueryable<string>> GetNameSupsectGroup(string textFind);
+
+        Task<Student10VM> GetStudentById(string idModel);
     }
 }

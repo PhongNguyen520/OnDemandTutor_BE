@@ -29,6 +29,8 @@ namespace BusinessObjects.Models
         public string? UserId { get; set; }
         public string? FullName { get; set; }
         public string? Avatar {  get; set; }
+        public bool? IsCancel { get; set; }
+        public DateTime? CancelDay { get; set; }
     }
 
     public class ClassDetail
@@ -42,6 +44,7 @@ namespace BusinessObjects.Models
 
     public class CalenderVM
     {
+        public string Id { get; set; } = string.Empty;
         public string BookDay { get; set; } = string.Empty;
         public string Time { get; set; } = string.Empty;
         public string ClassId { get; set; } = string.Empty;
@@ -57,5 +60,42 @@ namespace BusinessObjects.Models
         public int TimeEnd { get; set; }
         public string StudentId { get; set; } = string.Empty;
         public string SubjectId { get; set; } = string.Empty;
+    }
+
+    public class HandleCreateForm
+    {
+        public string DayOfWeek { get; set; } = string.Empty;
+        public DateTime DayStart { get; set; }
+        public DateTime DayEnd { get; set; }
+        public int TimeStart { get; set; }
+        public int TimeEnd { get; set; }
+        public string StudentId { get; set; } = string.Empty;
+    }
+
+    public class ClassVMPhuc
+    {
+        public string ClassId { get; set; } = null!;
+
+        public string ClassName { get; set; } = null!;
+
+        public float Price { get; set; }
+
+        public string Description { get; set; } = null!;
+
+        public bool? Status { get; set; }
+
+        public string TutorId { get; set; } = null!;
+
+        public string StudentId { get; set; } = null!;
+
+        public string SubjectId { get; set; } = null!;
+
+        public DateTime CreateDay { get; set; }
+
+        public bool? IsApprove { get; set; }
+
+        public DateTime DayStart { get; set; }
+
+        public DateTime DayEnd { get; set; }
     }
 }

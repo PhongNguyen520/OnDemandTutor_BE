@@ -19,7 +19,7 @@ using BusinessObjects.Models.FindFormModel;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/class")]
     [ApiController]
     public class ClassesController : ControllerBase
     {
@@ -32,9 +32,9 @@ namespace API.Controllers
         private readonly IClassCalenderService _classCalenderService;
         private readonly IPagingListService<ClassVM> _pagingListService;
 
-        public ClassesController(ICurrentUserService currentUserService, IAccountService accountService)
+        public ClassesController(ICurrentUserService currentUserService, IAccountService accountService, IClassService classService)
         {
-            _classService = new ClassService();
+            _classService = classService;
             _currentUserService = currentUserService;
             _tutorService = new TutorService();
             _subjectService = new SubjectService();
@@ -45,14 +45,21 @@ namespace API.Controllers
         }
 
         // Class tự động tạo sau khi Student duyệt Tutor
-        [HttpPost("createClass")]
-        public IActionResult CreateClass(CreateClassVM request)
+        [HttpPost("create_class")]
+        public async Task<IActionResult> CreateClass(CreateClassVM request)
         {
             var form = _classService.CheckTypeForm(request.FormId);
 
             var userId = _currentUserService.GetUserId().ToString();
 
             var tutor = _tutorService.GetTutors().Where(s => s.AccountId == userId).First();
+
+            var check = await _classCalenderService.HandleAvoidConflictCalendar(form.DayOfWeek, form.DayStart, form.DayEnd, form.TimeStart, form.TimeEnd, tutor.TutorId, 1);
+
+            if (check == false)
+            {
+                return Ok("You can't create new class! You have class that coincide with this schedual!");
+            }
 
             List<DayOfWeek> desiredDays = _classCalenderService.ParseDaysOfWeek(form.DayOfWeek);
 
@@ -72,6 +79,7 @@ namespace API.Controllers
                 StudentId = form.StudentId,
                 TutorId = tutor.TutorId,
                 SubjectId = form.SubjectId,
+                IsCancel = false,
             };
 
             _classService.AddClass(newClass);
@@ -92,7 +100,7 @@ namespace API.Controllers
             return Ok();
         }
 
-        [HttpGet("showTutorCalender")]
+        [HttpGet("get_tutor-calenders")]
         public IActionResult GetTutorCalender(string tutorId)
         {
             var calenders = _classCalenderService.GetClassCalenders();
@@ -112,7 +120,7 @@ namespace API.Controllers
         }
 
         // Tutor view class List
-        [HttpGet("tutor/viewClassList")]
+        [HttpGet("get_tutor-classes")]
         public IActionResult TutorViewClass(bool? status, bool? isApprove, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
@@ -128,6 +136,7 @@ namespace API.Controllers
             }
 
             var query = from c in classList
+                        orderby c.CreateDay descending
                         select new ClassVM()
                         {
                             Classid = c.ClassId,
@@ -158,6 +167,8 @@ namespace API.Controllers
                                       select a.Avatar).FirstOrDefault(),
                             Status = c.Status,
                             IsApprove = c.IsApprove,
+                            IsCancel = c.IsCancel,
+                            CancelDay = c.CancelDay,
                         };
 
             result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
@@ -166,7 +177,7 @@ namespace API.Controllers
         }
 
         // Student view class list
-        [HttpGet("student/viewClassList")]
+        [HttpGet("get_student-classes")]
         public IActionResult StudentViewClass(bool? status, bool? isApprove, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
@@ -183,6 +194,7 @@ namespace API.Controllers
             }
 
             var query = from c in classList
+                        orderby c.CreateDay descending
                         select new ClassVM()
                         {
                             Classid = c.ClassId,
@@ -213,6 +225,8 @@ namespace API.Controllers
                                       select a.Avatar).FirstOrDefault(),
                             Status = c.Status,
                             IsApprove = c.IsApprove,
+                            IsCancel = c.IsCancel,
+                            CancelDay = c.CancelDay,
                         };
 
             result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
@@ -220,13 +234,14 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("viewClassDetail")]
+        [HttpGet("get_class-detail")]
         public IActionResult ClassDetail(string classid)
         {
             var classDetail = _classService.GetClasses().Where(s => s.ClassId == classid).First();
             var calenders = from calender in _classCalenderService.GetClassCalenders().Where(s => s.ClassId == classid)
                             select new CalenderVM()
                             {
+                                Id = calender.CalenderId,
                                 BookDay = calender.DayOfWeek.ToString("yyyy-MM-dd"),
                                 Time = calender.TimeStart.ToString() + "h - " + calender.TimeEnd.ToString() + "h",
                                 ClassId = calender.ClassId,
@@ -247,7 +262,7 @@ namespace API.Controllers
         }
 
         //Student browse class
-        [HttpPut("student/browseClass")]
+        [HttpPut("student_browse-class")]
         public IActionResult BrowseClass(string classId, bool action)
         {
             if (classId is not null)
@@ -261,6 +276,32 @@ namespace API.Controllers
                 return NoContent();
             }
             return Ok();
+        }
+
+        //Student checking teaching day
+        [HttpPut("student_checking-day")]
+        public IActionResult Checking(string calenderId)
+        {
+            var calender = _classCalenderService.GetClassCalenders().Where(s => s.CalenderId == calenderId).FirstOrDefault();
+            calender.IsActive = true;
+
+            return Ok("Checked!");
+        }
+
+        [HttpGet("get_class-by-month-or-day")]
+        public async Task<IActionResult> ShowClassByMonthOrDay(string timeChoice)
+        {
+            if (timeChoice.ToUpper() == "DAY")
+            {
+                var list = await _classService.GetClassByDay();
+                return Ok(list);
+            }
+            if(timeChoice.ToUpper() == "MONTH")
+            {
+                var list2 = await _classService.GetClassByMonth();
+                return Ok(list2);
+            }
+            return BadRequest("NoNo!!!");
         }
     }
 }

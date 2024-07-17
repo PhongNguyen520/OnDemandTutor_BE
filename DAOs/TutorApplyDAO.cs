@@ -36,7 +36,8 @@ namespace DAOs
 
         public List<TutorApply> GetTutorApplies()
         {
-            return dbContext.TutorApplies.Include("Tutor").ToList();
+            return dbContext.TutorApplies.Include("Tutor")
+                                         .Include("FindTutorForm").ToList();
         }
 
         public bool UpdateTutorApplies(TutorApply tutorApply)

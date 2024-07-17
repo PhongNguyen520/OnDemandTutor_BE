@@ -32,7 +32,7 @@ namespace API.Controller
         }
 
         [AllowAnonymous]
-        [HttpPost("student-signUp")]
+        [HttpPost("student_signup")]
         public async Task<IActionResult> StudentSignUp(StudentDTO signUpModel)
         {
             var result = await _accountService.StudentSignUpAsync(signUpModel);
@@ -41,7 +41,7 @@ namespace API.Controller
         }
 
         [AllowAnonymous]
-        [HttpPost("tutor-signUp")]
+        [HttpPost("tutor_signup")]
         public async Task<IActionResult> TutorSignUp(TutorDTO signUpModel)
         {
             var result = await _accountService.TutorSignUpAsync(signUpModel);
@@ -50,7 +50,7 @@ namespace API.Controller
         }
 
         [AllowAnonymous]
-        [HttpPost("signUp")]
+        [HttpPost("signup")]
         public async Task<IActionResult> SignUp(AccountDTO signUpModel)
         {
             var userIdSignUpId = await _accountService.SignUpAsync(signUpModel);
@@ -71,7 +71,7 @@ namespace API.Controller
         }
 
         [AllowAnonymous]
-        [HttpPost("signUpModerator")]
+        [HttpPost("moderator_signup")]
         public async Task<IActionResult> SignUpModerator(SignUpModerator signUpModer)
         {
             var userIdSignUpId = await _accountService.SignUpModerator(signUpModer);
@@ -92,7 +92,7 @@ namespace API.Controller
         }
 
         [AllowAnonymous]
-        [HttpPost("signIn")]
+        [HttpPost("signin")]
         public async Task<IActionResult> SignIn(UserSignIn signIn)
         {
             var user = await _accountService.SignInAsync(signIn);
@@ -119,13 +119,13 @@ namespace API.Controller
         }
 
         [AllowAnonymous]
-        [HttpPost("signInWithGoogle")]
+        [HttpPost("signin_google")]
         public async Task<IActionResult> SignInWithGoogle([FromBody] string gmail)
         {
             var user = await _accountService.SignInWithGG(gmail);
             if (user == null || !(user.IsActive))
             {
-                return Unauthorized();
+                return BadRequest("Account does not exist");
             }
             else if (!user.EmailConfirmed)
             {
@@ -145,7 +145,7 @@ namespace API.Controller
             return BadRequest("Failed to update user's token");
         }
 
-        [HttpDelete("signOut")]
+        [HttpDelete("signout")]
         public async Task<IActionResult> SignOut()
         {
             var user = await _currentUserService.GetUser();
@@ -157,7 +157,7 @@ namespace API.Controller
         }
 
         [AllowAnonymous]
-        [HttpPost("refresh-token")]
+        [HttpPost("refresh_token")]
         public async Task<IActionResult> refeshToken(RefreshTokenVM refreshToken)
         {
             var user = await _accountService.GetAccountById(refreshToken.userId);
@@ -175,7 +175,7 @@ namespace API.Controller
         }
 
         [AllowAnonymous]
-        [HttpGet("confirm-email")]
+        [HttpGet("confirm_email")]
         public async Task<IActionResult> ConfirmAccount(string email)
         {
             var result = await _accountService.ConfirmAccount(email);
@@ -183,7 +183,7 @@ namespace API.Controller
             else return BadRequest("Cannot confirm your email");
         }
 
-        [HttpPost("forgetPassword")]
+        [HttpPost("forget_password")]
         public async Task<IActionResult> ForgetPassword([FromBody] string email)
         {
             var token = await _accountService.TokenForgetPassword(email);
@@ -200,7 +200,7 @@ namespace API.Controller
             return Ok("Send email to confirm reset password");
         }
 
-        [HttpGet("redirectoResetPasswordPage")]
+        [HttpGet("redirec_resetpasswordpage")]
         public async Task<IActionResult> RedirectoResetPasswordPage(string email, string token)
         {
             var result = _accountService.GetAccountByEmail(email);
@@ -211,7 +211,7 @@ namespace API.Controller
             return Ok(token);
         }
 
-        [HttpPost("resetPassword")]
+        [HttpPost("reset_password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {
             var result = await _accountService.ResetPasswordEmail(model);

@@ -12,7 +12,7 @@ using DAOs;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/message")]
     [ApiController]
     public class MessageController : ControllerBase
     {
@@ -44,6 +44,18 @@ namespace API.Controllers
                 .AsEnumerable()
                 .Reverse()
                 .ToList();
+
+            if (listMessages.Any())
+            {
+                foreach(var message in listMessages)
+                {
+                    if (message.IsRead == false)
+                    {
+                        message.IsRead = true;
+                        messageService.UpdateMessages(message);
+                    }
+                }
+            }
 
             //var messageVM = _mapper.Map<IEnumerable<Message>, IEnumerable<MessageVM>>(listMessages);
 
@@ -81,6 +93,7 @@ namespace API.Controllers
                 ConversationId = room,
                 Time = DateTime.Now,
                 IsActive = true,
+                IsRead = false,
             };
 
             _dbContext.Add(msg);

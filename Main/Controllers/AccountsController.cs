@@ -8,18 +8,21 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObjects;
 using DAOs;
 using Services;
+using Microsoft.AspNetCore.DataProtection.Internal;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/account")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
         private readonly IAccountService iAccountService;
+        private readonly ITutorService _tutorService;
 
-        public AccountsController(IAccountService accountService)
+        public AccountsController(IAccountService accountService, ITutorService tutorService)
         {
             iAccountService = accountService;
+            _tutorService = tutorService;
         }
 
         // GET: api/Accounts
@@ -119,5 +122,26 @@ namespace API.Controllers
         //{
         //    return _context.Accounts.Any(e => e.AccountId == id);
         //}
+
+        [HttpGet("show_10-tutor-new")]
+        public async Task<IActionResult> Show10TutorNew()
+        {
+            var list = await iAccountService.Get10TutorNew();
+            return Ok(list);
+        }
+
+        [HttpGet("show_10-student-new")]
+        public async Task<IActionResult> Show10StudentNew()
+        {
+            var list = await iAccountService.Get10StudentNew();
+            return Ok(list);
+        }
+
+        [HttpGet("show_tutor_have_ads")]
+        public async Task<IActionResult> ShowTutorHaveAds()
+        {
+            var result = await _tutorService.GetAccountHaveAd();
+            return Ok(result);
+        }
     }
 }

@@ -23,11 +23,15 @@ namespace BusinessObjects.Models.FindFormModel
         public string SubjectName { get; set; } = string.Empty ;
         public string? Description { get; set; }
         public bool? TutorGender { get; set; }
+        public string? TypeOfDegree { get; set; }
         public bool? Status { get; set; }
         public bool? IsActived { get; set; }
+        public string? GradeId { get; set; }
+        public string? SubjectGroupId { get; set; }
         public string SubjectId { get; set; } = string.Empty;
         public string StudentId { get; set; } = string.Empty;
         public string UserIdStudent { get; set; } = string.Empty;
+        public string? ReasonReject { get; set; }
     }
 
     public class TutorApplyVM

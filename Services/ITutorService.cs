@@ -29,5 +29,13 @@ namespace Services
         Task<TutorVM> UpdateTutor(string idAccount, TutorVM tutorVM);
         Task<TutorVM> GetTutorCurrent(string idAccount);
         Task<bool> ChangeStatusTutor(IsActiveTutor model);
+
+        Task<DashBoardTutor> NumberOfClasses(string id, DateTime createDay);
+
+        Task<DashBoardTutor> NumberOfHour(string id, DateTime createDay);
+
+        Task<DashBoardTutor> NumberOfClassesIsCancel(string id, DateTime createDay);
+
+        Task<List<AccountTutorAdVM>> GetAccountHaveAd();
     }
 }
