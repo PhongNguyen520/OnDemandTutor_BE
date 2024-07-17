@@ -8,13 +8,9 @@ namespace Services.PaymentServices
 {
     public class ZaloPayConfig
     {
-        public static string ConfigName => "ZaloPay";
-        public string AppUser { get; set; } = string.Empty;
-        public string PaymentUrl { get; set; } = string.Empty;
-        public string RedirectUrl { get; set; } = string.Empty;
-        public string IpnUrl { get; set; } = string.Empty;
-        public int AppId { get; set; }
-        public string Key1 { get; set; } = string.Empty;
-        public string Key2 { get; set; } = string.Empty;
+        public static string AppId = "553";
+        public static string Key1 = "9phuAOYhan4urywHTh0ndEXiV3pKHr5Q";
+        public static string Key2 = "Iyz2habzyr7AG8SgvoBCbKwKi3UzlLi3";
+        public static string Endpoint = "https://sandbox.zalopay.com.vn/v001/tpe/createorder";
     }
 }
