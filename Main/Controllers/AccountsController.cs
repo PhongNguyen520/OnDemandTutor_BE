@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.DataProtection.Internal;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/account")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
@@ -123,14 +123,14 @@ namespace API.Controllers
         //    return _context.Accounts.Any(e => e.AccountId == id);
         //}
 
-        [HttpGet("Show10TutorNew")]
+        [HttpGet("show_10-tutor-new")]
         public async Task<IActionResult> Show10TutorNew()
         {
             var list = await iAccountService.Get10TutorNew();
             return Ok(list);
         }
 
-        [HttpGet("Show10StudentNew")]
+        [HttpGet("show_10-student-new")]
         public async Task<IActionResult> Show10StudentNew()
         {
             var list = await iAccountService.Get10StudentNew();

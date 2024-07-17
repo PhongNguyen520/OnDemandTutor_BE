@@ -14,7 +14,7 @@ using BusinessObjects.Models;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/formrequesttutor")]
     [ApiController]
     public class FormRequestTutorController : ControllerBase
     {
@@ -46,7 +46,7 @@ namespace API.Controllers
         }
 
         // Create Form Request Tutor + Handle To Avoid Conflict With Tutor Calender
-        [HttpPost("createForm")]
+        [HttpPost("create_form")]
         public async Task<IActionResult> CreateRequest(RequestCreateFormRequestTutor form)
         {
             var userId = _currentUserService.GetUserId().ToString();
@@ -98,7 +98,7 @@ namespace API.Controllers
         }
 
         // Tutor/Student view their request tutor form
-        [HttpGet("viewForm")]
+        [HttpGet("get_form")]
         public IActionResult viewForm(bool? status, int pageIndex)
         {
             var userId = _currentUserService.GetUserId().ToString();
@@ -140,7 +140,7 @@ namespace API.Controllers
         }
 
         // Tutor browser form
-        [HttpPut("tutorBrowserForm")]
+        [HttpPut("tutor_browserform")]
         public IActionResult TutorBrowserForm(string formId, bool action)
         {
             var form = _formService.GetRequestTutorForms().Where(s => s.FormId == formId).FirstOrDefault();
@@ -171,7 +171,7 @@ namespace API.Controllers
         }
 
         // Handle form request and form class
-        [HttpGet("handleBrowserForm")]
+        [HttpGet("handle_browserform")]
         public async Task<IActionResult> HandleBrowserForm(string formId, bool action)
         {
             var tutor = _tutorService.GetTutors().Where(s => s.AccountId == _currentUserService.GetUserId().ToString());
@@ -223,7 +223,7 @@ namespace API.Controllers
         }
 
         // Handle Create Form 
-        [HttpPost("handleCreateForm")]
+        [HttpPost("handle_createform")]
         public async Task<IActionResult> HandleCreateForm(HandleCreateForm form)
         {
             var checkForm = await _classCalenderService.HandleStudentCreateForm(form.DayOfWeek, form.DayStart, form.DayEnd, form.TimeStart, form.TimeEnd, form.StudentId);

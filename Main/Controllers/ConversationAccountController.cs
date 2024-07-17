@@ -11,7 +11,7 @@ using Services;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/conversation-account")]
     [ApiController]
     public class ConversationAccountController : ControllerBase
     {

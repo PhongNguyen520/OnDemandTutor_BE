@@ -9,7 +9,7 @@ using Services;
 namespace API.Controller
 {
 
-    [Route("api/[controller]")]
+    [Route("api/admin")]
     [ApiController]
 
     public class AdminController : ControllerBase
@@ -24,7 +24,7 @@ namespace API.Controller
             iAccountService = _iAccountService;
         }
         [Authorize(Roles = AppRole.Tutor)]
-        [HttpGet("getRole")]
+        [HttpGet("get_role")]
         public async Task<IActionResult> GetAccounts()
         {
             var result = await iRoleService.GetRole();
@@ -36,7 +36,7 @@ namespace API.Controller
             return Ok(listRoles);
         }
 
-        [HttpGet("getRoleBy/{id}")]
+        [HttpGet("get_role/{id}")]
         public async Task<IActionResult> GetRoleById(String id)
         {
             var result = await iRoleService.GetRoleById(id);
@@ -44,14 +44,16 @@ namespace API.Controller
             return BadRequest("Cannot found");
         }
 
-        [HttpPost("createRole")]
-        public async Task<IActionResult> CreateRole([FromBody] String roleName)
+
+        [HttpPost("create_role")]
+        public async Task<IActionResult> CreateRole(String roleName)
+
         {
             var result = await iRoleService.CreateRole(roleName);
             return Ok(result);
         }
 
-        [HttpPut("updateRole/{id}")]
+        [HttpPut("update_role/{id}")]
         public async Task<IActionResult> UpdateRole(String roleName, String id)
         {
             var result = await iRoleService.UpdateRole(roleName, id);
@@ -59,21 +61,21 @@ namespace API.Controller
             return BadRequest("Cannot update");
         }
 
-        [HttpDelete("deleteRole")]
+        [HttpDelete("delete_role")]
         public async Task<IActionResult> DeleteRole(String roleId)
         {
             var result = await iRoleService.DeleteRole(roleId);
             return Ok(result);
         }
 
-        [HttpGet("getUserRole")]
+        [HttpGet("get_user-roles")]
         public async Task<IActionResult> GetListUsers()
         {
             var result = await iRoleService.GetListUsers();
             return Ok(result);
 
         }
-        [HttpGet("getUserRole/{userId}")]
+        [HttpGet("get_user-role/{userId}")]
         public async Task<IActionResult> GetUserRole(String userId)
         {
             var result = await iRoleService.GetUserRole(userId);
@@ -82,15 +84,19 @@ namespace API.Controller
         }
 
 
-        [HttpPost("addUserRole")]
-        public async Task<IActionResult> AddRoleUser(List<string> roleNames, string userId)
+
+        [HttpPost("create_user-role")]
+        public async Task<IActionResult> AddRoleUser(List<string> roleNames, String userId)
+
         {
             var result = await iRoleService.AddRoleUser(roleNames, userId);
             return Ok(result);
         }
 
-        [HttpPost("changeUserStatus")]
-        public async Task<IActionResult> EnalbleUser([FromBody] string userId)
+
+        [HttpPost("update_user-status")]
+        public async Task<IActionResult> EnalbleUser(String userId)
+
         {
             return Ok(await iAccountService.EnalbleUser(userId));
         }

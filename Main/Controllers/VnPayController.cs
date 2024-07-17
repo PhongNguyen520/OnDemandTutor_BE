@@ -14,7 +14,7 @@ using System.Text;
 namespace API.Controllers
 {
 
-    [Route("api/[controller]")]
+    [Route("api/vnpay")]
     [ApiController]
     public class VnPayController : ControllerBase
     {

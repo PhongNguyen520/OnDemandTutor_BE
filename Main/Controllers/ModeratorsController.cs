@@ -7,7 +7,7 @@ using Services;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/moderator")]
     [ApiController]
     public class ModeratorsController : ControllerBase
     {
@@ -26,14 +26,14 @@ namespace API.Controllers
             _tutorAdService = tutorAdService;
         }
 
-        [HttpGet("ShowListTutorInter")]
+        [HttpGet("get_tutors")]
         public async Task<IActionResult> ShowListTutorInter()
         {
             var result = await _accountService.GetAccountTutorIsActiveFalse();
             return Ok(result);
         }
 
-        [HttpGet("SendEmailInterTutor")]
+        [HttpGet("create_email")]
         public async Task<IActionResult> SendEmailInterTutor(string email, string content)
         {
             if (await _accountService.CheckAccountByEmail(email))
@@ -44,7 +44,7 @@ namespace API.Controllers
             return BadRequest("No Account");
         }
 
-        [HttpPost("ChangeStatusTutor")]
+        [HttpPost("update_status")]
         public async Task<IActionResult> ChangeStatusTutor(List<IsActiveTutor> acccount)
         {
             var listResult = new List<string>();
@@ -58,7 +58,7 @@ namespace API.Controllers
             return Ok(listResult);
         }
 
-        [HttpPut("ModerComplaint")]
+        [HttpPut("get_complaint-detail")]
         public async Task<IActionResult> ModerComplaint (string complaintId, string pro, bool stu)
         {
             var result = await _complaintService.ModeratorComplaint(complaintId, pro, stu);
@@ -69,7 +69,7 @@ namespace API.Controllers
             return BadRequest();
         }
 
-        [HttpGet("ShowListComplaint")]
+        [HttpGet("get_complaints")]
         public async Task<IActionResult> ShowListComplaint()
         {
             var list = await _complaintService.ShowListComplaintClass();

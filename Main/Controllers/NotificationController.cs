@@ -9,7 +9,7 @@ using Services;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/notification")]
     [ApiController]
     public class NotificationController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace API.Controllers
             _hubContext = hubContext;
         }
 
-        [HttpGet("viewNotificationList")]
+        [HttpGet("get_notifications")]
         public IActionResult Get()
         {
             var user = _currentUserService.GetUserId().ToString();
@@ -44,7 +44,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("viewNotificationDetail")]
+        [HttpGet("get_notification-detail")]
         public IActionResult GetDetail(string id)
         {
             var noti = _notificationService.GetNotifications()
@@ -64,7 +64,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("createNotification")]
+        [HttpPost("create_notification")]
         public async Task<ActionResult> CreateNotification(CreateNotiVM request)
         {
             var user = _currentUserService.GetUser();
@@ -87,7 +87,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("deleteNotification")]
+        [HttpPut("delete_notification")]
         public IActionResult DeleteNotification(string id)
         {
             var result = _notificationService.GetNotifications().Where(s => s.NotificationId == id).FirstOrDefault();
