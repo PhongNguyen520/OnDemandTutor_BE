@@ -22,5 +22,7 @@ namespace Services
         Task<StudentVM> GetStudentCurrent(string accountId);
 
         Task<IQueryable<string>> ListNameSupsectGroup(string textFind);
+
+        Task<Student10VM> GetStudentById(string idModel);
     }
 }

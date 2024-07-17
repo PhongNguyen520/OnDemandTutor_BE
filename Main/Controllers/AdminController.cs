@@ -11,7 +11,7 @@ namespace API.Controller
 
     [Route("api/[controller]")]
     [ApiController]
-    
+
     public class AdminController : ControllerBase
     {
 
@@ -22,7 +22,7 @@ namespace API.Controller
         {
             iRoleService = _iRoleService;
             iAccountService = _iAccountService;
-    }
+        }
         [Authorize(Roles = AppRole.Tutor)]
         [HttpGet("getRole")]
         public async Task<IActionResult> GetAccounts()
@@ -34,7 +34,7 @@ namespace API.Controller
                 _.Name
             });
             return Ok(listRoles);
-}
+        }
 
         [HttpGet("getRoleBy/{id}")]
         public async Task<IActionResult> GetRoleById(String id)
@@ -45,7 +45,7 @@ namespace API.Controller
         }
 
         [HttpPost("createRole")]
-        public async Task<IActionResult> CreateRole(String roleName)
+        public async Task<IActionResult> CreateRole([FromBody] String roleName)
         {
             var result = await iRoleService.CreateRole(roleName);
             return Ok(result);
@@ -83,14 +83,14 @@ namespace API.Controller
 
 
         [HttpPost("addUserRole")]
-        public async Task<IActionResult> AddRoleUser(List<string> roleNames, String userId)
+        public async Task<IActionResult> AddRoleUser(List<string> roleNames, string userId)
         {
             var result = await iRoleService.AddRoleUser(roleNames, userId);
             return Ok(result);
         }
 
         [HttpPost("changeUserStatus")]
-        public async Task<IActionResult> EnalbleUser(String userId)
+        public async Task<IActionResult> EnalbleUser([FromBody] string userId)
         {
             return Ok(await iAccountService.EnalbleUser(userId));
         }

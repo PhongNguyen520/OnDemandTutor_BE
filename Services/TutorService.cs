@@ -188,5 +188,10 @@ namespace Services
 
             return result;
         }
+
+        public async Task<List<AccountTutorAdVM>> GetAccountHaveAd()
+        {
+            return await _repository.GetAccountHaveAd();
+        }
     }
 }

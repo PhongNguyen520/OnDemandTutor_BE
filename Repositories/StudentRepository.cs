@@ -112,5 +112,19 @@ namespace Repositories
                             .ToList().AsQueryable();
             return listSupj;
         }
+
+        public async Task<Student10VM> GetStudentById(string idModel)
+        {
+            var studentDb = await _dbContext.Students.Include(_ => _.Account)
+                                 .FirstOrDefaultAsync(_ => _.StudentId == idModel);
+            if(studentDb == null)
+            {
+                return null;
+            }
+            var studentVm = _mapper.Map<Student10VM>(studentDb);
+            return studentVm;
+        }
+
+
     }
 }

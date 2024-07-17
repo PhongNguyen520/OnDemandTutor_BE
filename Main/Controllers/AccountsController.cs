@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObjects;
 using DAOs;
 using Services;
+using Microsoft.AspNetCore.DataProtection.Internal;
 
 namespace API.Controllers
 {
@@ -16,10 +17,12 @@ namespace API.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly IAccountService iAccountService;
+        private readonly ITutorService _tutorService;
 
-        public AccountsController(IAccountService accountService)
+        public AccountsController(IAccountService accountService, ITutorService tutorService)
         {
             iAccountService = accountService;
+            _tutorService = tutorService;
         }
 
         // GET: api/Accounts
@@ -132,6 +135,13 @@ namespace API.Controllers
         {
             var list = await iAccountService.Get10StudentNew();
             return Ok(list);
+        }
+
+        [HttpGet("show_tutor_have_ads")]
+        public async Task<IActionResult> ShowTutorHaveAds()
+        {
+            var result = await _tutorService.GetAccountHaveAd();
+            return Ok(result);
         }
     }
 }

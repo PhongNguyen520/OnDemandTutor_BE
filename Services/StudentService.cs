@@ -57,5 +57,10 @@ namespace Services
         {
             return iStudentRepository.GetNameSupsectGroup(textFind);
         }
+
+        public async Task<Student10VM> GetStudentById(string idModel)
+        {
+            return await iStudentRepository.GetStudentById(idModel);
+        }
     }
 }

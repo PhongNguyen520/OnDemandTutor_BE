@@ -35,6 +35,9 @@ namespace Services.Dependency
             services.AddScoped<IClassRepository, ClassRepository>();
             services.AddScoped<IClassService, ClassService>();
 
+            services.AddScoped<ITutorAdRepository, TutorAdRepository>();
+            services.AddScoped<ITutorAdService, TutorAdService>();
+
             return services;
         }
     }

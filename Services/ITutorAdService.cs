@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,11 @@ namespace Services
         public List<TutorAd> GetTutorAds();
 
         public bool UpdateTutorAds(TutorAd tutorAd);
+
+        Task<List<TutorAd>> GetAllTutorAdIsActive();
+
+        Task<bool> CeateAd(TutorAd model);
+
+        Task<bool> UpdateIsActiveTutorAd(TutorAdIsAc model);
     }
 }
