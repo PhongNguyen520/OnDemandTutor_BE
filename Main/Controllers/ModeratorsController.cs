@@ -76,7 +76,7 @@ namespace API.Controllers
             return Ok(list);
         }
 
-        [HttpGet("ShowTutorAdBrowse")]
+        [HttpGet("show_tutorAd_browse")]
         public async Task<IActionResult> ShowTutorAdBrowse()
         {
             var result = await _tutorAdService.GetAllTutorAdIsActive();
