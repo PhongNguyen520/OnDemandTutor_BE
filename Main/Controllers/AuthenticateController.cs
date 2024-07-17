@@ -125,7 +125,7 @@ namespace API.Controller
             var user = await _accountService.SignInWithGG(gmail);
             if (user == null || !(user.IsActive))
             {
-                return Unauthorized();
+                return BadRequest("Account does not exist");
             }
             else if (!user.EmailConfirmed)
             {
