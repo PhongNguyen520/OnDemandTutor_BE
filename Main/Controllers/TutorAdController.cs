@@ -7,7 +7,7 @@ using Services;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/tutor-ad")]
     [ApiController]
     public class TutorAdController : ControllerBase
     {
@@ -31,7 +31,7 @@ namespace API.Controllers
             return Ok(tbAds);
         }
 
-        [HttpPost("tutor/CreateAds")]
+        [HttpPost("create_ads")]
         public IActionResult PostAds(TutorAdsModel tutorAds)
         {
             var userId = _currentUserService.GetUserId().ToString();

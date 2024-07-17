@@ -12,7 +12,7 @@ using DAOs;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/message")]
     [ApiController]
     public class MessageController : ControllerBase
     {

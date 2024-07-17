@@ -19,7 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/tutor")]
     [ApiController]
     public class TutorsController : ControllerBase
     {
@@ -61,6 +61,13 @@ namespace API.Controllers
         }
 
         // GET: api/Tutors
+        /// <summary>
+        /// SortBy (HourlyRate = 1, Start = 2)
+        /// 
+        /// SortType (Ascending = 1, Descending = 2)
+        /// </summary>
+        /// <param name="requestSearchTutorModel"></param>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult FilterTutor([FromQuery] RequestSearchTutorModel requestSearchTutorModel)
         {
@@ -165,7 +172,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("Id/{id}")]
+        [HttpGet("get_tutor-detail/{id}")]
         public IActionResult GetTutorDetail(string id)
         {
             // Lấy thông tin tutor dựa trên id
@@ -220,7 +227,7 @@ namespace API.Controllers
             return Ok(tutorDetail);
         }
 
-        [HttpPost("UpdateTutor")]
+        [HttpPost("update_tutor")]
         public async Task<IActionResult> UpdateTutorAccount(TutorVM tutorVM)
         {
             var accountId = currentUserService.GetUserId().ToString();
@@ -232,7 +239,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetTutorCurrent")]
+        [HttpGet("get_tutor-current")]
         public async Task<IActionResult> GetTutorCurrent()
         {
             var accountId = currentUserService.GetUserId().ToString();
@@ -244,7 +251,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("RegistrateTutorSubject")]
+        [HttpPost("registrate_tutor-subject")]
         public async Task<IActionResult> RegistrateTutorSubject(RegistrateSubject registrateSubject)
         {
             List<SubjectTutor> list = new List<SubjectTutor>();

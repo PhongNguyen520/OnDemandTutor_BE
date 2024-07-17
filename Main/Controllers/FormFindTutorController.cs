@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/formfindtutor")]
     [ApiController]
     public class FormFindTutorController : ControllerBase
     {
@@ -49,7 +49,7 @@ namespace API.Controllers
         }
 
         // MODERATER XEM DANH SÁCH FORM CHX DUYỆT
-        [HttpGet("moderator/viewformlist")]
+        [HttpGet("moderator_getforms")]
         public IActionResult GetRequestList(int pageIndex)
         {
             PagingResult<FormFindTutorVM> result = new PagingResult<FormFindTutorVM>();
@@ -70,7 +70,7 @@ namespace API.Controllers
         }
 
         // TUTOR FILTER DANH SÁCH FORM
-        [HttpGet("tutor/searchpost")]
+        [HttpGet("search_post")]
         public IActionResult Get([FromQuery] RequestSearchPostModel requestSearchPostModel)
         {
             var sortBy = requestSearchPostModel.SortContent != null ? requestSearchPostModel.SortContent?.sortPostBy.ToString() : null;
@@ -145,7 +145,7 @@ namespace API.Controllers
         }
 
         // STUDENT XEM DANH SÁCH FORM ĐÃ ĐĂNG KÍ
-        [HttpGet("student/viewformlist")]
+        [HttpGet("student_getforms")]
         public IActionResult GetList(bool? status, bool? isActive, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
@@ -173,14 +173,14 @@ namespace API.Controllers
             }
 
             // Tạo danh sách các FormVM để trả về
-            var query = _findTutorFormService.GetFormList(forms, student);
+            var query = _findTutorFormService.GetFormList(forms, student).OrderByDescending(s => s.CreateDay);
 
             result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
 
             return Ok(result);
         }
 
-        [HttpGet("tutor/viewApplyForm")]
+        [HttpGet("tutor_getforms")]
         public IActionResult GetApplyForm(bool? isApprove, int pageIndex)
         {
             var userId = _currentUserService.GetUserId().ToString();
@@ -212,7 +212,7 @@ namespace API.Controllers
             }
 
             // Tạo danh sách các FormVM để trả về
-            var query = _findTutorFormService.GetFormList(forms, allStudents);
+            var query = _findTutorFormService.GetFormList(forms, allStudents).OrderByDescending(s => s.CreateDay);
 
             result = _pagingListService.Paging(query.ToList(), pageIndex, 7);
 
@@ -220,7 +220,7 @@ namespace API.Controllers
         }
 
         // STUDENT TẠO FORM
-        [HttpPost("student/createform")]
+        [HttpPost("create_form")]
         public IActionResult CreateForm(RequestCreateFormFindTutor form)
         {
             if (form == null)
@@ -279,7 +279,7 @@ namespace API.Controllers
         }
 
         // TUTOR APPLY POST
-        [HttpPost("tutor/applypost")]
+        [HttpPost("tutor_applypost")]
         public async Task<IActionResult> TutorApply([FromBody] string formId)
         {
             var userId = _currentUserService.GetUserId().ToString();
@@ -356,7 +356,7 @@ namespace API.Controllers
         }
 
         // MODERATER DUYỆT FORM
-        [HttpPut("moderator/browserform")]
+        [HttpPut("moderator_browserform")]
         public IActionResult BrowserForm([FromBody] List<string> id, bool action, string? rejectReason)
         {
             var forms = _findTutorFormService.GetFindTutorForms().Where(s => s.Status == null && s.IsActived == null);
@@ -386,7 +386,7 @@ namespace API.Controllers
         }
 
         // STUDENT UPDATE FORM
-        [HttpPut("student/updateform")]
+        [HttpPut("student_updateform")]
         public IActionResult UpdateForm(UpdateFormVM form)
         {
             if (form == null)
@@ -425,7 +425,7 @@ namespace API.Controllers
         }
 
         // STUDENT VIEW APPLY LIST
-        [HttpGet("student/viewApplyList")]
+        [HttpGet("student_get-applylist")]
         public IActionResult ViewApplyList(string formId)
         {
             var forms = _tutorApplyService.GetTutorApplies().Where(s => s.FormId == formId && s.IsActived != false);
@@ -452,11 +452,11 @@ namespace API.Controllers
                              UserIdTutor = account.Id,
                          };
 
-            return Ok(result);
+            return Ok(result.OrderByDescending(s => s.DayApply));
         }
 
         // STUDENT DUYỆT TUTOR
-        [HttpPut("student/browsertutor")]
+        [HttpPut("student_browsertutor")]
         public IActionResult SubmitForm(bool? action, string formId, string tutorId)
         {
             var tutorApply = _tutorApplyService.GetTutorApplies().Where(s => s.FormId == formId);
@@ -489,7 +489,7 @@ namespace API.Controllers
         }
 
         // STUDENT DELETE FORM
-        [HttpDelete("student/deleteform")]
+        [HttpDelete("delete_form")]
         public IActionResult DeleteForm(string id)
         {
             var form = _findTutorFormService.GetFindTutorForms().First(s => s.FormId == id);

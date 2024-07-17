@@ -6,7 +6,7 @@ using Services;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/dashboard")]
     [ApiController]
     public class DashBoarhController : ControllerBase
     {
@@ -20,14 +20,14 @@ namespace API.Controllers
             _tutorService = new TutorService();
         }
 
-        [HttpGet("ShowListAcount")]
+        [HttpGet("get_accounts")]
         public async Task<IActionResult> ShowAccountIsActive()
         {
             var result = await _iAccountService.ListAccountIsActive();
             return Ok(result);
         }
 
-        [HttpGet("tutor/DashBoard")]
+        [HttpGet("tutor_dashboard")]
         public async Task<IActionResult> TutorDashBoard()
         {
             var user = _currentUserSrevice.GetUserId();

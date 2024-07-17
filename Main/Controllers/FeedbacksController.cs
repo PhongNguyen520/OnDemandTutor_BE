@@ -15,7 +15,7 @@ using API.Services;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/feedback")]
     [ApiController]
     public class FeedbacksController : ControllerBase
     {
@@ -39,7 +39,7 @@ namespace API.Controllers
         }
 
         // GET: api/Feedbacks
-        [HttpGet("{id}")]
+        [HttpGet("get_feedbacks/{id}")]
         public IActionResult GetFeedbackList(string id, int pageIndex)
         {
             var tbFB = _feedbackService.GetFeedbacks(id);
@@ -74,7 +74,7 @@ namespace API.Controllers
         }
 
         //Student Create FeedBack
-        [HttpPost("createFeedback")]
+        [HttpPost("create_feedback")]
         public IActionResult createFeedback(CreateFeedback request)
         {
             var userId = _currentUserService.GetUserId().ToString();

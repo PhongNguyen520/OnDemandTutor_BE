@@ -13,7 +13,7 @@ using BusinessObjects.Models;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/complaint")]
     [ApiController]
     public class ComplaintsController : ControllerBase
     {
@@ -124,7 +124,7 @@ namespace API.Controllers
         //    return _context.Complaints.Any(e => e.ComplaintId == id);
         //}
 
-        [HttpPost("CreateComplaint")]
+        [HttpPost("create_complaint")]
         public async Task<IActionResult> CreateComplaint(ComplaintDTO complaintDTO)
         {
             complaintDTO.Complainter = _currentUserService.GetUserId().ToString();
@@ -136,7 +136,7 @@ namespace API.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("ViewAllComplaintInClass/{classId}")]
+        [HttpGet("get_complaints-in-class/{classId}")]
         public async Task<IActionResult> ViewComplaint(string classId)
         {
             var result = await _iComplaintService.ViewAllComplaintInClass(classId);

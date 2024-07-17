@@ -6,7 +6,7 @@ using Services;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/student")]
     [ApiController]
     public class StudentsController : ControllerBase
     {
@@ -19,7 +19,7 @@ namespace API.Controllers
             _iCurrentUserService = iCurrentUserService;
         }
 
-        [HttpPost("UpdateStudent")]
+        [HttpPost("update_student")]
         public async Task<IActionResult> UpdateStudentAccount(StudentVM studentVM)
         {
             var accountId = _iCurrentUserService.GetUserId().ToString();
@@ -31,7 +31,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetStudentCurrent")]
+        [HttpGet("get_student-current")]
         public async Task<IActionResult> GetTutorCurrent()
         {
             var accountId = _iCurrentUserService.GetUserId().ToString();
@@ -43,7 +43,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("ListSubjectName")]
+        [HttpGet("get_subject-name")]
         public async Task<IActionResult> ListSubjectName(string nameFind)
         {
             var rusult = await _iStudentService.ListNameSupsectGroup(nameFind);
