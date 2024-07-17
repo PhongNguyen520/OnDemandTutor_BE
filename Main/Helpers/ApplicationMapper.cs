@@ -125,7 +125,6 @@ namespace API.Helper
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Image))
                 .ReverseMap();
 
-
             CreateMap<Complaint, ComplaintDTO>().ReverseMap();
             CreateMap<Complaint, ComplaintVM>().ReverseMap();
             CreateMap<Complaint, ComlaintClass>().ReverseMap();

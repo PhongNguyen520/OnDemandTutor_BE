@@ -66,7 +66,7 @@ namespace API.Controllers
 
         [HttpPut]
         [Route("update_wallet")]
-        [HttpPost("ReloadBalance")]
+        [HttpPost("reload_balance")]
         public async Task<IActionResult> ReloadBalance()
         {
             var userId = _currentUserService.GetUserId().ToString();
