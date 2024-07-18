@@ -86,10 +86,10 @@ namespace API.Controller
 
 
         [HttpPost("create_user-role")]
-        public async Task<IActionResult> AddRoleUser(List<string> roleNames, String userId)
+        public async Task<IActionResult> AddRoleUser(ChangRoleVM model)
 
         {
-            var result = await iRoleService.AddRoleUser(roleNames, userId);
+            var result = await iRoleService.AddRoleUser(model.ListRoleName, model.UserId);
             return Ok(result);
         }
 
