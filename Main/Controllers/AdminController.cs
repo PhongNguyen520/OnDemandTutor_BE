@@ -95,7 +95,7 @@ namespace API.Controller
 
 
         [HttpPost("update_user-status")]
-        public async Task<IActionResult> EnalbleUser(String userId)
+        public async Task<IActionResult> EnalbleUser([FromBody]string userId)
 
         {
             return Ok(await iAccountService.EnalbleUser(userId));
