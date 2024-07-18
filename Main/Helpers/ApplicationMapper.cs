@@ -80,6 +80,7 @@ namespace API.Helper
                 .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId))
                 .ForMember(dest => dest.CreateDay, opt => opt.MapFrom(src => src.Account.CreateDay))
                 .ForMember(dest => dest.TutorId, opt => opt.MapFrom(src => src.TutorId))
+                .ForMember(dest => dest.AccountIsActive, opt => opt.MapFrom(src => src.Account.IsActive))
                 .ReverseMap();
 
             CreateMap<Student, Student10VM>()
@@ -95,6 +96,7 @@ namespace API.Helper
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.Age))
                 .ForMember(dest => dest.IsParent, opt => opt.MapFrom(src => src.IsParent))
                 .ForMember(dest => dest.StudentId, opt => opt.MapFrom(src => src.StudentId))
+                .ForMember(dest => dest.AccountIsActive, opt => opt.MapFrom(src => src.Account.IsActive))
                 .ReverseMap();
 
             CreateMap<Tutor, AccountTutorAdVM>()
@@ -117,6 +119,7 @@ namespace API.Helper
                 .ForMember(dest => dest.CreateDay, opt => opt.MapFrom(src => src.Account.CreateDay))
                 .ForMember(dest => dest.TutorId, opt => opt.MapFrom(src => src.TutorId))
                 .ReverseMap();
+
 
 
             CreateMap<TutorAd, TutorAdsModel>()
