@@ -121,6 +121,7 @@ namespace API.Helper
                 .ReverseMap();
 
 
+
             CreateMap<TutorAd, TutorAdsModel>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.VideoUrl, opt => opt.MapFrom(src => src.Video))
