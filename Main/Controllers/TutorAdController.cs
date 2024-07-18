@@ -38,7 +38,7 @@ namespace API.Controllers
         public IActionResult PostAds(TutorAdsModel tutorAds)
         {
             var userId = _currentUserService.GetUserId().ToString();
-            var tutor = _dbContext.TutorAds.FirstOrDefault(t => t.Tutor.AccountId == userId);
+            var tutor = _dbContext.Tutors.FirstOrDefault(t => t.AccountId == userId);
 
             if (tutor != null)
             {
@@ -55,7 +55,7 @@ namespace API.Controllers
 
                 _tutorAdService.CeateAd(result);
 
-                return Ok(result);
+                return Ok(tutorAds);
             }
             return BadRequest();
         }
