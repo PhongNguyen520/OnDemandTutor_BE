@@ -54,9 +54,9 @@ namespace API.Controller
         public async Task<IActionResult> SignUp(AccountDTO signUpModel)
         {
             var userIdSignUpId = await _accountService.SignUpAsync(signUpModel);
-            if (userIdSignUpId == null)
+            if (userIdSignUpId == "Email exists!!!" || userIdSignUpId == "UserName exists!!!")
             {
-                return BadRequest("Email is existed");
+                return Ok(userIdSignUpId);
             }
             if (userIdSignUpId != null)
             {

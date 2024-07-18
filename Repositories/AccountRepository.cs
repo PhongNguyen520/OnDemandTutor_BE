@@ -131,7 +131,12 @@ namespace Repositories
             var isDupplicate = await _userManager.FindByEmailAsync(model.Email);
             if (isDupplicate != null)
             {
-                return null;
+                return "Email exists!!!";
+            }
+            isDupplicate = await _userManager.FindByNameAsync(model.UserName);
+            if (isDupplicate != null)
+            {
+                return "UserName exists!!!";
             }
             var user = _mapper.Map<Account>(model);
 
