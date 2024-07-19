@@ -120,13 +120,23 @@ namespace API.Helper
                 .ForMember(dest => dest.TutorId, opt => opt.MapFrom(src => src.TutorId))
                 .ReverseMap();
 
-
-
             CreateMap<TutorAd, TutorAdsModel>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.VideoUrl, opt => opt.MapFrom(src => src.Video))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Image))
                 .ReverseMap();
+
+            CreateMap<TutorAd, TutorIsActiveVM>()
+                .ForMember(dest => dest.AdsId, opt => opt.MapFrom(src => src.AdsId))
+                .ForMember(dest => dest.CreateDay, opt => opt.MapFrom(src => src.CreateDay))
+                .ForMember(dest => dest.Video, opt => opt.MapFrom(src => src.Video))
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image))
+                .ForMember(dest => dest.TutorId, opt => opt.MapFrom(src => src.TutorId))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+                .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => src.IsActived))
+                .ForMember(dest => dest.AccountTutorId, opt => opt.MapFrom(src => src.Tutor.AccountId))
+                .ReverseMap();
+
 
             CreateMap<Complaint, ComplaintDTO>().ReverseMap();
             CreateMap<Complaint, ComplaintVM>().ReverseMap();
