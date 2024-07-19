@@ -1,6 +1,8 @@
-﻿using BusinessObjects;
+﻿using AutoMapper;
+using BusinessObjects;
 using BusinessObjects.Models;
 using DAOs;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +15,16 @@ namespace Repositories
     {
         private readonly TutorAdDAO tutorAdDAO = null;
         private readonly DAOs.DbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public TutorAdRepository(DbContext dbContext)
+        public TutorAdRepository(DAOs.DbContext dbContext, IMapper mapper)
         {
             if (tutorAdDAO == null)
             {
                 tutorAdDAO = new TutorAdDAO();
             }
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         public bool AddTutorAd(TutorAd tutorAd)
@@ -43,12 +47,14 @@ namespace Repositories
             return tutorAdDAO.UpdateTutorAds(tutorAd);
         }
 
-        public async Task<List<TutorAd>> GetAllTutorAdIsActive()
+        public async Task<List<TutorIsActiveVM>> GetAllTutorAdIsActive()
         {
             var list = _dbContext.TutorAds
+                       .Include(_ => _.Tutor)
                        .Where(_ => _.IsActived == null)
                        .ToList();
-            return list;
+            var listEnd = _mapper.Map<List<TutorIsActiveVM>>(list);
+            return listEnd;
         }
 
         public async Task<bool> CeateAd(TutorAd model)

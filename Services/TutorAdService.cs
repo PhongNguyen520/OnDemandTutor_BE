@@ -39,7 +39,7 @@ namespace Services
             return iTutorAdRepository.UpdateTutorAds(tutorAd);
         }
 
-        public async Task<List<TutorAd>> GetAllTutorAdIsActive()
+        public async Task<List<TutorIsActiveVM>> GetAllTutorAdIsActive()
         {
             return await iTutorAdRepository.GetAllTutorAdIsActive();
         }

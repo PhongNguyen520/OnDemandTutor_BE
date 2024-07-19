@@ -19,7 +19,7 @@ namespace Repositories
 
         public bool UpdateTutorAds(TutorAd tutorAd);
 
-        Task<List<TutorAd>> GetAllTutorAdIsActive();
+        Task<List<TutorIsActiveVM>> GetAllTutorAdIsActive();
 
         Task<bool> CeateAd(TutorAd model);
         Task<bool> UpdateIsActiveTutorAd(TutorAdIsAc model);
