@@ -20,7 +20,7 @@ namespace Services
             }
         }
 
-        public bool AddMessage(Message message)
+        public async Task<bool> AddMessage(Message message)
         {
             return iMessageRepository.AddMessage(message);
         }

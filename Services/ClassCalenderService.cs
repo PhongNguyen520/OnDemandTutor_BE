@@ -198,17 +198,22 @@ namespace Services
 
             var filteredDates = classCalenderRepository.GetDatesByDaysOfWeek(form.DayStart, form.DayEnd, formDays);
 
-            foreach (var f in list)
+            var newList = from a in list
+                          join f in findTutorFormRepository.GetFindTutorForms()
+                          on a.FormId equals f.FormId
+                          select f;
+
+            foreach (var f in newList)
             {
-                List<DayOfWeek> fDays = classCalenderRepository.ParseDaysOfWeek(f.FindTutorForm.DayOfWeek);
-                var fDates = classCalenderRepository.GetDatesByDaysOfWeek(f.FindTutorForm.DayStart, f.FindTutorForm.DayEnd, fDays);
+                List<DayOfWeek> fDays = classCalenderRepository.ParseDaysOfWeek(f.DayOfWeek);
+                var fDates = classCalenderRepository.GetDatesByDaysOfWeek(f.DayStart, f.DayEnd, fDays);
                 foreach (var d in fDates)
                 {
                     if (filteredDates.Contains(d))
                     {
-                        if (form.TimeStart <= f.FindTutorForm.TimeStart && form.TimeEnd >= f.FindTutorForm.TimeEnd
-                         || form.TimeStart >= f.FindTutorForm.TimeStart && form.TimeStart < f.FindTutorForm.TimeEnd
-                         || form.TimeEnd > f.FindTutorForm.TimeStart && form.TimeEnd <= f.FindTutorForm.TimeEnd)
+                        if (form.TimeStart <= f.TimeStart && form.TimeEnd >= f.TimeEnd
+                         || form.TimeStart >= f.TimeStart && form.TimeStart < f.TimeEnd
+                         || form.TimeEnd > f.TimeStart && form.TimeEnd <= f.TimeEnd)
                         {
                             return false;
                         }

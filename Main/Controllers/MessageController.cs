@@ -21,7 +21,6 @@ namespace API.Controllers
         private readonly IMapper _mapper;
         private readonly IHubContext<ChatHub> _hubContext;
         private readonly IAccountService _accountService;
-        private readonly DbContext _dbContext;
 
         public MessageController(IHubContext<ChatHub> hubContext, IMapper mapper, ICurrentUserService currentUserService, IAccountService accountService, DbContext dbContext)
         {
@@ -30,7 +29,6 @@ namespace API.Controllers
             _hubContext = hubContext;
             _currentUserService = currentUserService;
             _accountService = accountService;
-            _dbContext = dbContext;
         }
 
 
@@ -96,8 +94,7 @@ namespace API.Controllers
                 IsRead = false,
             };
 
-            _dbContext.Add(msg);
-            await _dbContext.SaveChangesAsync();
+            messageService.AddMessage(msg);
 
             var showMessage = new MessageVM()
             {

@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using Repositories;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Services
             _repository = new TutorApplyRepository();
         }
 
-        public bool AddTutorApply(TutorApply tutorApply)
+        public async Task<bool> AddTutorApply(TutorApply tutorApply)
         {
             return _repository.AddTutorApply(tutorApply);
         }
@@ -35,6 +36,11 @@ namespace Services
         public bool UpdateTutorApplies(TutorApply tutorApply)
         {
             return _repository.UpdateTutorApplies(tutorApply);
+        }
+
+        public async Task<IEnumerable<TutorApply>> TutorApplyForm(string tutorId)
+        {
+            return _repository.GetTutorApplies().Where(s => s.TutorId == tutorId);
         }
     }
 }

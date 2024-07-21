@@ -22,7 +22,7 @@ namespace DAOs
         public bool AddMessage(Message message)
         {
             dbContext.Messages.Add(message);
-            dbContext.SaveChanges();
+            dbContext.SaveChangesAsync();
             return true;
         }
 
