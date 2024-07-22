@@ -59,5 +59,13 @@ namespace API.Controllers
             }
             return BadRequest();
         }
+
+        [HttpGet("show_list_ads_vm")]
+        public async Task<IActionResult> ShowListAdsVM()
+        {
+            var result = await _tutorAdService.GetAllAds();
+
+            return Ok(result);
+        }
     }
 }

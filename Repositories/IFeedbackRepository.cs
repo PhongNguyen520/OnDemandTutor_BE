@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,7 @@ namespace Repositories
         public List<Feedback> GetFeedbacks(string id);
 
         public bool UpdateFeedbacks(Feedback feedback);
+
+        Task<List<FeedbackVMPhuc>> GetAllFeedBack();
     }
 }
