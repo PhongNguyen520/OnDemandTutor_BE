@@ -198,11 +198,31 @@ namespace Repositories
             return result;
         }
 
-        public async Task<List<HistoryTutorApply>> GetAllStatusHistoryTutorApply()
+        public async Task<List<HistoryTutorApplyVM>> GetAllStatusHistoryTutorApply()
         {
-            var result = await _dbContext.HistoryTutors.Where(_ => _.Status == null).ToListAsync();
+            var listDB = await _dbContext.HistoryTutors.ToListAsync();
+            var result = _mapper.Map<List<HistoryTutorApplyVM>>(listDB);
+
             return result;
         }
 
+
+        public async Task<bool> CreateHistoryTutorApply(HistoryTutorApplyVM model)
+        {
+            var histotyDB = _mapper.Map<HistoryTutorApply>(model);
+
+            _dbContext.HistoryTutors.Add(histotyDB);
+            int result = await _dbContext.SaveChangesAsync();
+
+            if (result == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
     }
 }

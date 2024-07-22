@@ -62,7 +62,7 @@ namespace API.Controller
             {
                 var scheme = HttpContext.Request.Scheme;
                 var host = HttpContext.Request.Host.Value;
-                var url = $"{scheme}://{host}/api/auth/confirm-email?email={signUpModel.Email}";
+                var url = $"{scheme}://{host}/api/auth/confirm_email?email={signUpModel.Email}";
                 await _mailService.SendEmailAsync(signUpModel.Email, "Xác thực tài khoản của bạn", url);
                 return Ok(new { userId = userIdSignUpId });
             }

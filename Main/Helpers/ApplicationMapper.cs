@@ -147,6 +147,8 @@ namespace API.Helper
 
             CreateMap<Class, ClassVMPhuc>().ReverseMap();
 
+            CreateMap<HistoryTutorApply, HistoryTutorApplyVM>().ReverseMap();
+
             CreateMap<Feedback, FeedbackVMPhuc>().ReverseMap();
 
             #endregion

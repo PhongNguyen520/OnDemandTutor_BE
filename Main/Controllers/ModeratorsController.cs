@@ -33,12 +33,19 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("create_email")]
-        public async Task<IActionResult> SendEmailInterTutor(string email, string content)
+        [HttpPut("create_email")]
+        public async Task<IActionResult> SendEmailInterTutor(HistoryTutorApplyVM models)
         {
-            if (await _accountService.CheckAccountByEmail(email))
+            if (await _accountService.CheckAccountByEmail(models.Email))
             {
-                _mailService.SendTutorInter(email, "Phỏng vấn On Demand Tutor", content);
+                models.HistoryTutorApplyId = Guid.NewGuid().ToString();
+                var chec = await _tutorService.CreateHistoryTutorApply(models);
+               if(chec == false)
+                {
+                    return BadRequest("Error Create HistoryTutorApply");
+                }
+                _mailService.SendTutorInter(models.Email, "Phỏng vấn On Demand Tutor", models.Content);
+
                 return Ok();
             }
             return BadRequest("No Account");
