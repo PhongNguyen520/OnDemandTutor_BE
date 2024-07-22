@@ -44,4 +44,6 @@ public partial class Tutor
     public virtual ICollection<RequestTutorForm> RequestTutorForms { get; set; } = new List<RequestTutorForm>();
 
     public virtual ICollection<TutorApply> TutorApplies { get; set; } = new List<TutorApply>();
+
+    public virtual ICollection<HistoryTutorApply> HistoryTutorApplies { get; set; } = new List<HistoryTutorApply>();
 }

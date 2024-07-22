@@ -93,5 +93,12 @@ namespace API.Controllers
             }
             return Ok(model.IsActive);
         }
+
+        [HttpGet("show_list_tutor_apply")]
+        public async Task<IActionResult> ShowListHistoryTuorApply()
+        {
+            var result = await _tutorService.GetAllStatusHistoryTutorApply();
+            return Ok(result);
+        }
     }
 }

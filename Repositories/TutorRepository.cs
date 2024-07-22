@@ -198,5 +198,11 @@ namespace Repositories
             return result;
         }
 
+        public async Task<List<HistoryTutorApply>> GetAllStatusHistoryTutorApply()
+        {
+            var result = await _dbContext.HistoryTutors.Where(_ => _.Status == null).ToListAsync();
+            return result;
+        }
+
     }
 }

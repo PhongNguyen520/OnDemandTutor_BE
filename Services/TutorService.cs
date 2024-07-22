@@ -193,5 +193,10 @@ namespace Services
         {
             return await _repository.GetAccountHaveAd();
         }
+
+        public async Task<List<HistoryTutorApply>> GetAllStatusHistoryTutorApply()
+        {
+            return await _repository.GetAllStatusHistoryTutorApply();
+        }
     }
 }

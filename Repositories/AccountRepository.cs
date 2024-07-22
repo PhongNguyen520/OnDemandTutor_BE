@@ -288,7 +288,7 @@ namespace Repositories
 
         public async Task<IQueryable<TutorInterVM>> GetAccountTutorIsActiveFalse()
         {
-            var listTutor = _dbContext.Tutors.Where(t => t.IsActive == false)
+            var listTutor = _dbContext.Tutors.Where(t => t.IsActive == null)
                                       .Include(a => a.Account)
                                       .Where(a => a.Account.IsActive == true)
                                       .ToList();
