@@ -9,12 +9,14 @@ namespace Services
 {
     public interface ITutorApplyService
     {
-        public bool AddTutorApply(TutorApply tutorApply);
+        Task<bool> AddTutorApply(TutorApply tutorApply);
 
         public bool DelTutorApplies(int id);
 
         public List<TutorApply> GetTutorApplies();
 
         public bool UpdateTutorApplies(TutorApply tutorApply);
+
+        Task<IEnumerable<TutorApply>> TutorApplyForm(string tutorId);
     }
 }

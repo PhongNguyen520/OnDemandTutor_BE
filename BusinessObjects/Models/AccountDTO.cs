@@ -199,6 +199,8 @@ namespace BusinessObjects.Models
 
         public string TutorId { get; set; }
 
+        public bool AccountIsActive { get; set;}
+
     }
 
     public class Student10VM
@@ -225,6 +227,8 @@ namespace BusinessObjects.Models
         public DateTime CreateDay { get; set; }
 
         public string StudentId { get; set; }
+
+        public bool AccountIsActive { get; set; }
 
     }
 

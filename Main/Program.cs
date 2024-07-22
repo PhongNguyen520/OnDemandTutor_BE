@@ -24,7 +24,7 @@ namespace Main
                 options.AddPolicy("AllowReactApp",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000")
+                        builder.WithOrigins("https://demoondemandtutor.web.app")
                                .AllowAnyHeader()
                                .AllowAnyMethod()
                                .AllowCredentials();
@@ -133,20 +133,22 @@ namespace Main
 
 
                 // Set up CORS
-                app.UseCors("AllowReactApp");
+               
 
-                app.UseHttpsRedirection();
+                
+            } 
+            app.UseCors("AllowReactApp");
+            app.UseHttpsRedirection();
 
-                app.UseAuthentication();
+            app.UseAuthentication();
 
-                app.UseAuthorization();
+            app.UseAuthorization();
 
-                app.MapControllers();
+            app.MapControllers();
 
-                app.MapHub<ChatHub>("/chatHub");
+            app.MapHub<ChatHub>("/chatHub");
 
-                app.Run();
-            }
+            app.Run();
         }
     }
 }
