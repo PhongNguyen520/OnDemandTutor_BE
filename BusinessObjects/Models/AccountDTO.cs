@@ -100,7 +100,7 @@ namespace BusinessObjects.Models
 
         public string? Address { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
 
         public DateTime CreateDay { get; set; }
 
@@ -151,7 +151,7 @@ namespace BusinessObjects.Models
         public String? PhoneNumber { get; set; }
         public bool Gender { get; set; }
         public string? Avatar { get; set; }
-        public int isActive { get; set; } = 1;
+        public int isActive { get; set; }
 
     }
 
@@ -193,7 +193,7 @@ namespace BusinessObjects.Models
 
         public string? Address { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
 
         public DateTime CreateDay { get; set; }
 
@@ -263,7 +263,7 @@ namespace BusinessObjects.Models
 
         public string? Address { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
 
         public DateTime CreateDay { get; set; }
 
