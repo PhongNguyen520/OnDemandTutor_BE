@@ -19,7 +19,6 @@ public partial class Wallet
 
     public virtual Account Account { get; set; } = null!;
 
-    public virtual ICollection<Payment> Payments{ get; set; } = new List<Payment>();
+    public virtual ICollection<PaymentTransaction> PaymentTransactions{ get; set; } = new List<PaymentTransaction>();
 
-    public virtual ICollection<HistoryTransaction> HistoryTransactions { get; set; } = new List<HistoryTransaction>();
 }

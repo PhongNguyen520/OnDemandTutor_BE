@@ -4,6 +4,7 @@ using DAOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOs.Migrations
 {
     [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240721233015_ReconstructPayment")]
+    partial class ReconstructPayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -581,6 +584,54 @@ namespace DAOs.Migrations
                     b.ToTable("Notification", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObjects.Payment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentDestinationId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("RequiredAmount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Signature")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("TxnRef")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WalletId")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Payment__CB1927A1190BF352E");
+
+                    b.HasIndex("PaymentDestinationId");
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("Payment", (string)null);
+                });
+
             modelBuilder.Entity("BusinessObjects.PaymentDestination", b =>
                 {
                     b.Property<string>("Id")
@@ -612,27 +663,28 @@ namespace DAOs.Migrations
                     b.Property<float?>("Amount")
                         .HasColumnType("real");
 
+                    b.Property<string>("BankTranNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsValid")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PaymentDestinationId")
+                    b.Property<string>("PaymentId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("TranDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("WalletId")
-                        .HasColumnType("nvarchar(255)");
-
                     b.HasKey("Id")
-                        .HasName("PK__Payment__CB1927A1190BF352E");
+                        .HasName("PK__PaymentTransaction__CB1927A1291BF343P");
 
-                    b.HasIndex("PaymentDestinationId");
-
-                    b.HasIndex("WalletId");
+                    b.HasIndex("PaymentId");
 
                     b.ToTable("PaymentTransaction", (string)null);
                 });
@@ -1287,21 +1339,31 @@ namespace DAOs.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("BusinessObjects.PaymentTransaction", b =>
+            modelBuilder.Entity("BusinessObjects.Payment", b =>
                 {
                     b.HasOne("BusinessObjects.PaymentDestination", "PaymentDestination")
-                        .WithMany("PaymentTransactions")
+                        .WithMany("Payments")
                         .HasForeignKey("PaymentDestinationId")
                         .HasConstraintName("FKPayment1159779");
 
                     b.HasOne("BusinessObjects.Wallet", "Wallet")
-                        .WithMany("PaymentTransactions")
+                        .WithMany("Payments")
                         .HasForeignKey("WalletId")
                         .HasConstraintName("FKPayment1158769");
 
                     b.Navigation("PaymentDestination");
 
                     b.Navigation("Wallet");
+                });
+
+            modelBuilder.Entity("BusinessObjects.PaymentTransaction", b =>
+                {
+                    b.HasOne("BusinessObjects.Payment", "Payment")
+                        .WithMany("PaymentTransactions")
+                        .HasForeignKey("PaymentId")
+                        .HasConstraintName("FKPaymentTransaction3171253");
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("BusinessObjects.RequestTutorForm", b =>
@@ -1524,9 +1586,14 @@ namespace DAOs.Migrations
                     b.Navigation("Subjects");
                 });
 
-            modelBuilder.Entity("BusinessObjects.PaymentDestination", b =>
+            modelBuilder.Entity("BusinessObjects.Payment", b =>
                 {
                     b.Navigation("PaymentTransactions");
+                });
+
+            modelBuilder.Entity("BusinessObjects.PaymentDestination", b =>
+                {
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("BusinessObjects.Student", b =>
@@ -1577,7 +1644,7 @@ namespace DAOs.Migrations
 
             modelBuilder.Entity("BusinessObjects.Wallet", b =>
                 {
-                    b.Navigation("PaymentTransactions");
+                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }

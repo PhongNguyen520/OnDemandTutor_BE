@@ -58,13 +58,11 @@ public partial class DbContext : IdentityDbContext<Account>
 
     public virtual DbSet<TutorApply> TutorApplies { get; set; }
 
-    public virtual DbSet<Payment> Payments { get; set; }
+    public virtual DbSet<PaymentTransaction> Payments { get; set; }
 
     public virtual DbSet<PaymentDestination> PaymentDestinations { get; set; }
 
     public virtual DbSet<PaymentTransaction> PaymentTransactions { get; set; }
-
-    public virtual DbSet<HistoryTransaction> HistoryTransactions { get; set; }
 
     private string? GetConnectionString()
     {
@@ -601,18 +599,18 @@ public partial class DbContext : IdentityDbContext<Account>
         });
 
 
-        modelBuilder.Entity<Payment>(entity =>
+        modelBuilder.Entity<PaymentTransaction>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Payment__CB1927A1190BF352E");
 
-            entity.ToTable("Payment");
+            entity.ToTable("PaymentTransaction");
 
-            entity.HasOne(d => d.Wallet).WithMany(p => p.Payments)
+            entity.HasOne(d => d.Wallet).WithMany(p => p.PaymentTransactions)
               .HasForeignKey(d => d.WalletId)
               .OnDelete(DeleteBehavior.ClientSetNull)
               .HasConstraintName("FKPayment1158769");
 
-            entity.HasOne(d => d.PaymentDestination).WithMany(p => p.Payments)
+            entity.HasOne(d => d.PaymentDestination).WithMany(p => p.PaymentTransactions)
                 .HasForeignKey(d => d.PaymentDestinationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKPayment1159779");
@@ -624,32 +622,6 @@ public partial class DbContext : IdentityDbContext<Account>
 
             entity.ToTable("PaymentDestination");
 
-        });
-
-
-        modelBuilder.Entity<PaymentTransaction>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__PaymentTransaction__CB1927A1291BF343P");
-
-            entity.ToTable("PaymentTransaction");
-
-            entity.HasOne(d => d.Payment).WithMany(p => p.PaymentTransactions)
-                .HasForeignKey(d => d.PaymentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKPaymentTransaction3171253");
-            
-        });
-
-        modelBuilder.Entity<HistoryTransaction>(entity =>
-        {
-            entity.HasKey(e => e.HistoryId).HasName("PK__HistoryTransaction__77C70FC2A16C5PHUC");
-
-            entity.ToTable("HistoryTransaction");
-
-            entity.HasOne(d => d.Wallet).WithMany(p => p.HistoryTransactions)
-                .HasForeignKey(d => d.WalletId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKTutor3875333");
         });
 
         base.OnModelCreating(modelBuilder);

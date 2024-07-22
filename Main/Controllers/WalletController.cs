@@ -66,6 +66,15 @@ namespace API.Controllers
 
         [HttpPut]
         [Route("update_wallet")]
+        public IActionResult UpdateWallet(string bankname, string banknumber)
+        {
+            var userId = _currentUserService.GetUserId().ToString();
+            var response = _walletService.GetWallets().FirstOrDefault(w => w.AccountId == userId);
+            response.BankName = bankname;
+            response.BankNumber = banknumber;
+            _walletService.UpdateWallets(response);
+            return Ok(response);
+        }
         [HttpPost("reload_balance")]
         public async Task<IActionResult> ReloadBalance()
         {
@@ -89,17 +98,7 @@ namespace API.Controllers
             if (!check) return BadRequest();
 
             var wit = _walletService.WithdrawMoney(userId, withdrawMoney);
-            if (wit == null ) return BadRequest("Not enough money!!!");
-            HistoryTransaction historyTransaction = new HistoryTransaction();
-            historyTransaction.HistoryId = Guid.NewGuid().ToString();
-            historyTransaction.DateCreate = DateTime.Now;
-            historyTransaction.Amount = withdrawMoney;
-            historyTransaction.Description = "WithdrawMoney";
-            var wall = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.AccountId == userId);
-            historyTransaction.WalletId = wall.WalletId;
-
-            _dbContext.Add(historyTransaction);
-            _dbContext.SaveChanges();
+           
             return Ok(wit);
         }
     }
