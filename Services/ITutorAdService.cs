@@ -23,5 +23,7 @@ namespace Services
         Task<bool> CeateAd(TutorAd model);
 
         Task<bool> UpdateIsActiveTutorAd(TutorAdIsAc model);
+
+        Task<List<AdsVMPl>> GetAllAds();
     }
 }

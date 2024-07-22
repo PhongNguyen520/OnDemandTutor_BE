@@ -38,6 +38,9 @@ namespace Services.Dependency
             services.AddScoped<ITutorAdRepository, TutorAdRepository>();
             services.AddScoped<ITutorAdService, TutorAdService>();
 
+            services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+            services.AddScoped<IFeedbackService, FeedbackService>();
+
             return services;
         }
     }

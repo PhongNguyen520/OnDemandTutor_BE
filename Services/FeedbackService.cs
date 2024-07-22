@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
 using Repositories;
 using System;
@@ -11,7 +12,8 @@ namespace Services
 {
     public class FeedbackService : IFeedbackService
     {
-        private readonly IFeedbackRepository iFeedbackRepository = null;
+        private readonly IFeedbackRepository iFeedbackRepository;
+        
 
         public FeedbackService()
         {
@@ -19,6 +21,11 @@ namespace Services
             {
                 iFeedbackRepository = new FeedbackRepository();
             }
+        }
+
+        public FeedbackService(IFeedbackRepository _feedbackRepository)
+        {
+            iFeedbackRepository = _feedbackRepository;
         }
         public bool AddFeedback(Feedback feedback)
         {
@@ -68,6 +75,11 @@ namespace Services
             }
             rate = query.Count();
             return rate;
+        }
+
+        public async Task<List<FeedbackVMPhuc>> GetAllFeedBack()
+        {
+            return await iFeedbackRepository.GetAllFeedBack();
         }
     }
 }

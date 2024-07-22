@@ -21,4 +21,5 @@ public partial class TutorAd
 
     public bool? IsActived { get; set; }
 
+    public string? RejectReason { get; set; }
 }

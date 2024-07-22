@@ -53,5 +53,10 @@ namespace Services
         {
             return await iTutorAdRepository.UpdateIsActiveTutorAd(model);
         }
+
+        public async Task<List<AdsVMPl>> GetAllAds()
+        {
+            return await iTutorAdRepository.GetAllAds();
+        }
     }
 }
