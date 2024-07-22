@@ -45,11 +45,6 @@ namespace Services
             return iWalletRepository.UpdateWallets(wallet);
         }
 
-        public async Task<float?> CreaterHistoryTransaction(HistoryTransaction transaction)
-        {
-            return await iWalletRepository.CreaterHistoryTransaction(transaction);
-        }
-
         public async Task<float?> UpdateBalance(string userId, float plusMoney)
         {
             return await iWalletRepository.UpdateBalance(userId, plusMoney);

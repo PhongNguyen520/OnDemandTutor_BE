@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BusinessObjects;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,29 +12,51 @@ namespace Services.PaymentServices
 {
     public class MomoService
     {
-        public async Task<string> CreateOrderAsync(decimal amount, string description, string orderId)
+        private readonly IPaymentTransactionService _transactionService = new PaymentTransactionService();
+        private readonly IWalletService _walletService = new WalletService();
+
+        public async Task<string> CreateOrderAsync(decimal amount, string description, string orderId, string walletId, string paymentDestinationId)
         {
             var requestId = Guid.NewGuid().ToString();
-            var requestType = "captureMoMoWallet";
-            var extraData = ""; // Dữ liệu thêm nếu có
+            //var requestType = "captureWallet";
+            var requestType = "payWithATM";
+            //var requestType = "onDelivery";
+            var extraData = "";
+            var lang = "vi";
 
-            var rawHash = $"partnerCode={MoMoConfig.PartnerCode}&accessKey={MoMoConfig.AccessKey}&requestId={requestId}&amount={amount}&orderId={orderId}&orderInfo={description}&returnUrl={MoMoConfig.ReturnUrl}&notifyUrl={MoMoConfig.NotifyUrl}&extraData={extraData}";
+            var rawHash = $"accessKey={MoMoConfig.AccessKey}&amount={amount}&extraData={extraData}&ipnUrl={MoMoConfig.IpnUrl}&orderId={orderId}&orderInfo={description}&partnerCode={MoMoConfig.PartnerCode}&redirectUrl={MoMoConfig.RedirectUrl}&requestId={requestId}&requestType={requestType}";
+
+
             var signature = CreateHMACSHA256Signature(rawHash, MoMoConfig.SecretKey);
 
             var param = new Dictionary<string, string>
-        {
-            { "partnerCode", MoMoConfig.PartnerCode },
-            { "accessKey", MoMoConfig.AccessKey },
-            { "requestId", requestId },
-            { "amount", amount.ToString() },
-            { "orderId", orderId },
-            { "orderInfo", description },
-            { "returnUrl", MoMoConfig.ReturnUrl },
-            { "notifyUrl", MoMoConfig.NotifyUrl },
-            { "extraData", extraData },
-            { "requestType", requestType },
-            { "signature", signature }
-        };
+            {
+                { "partnerCode", MoMoConfig.PartnerCode },
+                { "accessKey", MoMoConfig.AccessKey },
+                { "requestId", requestId },
+                { "amount", amount.ToString() },
+                { "orderId", orderId },
+                { "orderInfo", description },
+                { "redirectUrl", MoMoConfig.RedirectUrl },
+                { "ipnUrl", MoMoConfig.IpnUrl },
+                { "extraData", extraData },
+                { "requestType", requestType },
+                { "signature", signature },
+                { "lang", lang },
+            };
+
+            var payment = new PaymentTransaction()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Amount = (float)amount,
+                Description = description,
+                TranDate = DateTime.Now,
+                IsValid = false,
+                WalletId = walletId,
+                PaymentDestinationId = paymentDestinationId
+            };
+
+            _transactionService.AddTransaction(payment);
 
             using (var client = new HttpClient())
             {
@@ -59,6 +82,52 @@ namespace Services.PaymentServices
                     throw new Exception("Unexpected response format: " + responseString);
                 }
             }
+
+        }
+
+        public async Task<bool> PaymentReturnAsync(string id, Dictionary<string, string> responseParams)
+        {
+            if (!responseParams.TryGetValue("signature", out var receivedSignature))
+            {
+                throw new Exception("Missing signature");
+            }
+
+            responseParams.Remove("signature");
+
+            if (!VerifySignature(responseParams, MoMoConfig.SecretKey, receivedSignature))
+            {
+                throw new Exception("Invalid signature");
+            }
+
+            var payment = _transactionService.GetTransactions().FirstOrDefault(s => s.Id == id);
+            if (payment != null)
+            {
+                var amount = float.Parse(responseParams["amount"]);
+                if (responseParams["resultCode"] == "0")
+                {
+                    payment.IsValid = true;
+                    _transactionService.UpdateTransaction(payment);
+
+                    var wallet = _walletService.GetWallets().FirstOrDefault(w => w.WalletId == payment.WalletId);
+                    if (wallet != null)
+                    {
+                        wallet.Balance += amount;
+                        _walletService.UpdateWallets(wallet);
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public static bool VerifySignature(Dictionary<string, string> responseParams, string secretKey, string receivedSignature)
+        {
+            var sortedParams = responseParams.OrderBy(kvp => kvp.Key);
+            var rawHash = string.Join("&", sortedParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+            var generatedSignature = CreateHMACSHA256Signature(rawHash, secretKey);
+            return generatedSignature == receivedSignature;
         }
 
         public static string CreateHMACSHA256Signature(string data, string key)

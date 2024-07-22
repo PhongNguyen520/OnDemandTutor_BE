@@ -48,17 +48,6 @@ namespace Repositories
             return walletDAO.UpdateWallets(wallet);
         }
 
-        public async Task<float?> CreaterHistoryTransaction(HistoryTransaction transaction)
-        {
-            if (transaction == null)
-            {
-                return null;
-            }
-            _dbContext.Add(transaction);
-            _dbContext.SaveChanges();
-            return transaction.Amount;
-        }
-
         public async Task<float?> UpdateBalance(string userId, float plusMoney)
         {
             var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.AccountId == userId);

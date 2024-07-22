@@ -13,6 +13,6 @@ namespace BusinessObjects
         public string? BankName { get; set; } = string.Empty;
         public string? BankLogo { get; set; } = string.Empty;
         public bool IsActive { get; set; }
-        public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+        public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
     }
 }

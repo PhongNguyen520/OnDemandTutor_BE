@@ -15,14 +15,12 @@ namespace API.Controllers
         private readonly IPaymentTransactionService _transactionService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IWalletService _walletService;
-        private readonly IPaymentService _paymentService;
 
         public PaymentTransactionController(ICurrentUserService currentUserService)
         {
             _transactionService = new PaymentTransactionService();
             _currentUserService = currentUserService;
             _walletService = new WalletService();
-            _paymentService = new PaymentService();
         }
 
         [HttpGet]
@@ -34,28 +32,28 @@ namespace API.Controllers
         }
 
 
-        [HttpGet]
-        [Route("get_transaction")]
-        public IActionResult GetTransaction()
-        {
-            var userId = _currentUserService.GetUserId().ToString();
+        //[HttpGet]
+        //[Route("get_transaction")]
+        //public IActionResult GetTransaction()
+        //{
+        //    var userId = _currentUserService.GetUserId().ToString();
             
-            var wallet = _walletService.GetWallets().Where(s => s.AccountId == userId).First();
+        //    var wallet = _walletService.GetWallets().Where(s => s.AccountId == userId).First();
 
-            var payments = _paymentService.GetPayments().Where(s => s.WalletId == wallet.WalletId);
+        //    var payments = _paymentService.GetPayments().Where(s => s.WalletId == wallet.WalletId);
 
-            List<PaymentTransaction> result = new List<PaymentTransaction>();
+        //    List<PaymentTransaction> result = new List<PaymentTransaction>();
 
-            foreach (var payment in payments)
-            {
-                var transactions = _transactionService.GetTransactions().Where(s => s.PaymentId == payment.Id).ToList();
-                foreach (var transaction in transactions)
-                {
-                    result.Add(transaction);
-                }
-            }
+        //    foreach (var payment in payments)
+        //    {
+        //        var transactions = _transactionService.GetTransactions().Where(s => s.PaymentId == payment.Id).ToList();
+        //        foreach (var transaction in transactions)
+        //        {
+        //            result.Add(transaction);
+        //        }
+        //    }
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
     }
 }

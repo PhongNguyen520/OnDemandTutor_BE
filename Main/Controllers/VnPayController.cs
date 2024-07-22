@@ -2,6 +2,7 @@
 using BusinessObjects;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Writers;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Services;
 using Services.PaymentServices;
@@ -19,7 +20,6 @@ namespace API.Controllers
     public class VnPayController : ControllerBase
     {
         private readonly VnPayService vnPayService;
-        private readonly IPaymentService paymentService;
         private readonly IPaymentTransactionService transactionService;
         private readonly IWalletService walletService;
         private readonly string vnp_TmnCode = "WX3Z3JAI";
@@ -30,7 +30,6 @@ namespace API.Controllers
         public VnPayController()
         {
             vnPayService = new VnPayService();
-            paymentService = new PaymentService();
             transactionService = new PaymentTransactionService();
             walletService = new WalletService();
         }
@@ -64,85 +63,71 @@ namespace API.Controllers
 
             var paymentUrl = vnPayService.CreateRequestUrl(vnp_Url, vnp_HashSecret, vnp_Params);
             var signature = vnPayService.CreateSignature(vnp_HashSecret, vnp_Params);
-            var paymentId = Guid.NewGuid().ToString();
+            var transactionId = Guid.NewGuid().ToString();
 
-            var payment = new Payment()
+            var payment = new PaymentTransaction()
             {
-                Id = paymentId,
-                RequiredAmount = request.Amount,
+                Id = transactionId,
+                Amount = request.Amount,
                 Description = request.Description,
-                CurrencyCode = currCode,
-                TxnRef = txnRef,
-                Signature = signature,
-                Status = true,
+                TranDate = DateTime.Now,
+                IsValid = false,
                 WalletId = request.WalletId,
                 PaymentDestinationId = request.PaymentDestinationId
             };
 
-            paymentService.AddPayment(payment);
+            transactionService.AddTransaction(payment);
 
-            return Ok( new { paymentUrl, paymentId });
+            return Ok(new { paymentUrl, transactionId });
         }
 
         [HttpPost]
         [Route("payment_return/{id}")]
         public IActionResult PaymentReturn(string id, [FromBody] ResponsePayment response)
         {
-            var requestPayment = paymentService.GetPayments().FirstOrDefault(s => s.TxnRef == response.vnp_TxnRef);
-
-
-            if (requestPayment != null)
+            var vnp_Params = new SortedDictionary<string, string>
             {
-                var amount = response.vnp_Amount/100;
-                var transaction = new PaymentTransaction()
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Amount = amount,
-                    Description = response.vnp_OrderInfo,
-                    CardType = response.vnp_CardType,
-                    TxnRef = response.vnp_TxnRef,
-                    BankTranNo = response.vnp_BankTranNo,
-                    TranStatus = response.vnp_TransactionStatus,
-                    ResponseCode = response.vnp_ResponseCode,
-                    IsValid = true,
-                    PaymentId = id
-                };
+                { "vnp_Amount", response.vnp_Amount.ToString() },
+                { "vnp_BankCode", response.vnp_BankCode },
+                { "vnp_BankTranNo", response.vnp_BankTranNo },
+                { "vnp_CardType", response.vnp_CardType },
+                { "vnp_OrderInfo", response.vnp_OrderInfo },
+                { "vnp_PayDate", response.vnp_PayDate },
+                { "vnp_ResponseCode", response.vnp_ResponseCode },
+                { "vnp_TmnCode", response.vnp_TmnCode },
+                { "vnp_TransactionNo", response.vnp_TransactionNo },
+                { "vnp_TxnRef", response.vnp_TxnRef },
+                { "vnp_TransactionStatus", response.vnp_TransactionStatus }
+            };
+
+            var secureHash = vnPayService.CreateSignature(vnp_HashSecret, vnp_Params);
+
+            if (secureHash != response.vnp_SecureHash)
+            {
+                return BadRequest("Invalid signature");
+            }
+
+            var payment = transactionService.GetTransactions().FirstOrDefault(s => s.Id == id);
+            if (payment != null)
+            {
+                var amount = response.vnp_Amount / 100;
 
                 if (response.vnp_ResponseCode == "00")
                 {
-                    transactionService.AddTransaction(transaction);
-
-                    var payment = paymentService.GetPayments().FirstOrDefault(p => p.Id == id);
-                   if (payment != null)
-                    {
-                        var wallet = walletService.GetWallets().FirstOrDefault(w => w.WalletId == payment.WalletId);
-                        wallet.Balance = wallet.Balance + amount;
-                        walletService.UpdateWallets(wallet);
-
-                        //----HistoryTable
-                        HistoryTransaction historyTransaction = new();
-                        historyTransaction.HistoryId = Guid.NewGuid().ToString();
-                        historyTransaction.DateCreate = DateTime.Now;
-                        historyTransaction.Amount = amount;
-                        historyTransaction.Description = response.vnp_OrderInfo;
-                        historyTransaction.CardType = response.vnp_CardType;
-                        historyTransaction.BackTranNo = response.vnp_BankTranNo;
-                        historyTransaction.WalletId = wallet.WalletId;
-
-                        var money = walletService.CreaterHistoryTransaction(historyTransaction);
-                    }
+                    payment.IsValid = true;
+                    transactionService.UpdateTransaction(payment);
+                    var wallet = walletService.GetWallets().FirstOrDefault(w => w.WalletId == payment.WalletId);
+                    wallet.Balance = wallet.Balance + amount;
+                    walletService.UpdateWallets(wallet);
                 }
                 else
                 {
-                    transaction.IsValid = false;
-                    transactionService.AddTransaction(transaction);
+                    return Ok(false);
                 }
-                    return Ok(response.vnp_ResponseCode);
+
             }
-            else
-            {
-                return NotFound();
-            }
+            return Ok(true);
+
         }
     }
 }
