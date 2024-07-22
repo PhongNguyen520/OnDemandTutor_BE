@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,7 @@ namespace Services
         public List<PaymentTransaction> GetTransactions();
 
         public bool UpdateTransaction(PaymentTransaction transaction);
+
+        Task<DashBoardAdmin> GetDashBoard(string id, DateTime createDay, int type, string title);
     }
 }

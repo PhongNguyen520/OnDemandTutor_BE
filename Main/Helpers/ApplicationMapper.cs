@@ -135,7 +135,10 @@ namespace API.Helper
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => src.IsActived))
                 .ForMember(dest => dest.AccountTutorId, opt => opt.MapFrom(src => src.Tutor.AccountId))
+                .ForMember(dest => dest.RejectReason, opt => opt.MapFrom(src => src.RejectReason))
                 .ReverseMap();
+
+            CreateMap<TutorAd, AdsVMPl>().ReverseMap();
 
 
             CreateMap<Complaint, ComplaintDTO>().ReverseMap();
@@ -143,6 +146,8 @@ namespace API.Helper
             CreateMap<Complaint, ComlaintClass>().ReverseMap();
 
             CreateMap<Class, ClassVMPhuc>().ReverseMap();
+
+            CreateMap<Feedback, FeedbackVMPhuc>().ReverseMap();
 
             #endregion
         }

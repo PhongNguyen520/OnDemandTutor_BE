@@ -26,7 +26,7 @@ namespace API.Controllers
         {
             try
             {
-                var orderUrl = await _momoService.CreateOrderAsync(request.Amount, request.Description, request.orderId, request.WalletId, request.PaymentDestinationId);
+                var orderUrl = await _momoService.CreateOrderAsync(request.Type, request.Amount, request.Description, request.orderId, request.WalletId, request.PaymentDestinationId);
              
                 return Ok(new { orderUrl });
             }
@@ -69,11 +69,13 @@ namespace API.Controllers
     }
     public class MomoRequest
     {
-        public decimal Amount { get; set; }
-        public string Description { get; set; }
-        public string orderId { get; set; }
         public string? WalletId { get; set; } = string.Empty;
         public string? PaymentDestinationId { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public int Type { get; set; }
+        public string Description { get; set; }
+        public string orderId { get; set; }
+        
     }
 
     public class ResponsePaymentMomo

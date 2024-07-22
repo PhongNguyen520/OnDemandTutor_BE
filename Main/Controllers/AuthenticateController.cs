@@ -83,7 +83,7 @@ namespace API.Controller
             {
                 var scheme = HttpContext.Request.Scheme;
                 var host = HttpContext.Request.Host.Value;
-                var url = $"{scheme}://{host}/api/auth/confirm-email?email={signUpModer.Email}";
+                var url = $"{scheme}://{host}/api/auth/confirm_email?email={signUpModer.Email}";
                 await _mailService.SendEmailAsync(signUpModer.Email, "Xác thực tài khoản của bạn", url);
                 return Ok(new { userId = userIdSignUpId });
             }
@@ -195,7 +195,7 @@ namespace API.Controller
             var encodedToken = Base64UrlTextEncoder.Encode(plainTextBytes);
             var scheme = HttpContext.Request.Scheme;
             var host = HttpContext.Request.Host.Value;
-            var url = $"{scheme}://{host}/api/auth/redirectoResetPasswordPage?email={email}&token={encodedToken}";
+            var url = $"{scheme}://{host}/api/auth/redirec_resetpasswordpage?email={email}&token={encodedToken}";
             await _mailService.SendToken(email, "Token For ResetPassword", url);
             return Ok("Send email to confirm reset password");
         }
