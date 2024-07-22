@@ -23,7 +23,7 @@ namespace API.Controller
             iRoleService = _iRoleService;
             iAccountService = _iAccountService;
         }
-        [Authorize(Roles = AppRole.Tutor)]
+        
         [HttpGet("get_role")]
         public async Task<IActionResult> GetAccounts()
         {

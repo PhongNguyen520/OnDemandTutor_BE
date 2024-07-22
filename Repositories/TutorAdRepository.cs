@@ -73,9 +73,19 @@ namespace Repositories
                 return false;
             }
             tutorAd.IsActived = model.IsActive;
+            tutorAd.RejectReason = model.RejectReason; 
             _dbContext.Update(tutorAd);
             _dbContext.SaveChanges();
             return true;
+        }
+
+        public async Task<List<AdsVMPl>> GetAllAds()
+        {
+            var listDb = _dbContext.TutorAds.Where(_ => _.IsActived == true);
+
+            var result = _mapper.Map<List<AdsVMPl>>(listDb);
+
+            return result;
         }
     }
 }

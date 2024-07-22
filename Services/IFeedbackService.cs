@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,7 @@ namespace Services
         public double TotalStart(string id);
 
         public int TotalRate(string id);
+
+        Task<List<FeedbackVMPhuc>> GetAllFeedBack();
     }
 }

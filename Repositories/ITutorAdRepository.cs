@@ -22,6 +22,9 @@ namespace Repositories
         Task<List<TutorIsActiveVM>> GetAllTutorAdIsActive();
 
         Task<bool> CeateAd(TutorAd model);
+
         Task<bool> UpdateIsActiveTutorAd(TutorAdIsAc model);
+
+        Task<List<AdsVMPl>> GetAllAds();
     }
 }
