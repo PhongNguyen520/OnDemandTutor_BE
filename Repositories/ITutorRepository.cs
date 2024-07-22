@@ -30,7 +30,9 @@ namespace Repositories
         Task<TutorVM> GetTutorCurrent(string idAccount);
         Task<bool> UpdateIsActiveTutor(IsActiveTutor model);
         Task<List<AccountTutorAdVM>> GetAccountHaveAd();
-        Task<List<HistoryTutorApply>> GetAllStatusHistoryTutorApply();
+        Task<List<HistoryTutorApplyVM>> GetAllStatusHistoryTutorApply();
+
+        Task<bool> CreateHistoryTutorApply(HistoryTutorApplyVM model);
     }
 }
 

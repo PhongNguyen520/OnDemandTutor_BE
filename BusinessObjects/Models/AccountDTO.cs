@@ -88,7 +88,7 @@ namespace BusinessObjects.Models
 
         public string TypeOfDegree { get; set; } = null!;
 
-        public int CardId { get; set; }
+        public string CardId { get; set; }
 
         public float HourlyRate { get; set; }
 
@@ -181,7 +181,7 @@ namespace BusinessObjects.Models
 
         public string TypeOfDegree { get; set; } = null!;
 
-        public int CardId { get; set; }
+        public string CardId { get; set; }
 
         public float HourlyRate { get; set; }
 
@@ -251,7 +251,7 @@ namespace BusinessObjects.Models
 
         public string TypeOfDegree { get; set; } = null!;
 
-        public int CardId { get; set; }
+        public string CardId { get; set; }
 
         public float HourlyRate { get; set; }
 
