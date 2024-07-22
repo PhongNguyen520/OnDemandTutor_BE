@@ -27,9 +27,9 @@ namespace API.Controllers
         private readonly ICurrentUserService _currentUserService;
         private readonly IPagingListService<FeedbackVM> _pagingListService;
 
-        public FeedbacksController(IAccountService accountService, ICurrentUserService currentUserService, IClassService classService, IFeedbackService feedbackService)
+        public FeedbacksController(IAccountService accountService, ICurrentUserService currentUserService, IClassService classService)
         {
-            _feedbackService = feedbackService;
+            _feedbackService = new FeedbackService();
             _studentService = new StudentService();
             _accountService = accountService;
             _classService = classService;
@@ -92,13 +92,6 @@ namespace API.Controllers
                 Title = request.Title,
             };
             _feedbackService.AddFeedback(result);
-            return Ok(result);
-        }
-
-        [HttpGet("show_list_feedback")]
-        public async Task<IActionResult> ShowListFeeback()
-        {
-            var result = await _feedbackService.GetAllFeedBack();
             return Ok(result);
         }
     }

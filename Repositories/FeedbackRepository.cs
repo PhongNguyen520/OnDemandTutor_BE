@@ -43,7 +43,7 @@ namespace Repositories
 
         public List<Feedback> GetFeedbacks(string id)
         {
-            return _context.Feedbacks.Where(_ => _.FeedbackId == id).ToList();
+            return  feedbackDAO.GetFeedbacks(id);
         }
 
         public bool UpdateFeedbacks(Feedback feedback)
