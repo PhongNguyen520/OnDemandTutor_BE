@@ -37,5 +37,7 @@ namespace Services
         Task<DashBoardTutor> NumberOfClassesIsCancel(string id, DateTime createDay);
 
         Task<List<AccountTutorAdVM>> GetAccountHaveAd();
+
+        Task<List<HistoryTutorApply>> GetAllStatusHistoryTutorApply();
     }
 }
