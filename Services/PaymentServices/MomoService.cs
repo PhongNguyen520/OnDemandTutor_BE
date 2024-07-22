@@ -15,7 +15,7 @@ namespace Services.PaymentServices
         private readonly IPaymentTransactionService _transactionService = new PaymentTransactionService();
         private readonly IWalletService _walletService = new WalletService();
 
-        public async Task<string> CreateOrderAsync(decimal amount, string description, string orderId, string walletId, string paymentDestinationId)
+        public async Task<string> CreateOrderAsync(int type, decimal amount, string description, string orderId, string walletId, string paymentDestinationId)
         {
             var requestId = Guid.NewGuid().ToString();
             //var requestType = "captureWallet";
@@ -51,6 +51,7 @@ namespace Services.PaymentServices
                 Amount = (float)amount,
                 Description = description,
                 TranDate = DateTime.Now,
+                Type = type,
                 IsValid = false,
                 WalletId = walletId,
                 PaymentDestinationId = paymentDestinationId

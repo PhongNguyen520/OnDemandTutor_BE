@@ -71,6 +71,7 @@ namespace API.Controllers
                 Amount = request.Amount,
                 Description = request.Description,
                 TranDate = DateTime.Now,
+                Type = request.Type,
                 IsValid = false,
                 WalletId = request.WalletId,
                 PaymentDestinationId = request.PaymentDestinationId

@@ -12,6 +12,8 @@ namespace BusinessObjects
         public float? Amount { get; set; }
         public string? Description { get; set; } = string.Empty;
         public DateTime? TranDate { get; set; } = DateTime.Now;
+
+        public int? Type { get; set; } 
         public bool? IsValid { get; set; }
         public string? WalletId { get; set; } = string.Empty;
         public string? PaymentDestinationId { get; set; } = string.Empty;

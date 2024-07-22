@@ -10,6 +10,7 @@ namespace BusinessObjects.Models
     {
         public string? WalletId { get; set; } = string.Empty;
         public string? PaymentDestinationId { get; set; } = string.Empty;
+        public int? Type { get; set; }
         public float Amount { get; set; }
         public string Description { get; set; }
     }
