@@ -80,6 +80,7 @@ namespace API.Controllers
                 StudentId = form.StudentId,
                 TutorId = tutor.TutorId,
                 SubjectId = form.SubjectId,
+                UrlClass = request.UrlClass,
                 IsCancel = false,
             };
 
@@ -168,6 +169,7 @@ namespace API.Controllers
                                       select a.Avatar).FirstOrDefault(),
                             Status = c.Status,
                             IsApprove = c.IsApprove,
+                            UrlClass = c.UrlClass,
                             IsCancel = c.IsCancel,
                             CancelDay = c.CancelDay,
                         };
@@ -226,6 +228,7 @@ namespace API.Controllers
                                       select a.Avatar).FirstOrDefault(),
                             Status = c.Status,
                             IsApprove = c.IsApprove,
+                            UrlClass = c.UrlClass,
                             IsCancel = c.IsCancel,
                             CancelDay = c.CancelDay,
                         };
@@ -257,6 +260,13 @@ namespace API.Controllers
                                          .Where(s => s.SubjectId == classDetail.SubjectId)
                                          .Select(s => s.Description)
                                          .FirstOrDefault(),
+                Createday = classDetail.CreateDay.ToString("yyyy-MM-dd"),
+                Price = classDetail.Price,
+                DayStart = classDetail.DayStart.ToString("yyyy-MM-dd"),
+                DayEnd = classDetail.DayEnd.ToString("yyyy-MM-dd"),
+                TutorId = classDetail.TutorId,
+                StudentId = classDetail.StudentId,
+                UrlClass = classDetail.UrlClass,
                 Calenders = calenders.ToList(),
             };
 
@@ -324,7 +334,17 @@ namespace API.Controllers
             var classRoom = _classService.GetClasses().Where(s => s.ClassId == id).FirstOrDefault();
             classRoom.Status = true;
             _classService.UpdateClasses(classRoom);
-            return Ok("Cancel successful");
+            return Ok("Submit successful");
+        }
+
+        [Authorize(Roles = AppRole.Tutor)]
+        [HttpPut("update_class-url/{id}")]
+        public IActionResult ChangeClassUrl(string id, string newUrl)
+        {
+            var classRoom = _classService.GetClasses().Where(s => s.ClassId == id).FirstOrDefault();
+            classRoom.UrlClass = newUrl;
+            _classService.UpdateClasses(classRoom);
+            return Ok("Change class url successful");
         }
     }
 }
