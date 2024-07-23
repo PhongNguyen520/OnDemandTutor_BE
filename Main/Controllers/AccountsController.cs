@@ -177,5 +177,12 @@ namespace API.Controllers
                 return BadRequest("Invalid balance");
             }
         }
+
+        [HttpGet("tutorid_by_accountid")]
+        public async Task<IActionResult> GetTutorIdByAccountId(string accountId)
+        {
+            string id = await iAccountService.GetTutorIdByAccountId(accountId);
+            return Ok(id);
+        }
     }
 }
