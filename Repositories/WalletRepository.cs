@@ -98,6 +98,47 @@ namespace Repositories
                 return true;
             }
             return false;
-        } 
+        }
+
+        public async Task<bool> Create2RefundPaymentTransaction(string userId, float money)
+        {
+            var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.AccountId == userId);
+            PaymentTransaction studentTransaction = new();
+            studentTransaction.Id = Guid.NewGuid().ToString();
+            studentTransaction.Description = "Refund to Student";
+            studentTransaction.TranDate = DateTime.Now;
+            studentTransaction.IsValid = true;
+            studentTransaction.WalletId = wallet.WalletId;
+            studentTransaction.Amount = money;
+            studentTransaction.Type = 6;
+            studentTransaction.PaymentDestinationId = null;
+
+            _dbContext.Add(studentTransaction);
+            _dbContext.SaveChanges();
+            
+            wallet.Balance += money;
+            _dbContext.Update(wallet);
+            _dbContext.SaveChanges();
+
+//---------------------------------------------------
+            PaymentTransaction adminTransaction = new();
+            adminTransaction.Id = Guid.NewGuid().ToString();
+            adminTransaction.Description = "Admin Refund to Student";
+            adminTransaction.TranDate = DateTime.Now;
+            adminTransaction.IsValid = true;
+            adminTransaction.WalletId = "jfdskj-dfhs";
+            adminTransaction.Amount = (0 - money);
+            adminTransaction.Type = 4;
+            adminTransaction.PaymentDestinationId = null;
+
+            _dbContext.Add(adminTransaction);
+            _dbContext.SaveChanges();
+
+            var walletAdmin = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.WalletId == "jfdskj-dfhs");
+            walletAdmin.Balance -= money;
+            _dbContext.Update(walletAdmin);
+            _dbContext.SaveChanges();
+            return true;
+        }
     }
 }

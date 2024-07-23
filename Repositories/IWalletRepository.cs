@@ -26,5 +26,7 @@ namespace Repositories
         Task<List<PaymentTransactionVM>> GetRequestWithdraw();
 
         Task<bool> ChangeStatusWallet(string id, bool status, float amount);
+
+        Task<bool> Create2RefundPaymentTransaction(string userId, float money);
     }
 }
