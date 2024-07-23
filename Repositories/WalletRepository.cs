@@ -72,7 +72,8 @@ namespace Repositories
 
         public async Task<List<PaymentTransactionVM>> GetRequestWithdraw()
         {
-            var list = await _dbContext.PaymentTransactions.Where(_ => _.IsValid == null).ToListAsync();
+            var list = await _dbContext.PaymentTransactions.Include(_ => _.Wallet)
+                                       .Where(_ => _.IsValid == null).ToListAsync();
             var result = _mapper.Map<List<PaymentTransactionVM>>(list);
             return result;
         }
@@ -90,7 +91,7 @@ namespace Repositories
                 if (wal.IsValid == true)
                 {
                     var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.WalletId == wal.WalletId);
-                    wallet.Balance += amount;
+                    wallet.Balance += (amount);
                     _dbContext.Update(wallet);
                     _dbContext.SaveChanges();
                 }
