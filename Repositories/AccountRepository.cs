@@ -375,5 +375,15 @@ namespace Repositories
             _dbContext.SaveChanges();
             return 1;
         }
+
+        public async Task<string> GetTutorIdByAccountId(string accountId)
+        {
+            var tutor = await _dbContext.Tutors.FirstOrDefaultAsync(_ => _.AccountId == accountId);
+            if (tutor == null)
+            {
+                return "NoAccount";
+            }
+            return tutor.TutorId;
+        }
     }
 }
