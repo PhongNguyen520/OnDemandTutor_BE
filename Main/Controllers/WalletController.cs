@@ -19,15 +19,17 @@ namespace API.Controllers
         private readonly UserManager<Account> _userManager;
         private readonly IAccountService _accountService;
         private readonly DAOs.DbContext _dbContext;
+        private readonly ITutorService _torService;
 
-        public WalletController(ICurrentUserService currentUserService, IClassService classService, IAccountService accountService, UserManager<Account> userManager, DAOs.DbContext dbContext)
+        public WalletController(ICurrentUserService currentUserService, IClassService classService, IAccountService accountService, UserManager<Account> userManager, DAOs.DbContext dbContext, ITutorService tutorService, IWalletService walletService)
         {
-            _walletService = new WalletService();
+            _walletService = walletService;
             _currentUserService = currentUserService;
             _classService = classService;
             _accountService = accountService;
             _userManager = userManager;
             _dbContext = dbContext;
+            _torService = tutorService;
         }
 
         [HttpGet]
@@ -84,7 +86,13 @@ namespace API.Controllers
             {
                 return BadRequest("Not Balance!");
             }
+            
             var result = await _walletService.UpdateBalance(userId, newBa.PlusMoney);
+
+            if(newBa.PlusMoney > 0)
+            {
+                var ph = await _torService.Create2PaymentTransaction(userId, newBa.PlusMoney);
+            }
             
             return Ok(result);
         }

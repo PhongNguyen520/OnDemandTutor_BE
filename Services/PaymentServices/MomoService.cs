@@ -13,7 +13,12 @@ namespace Services.PaymentServices
     public class MomoService
     {
         private readonly IPaymentTransactionService _transactionService = new PaymentTransactionService();
-        private readonly IWalletService _walletService = new WalletService();
+        private readonly IWalletService _walletService;
+
+        public MomoService(IWalletService walletService)
+        {
+            _walletService = walletService;
+        }
 
         public async Task<string> CreateOrderAsync(int type, decimal amount, string description, string orderId, string walletId, string paymentDestinationId)
         {

@@ -67,15 +67,23 @@ namespace Repositories
                                 .Classes
                                 .FirstOrDefaultAsync(_ => _.TutorId == tutor.TutorId);
             if (classi == null) return null;
-            if (classi.Status == null && classi.IsApprove == true)
+            if (classi.Status == null && classi.IsApprove == true && classi.DayEnd.Date <= DateTime.Now.Date)
             {
                 classi.Status = true;
-                float amount = classi.Price * (60 / 100);
+                float amount = (float)(classi.Price * 0.6);
                 returnBalance.PlusMoney = amount;
                 returnBalance.TutorId = classi.TutorId;
+
+                var walletAdmin = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.WalletId == "jfdskj-dfhs");
+
+                walletAdmin.Balance -= amount;
+                _dbContext.Update(walletAdmin);
+                _dbContext.SaveChanges();
                 return returnBalance;
             }
-            return null;
+            returnBalance.PlusMoney = 0;
+            returnBalance.TutorId = classi.TutorId;
+            return returnBalance;
         }
 
         public async Task<List<ListClassVMPhuc>> GetClassByDay()
@@ -106,5 +114,6 @@ namespace Repositories
                              .ToListAsync();
             return list;
         }
+
     }
 }

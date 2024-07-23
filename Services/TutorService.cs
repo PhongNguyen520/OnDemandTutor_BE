@@ -203,5 +203,10 @@ namespace Services
         {
             return await _repository.CreateHistoryTutorApply(model);
         }
+
+        public async Task<bool> Create2PaymentTransaction(string userId, float money)
+        {
+            return await _repository.Create2PaymentTransaction(userId, money);
+        }
     }
 }

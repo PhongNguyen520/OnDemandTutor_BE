@@ -27,11 +27,11 @@ namespace API.Controllers
         private readonly string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
         private readonly string returnUrl = "http://localhost:3000/classes";
 
-        public VnPayController()
+        public VnPayController(IWalletService _walletService)
         {
             vnPayService = new VnPayService();
             transactionService = new PaymentTransactionService();
-            walletService = new WalletService();
+            walletService = _walletService;
         }
 
         [HttpPost]
