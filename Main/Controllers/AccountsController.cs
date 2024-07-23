@@ -9,6 +9,9 @@ using BusinessObjects;
 using DAOs;
 using Services;
 using Microsoft.AspNetCore.DataProtection.Internal;
+using API.Services;
+using BusinessObjects.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Controllers
 {
@@ -18,11 +21,15 @@ namespace API.Controllers
     {
         private readonly IAccountService iAccountService;
         private readonly ITutorService _tutorService;
+        private ICurrentUserService _currentUserService;
+        private readonly UserManager<Account> _userManager;
 
-        public AccountsController(IAccountService accountService, ITutorService tutorService)
+        public AccountsController(IAccountService accountService, ITutorService tutorService, ICurrentUserService currentUserService, UserManager<Account> userManager)
         {
             iAccountService = accountService;
             _tutorService = tutorService;
+            _currentUserService = currentUserService;
+            _userManager = userManager;
         }
 
         // GET: api/Accounts
@@ -142,6 +149,33 @@ namespace API.Controllers
         {
             var result = await _tutorService.GetAccountHaveAd();
             return Ok(result);
+        }
+
+        [HttpPut("create_request_withdraw_money")]
+        public async Task<IActionResult> CreateRequestWithdrawMoney(RequestWithdrawMoneyVM model)
+        {
+            var userId = _currentUserService.GetUserId().ToString();
+            Account user = await _userManager.FindByIdAsync(userId);
+            var modelSigin = new UserSignIn() { UserName = user.UserName, Password = model.Password };
+            var userAuhten = await iAccountService.SignInAsync(modelSigin);
+
+            if(userAuhten == null)
+            {
+                return BadRequest("Invalid!!!");
+            }
+            float result = await iAccountService.CraeteRequestPaymentTransaction(userId, model.Amount, model.Type);
+            if(result == 0) 
+            {
+                return BadRequest("Fail Request");
+            }
+            if(result == 1)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Invalid balance");
+            }
         }
     }
 }

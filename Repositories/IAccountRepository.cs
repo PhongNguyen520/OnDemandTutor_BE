@@ -37,5 +37,6 @@ namespace Repositories
         Task<IQueryable<UserRolesVM>> GetAllIsActive();
         Task<List<TutorInterVM>> Get10TutorNew();
         Task<List<Student10VM>> Get10StudentNew();
+        Task<float> CraeteRequestPaymentTransaction(string userId, float amount, int type);
     }
 }

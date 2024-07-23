@@ -348,5 +348,32 @@ namespace Repositories
                              .Take(10).ToListAsync();
             return _mapper.Map<List<Student10VM>>(list);
         }
+
+        public async Task<float> CraeteRequestPaymentTransaction(string userId, float amount, int type)
+        {
+            var wall = _dbContext.Wallets.FirstOrDefault(_ => _.AccountId == userId);
+            if (wall == null)
+            {
+                return 0;
+            }
+            if(wall.Balance <= amount && wall.Balance != null) 
+            {
+                return -1;
+            }
+            PaymentTransaction paymentTransaction = new();
+
+            paymentTransaction.Id = Guid.NewGuid().ToString();
+            paymentTransaction.Description = "Request Withdraw Money";
+            paymentTransaction.TranDate = DateTime.Now;
+            paymentTransaction.IsValid = null;
+            paymentTransaction.PaymentDestinationId = null;
+            paymentTransaction.WalletId = wall.WalletId;
+            paymentTransaction.Amount = -(amount);
+            paymentTransaction.Type = type;
+
+            _dbContext.Add(paymentTransaction);
+            _dbContext.SaveChanges();
+            return 1;
+        }
     }
 }

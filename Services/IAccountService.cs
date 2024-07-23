@@ -38,5 +38,6 @@ namespace Services
         Task<IQueryable<UserRolesVM>> ListAccountIsActive();
         Task<List<Student10VM>> Get10StudentNew();
         Task<List<TutorInterVM>> Get10TutorNew();
+        Task<float> CraeteRequestPaymentTransaction(string userId, float amount, int type);
     }
 }

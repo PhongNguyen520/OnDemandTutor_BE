@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
 using Repositories;
 using System;
@@ -53,6 +54,16 @@ namespace Services
         public async Task<float?> WithdrawMoney(string userId, float money)
         {
             return await iWalletRepository.WithdrawMoney(userId, money);
+        }
+
+        public async Task<List<PaymentTransactionVM>> GetRequestWithdraw()
+        {
+            return await iWalletRepository.GetRequestWithdraw();
+        }
+
+        public async Task<bool> ChangeStatusWallet(string id, bool status, float amount)
+        {
+            return await iWalletRepository.ChangeStatusWallet(id, status, amount);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
 using System;
 using System.Collections.Generic;
@@ -21,5 +22,9 @@ namespace Repositories
         Task<float?> UpdateBalance(string userId, float plusMoney);
 
         Task<float?> WithdrawMoney(string userId, float money);
+
+        Task<List<PaymentTransactionVM>> GetRequestWithdraw();
+
+        Task<bool> ChangeStatusWallet(string id, bool status, float amount);
     }
 }
