@@ -15,9 +15,9 @@ namespace API.Controllers
         private readonly IPaymentTransactionService _transactionService;
 
 
-        public MomoController()
+        public MomoController(MomoService momoService)
         {
-            _momoService = new MomoService();
+            _momoService = momoService;
             _transactionService = new PaymentTransactionService();
         }
 

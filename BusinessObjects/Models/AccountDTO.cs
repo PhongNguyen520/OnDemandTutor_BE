@@ -88,7 +88,7 @@ namespace BusinessObjects.Models
 
         public string TypeOfDegree { get; set; } = null!;
 
-        public int CardId { get; set; }
+        public string CardId { get; set; }
 
         public float HourlyRate { get; set; }
 
@@ -181,7 +181,7 @@ namespace BusinessObjects.Models
 
         public string TypeOfDegree { get; set; } = null!;
 
-        public int CardId { get; set; }
+        public string CardId { get; set; }
 
         public float HourlyRate { get; set; }
 
@@ -251,7 +251,7 @@ namespace BusinessObjects.Models
 
         public string TypeOfDegree { get; set; } = null!;
 
-        public int CardId { get; set; }
+        public string CardId { get; set; }
 
         public float HourlyRate { get; set; }
 
@@ -272,4 +272,31 @@ namespace BusinessObjects.Models
         public List<TutorAdsModel> TutorAds { get; set; }
     }
 
+    public class RequestWithdrawMoneyVM
+    {
+        public string Password { get; set; }
+        public float Amount { get; set; }
+        public int Type {  get; set; }
+    }
+
+    public class PaymentTransactionVM
+    {
+        public string Id { get; set; } 
+        public float? Amount { get; set; }
+        public string? Description { get; set; }
+        public DateTime? TranDate { get; set; }
+
+        public int? Type { get; set; }
+        public bool? IsValid { get; set; }
+        public string? WalletId { get; set; } 
+        public string? PaymentDestinationId { get; set; } 
+    }
+
+    public class RequestDrawVM
+    {
+        public string idTran { get; set; }
+        public bool Status { get; set; }
+
+        public float Amount { get; set; }
+    }
 }

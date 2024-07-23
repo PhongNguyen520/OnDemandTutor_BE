@@ -16,14 +16,16 @@ namespace API.Controllers
         private readonly ITutorService _tutorService;
         private readonly IComplaintService _complaintService;
         private readonly ITutorAdService _tutorAdService;
+        private readonly IWalletService _walletService;
 
-        public ModeratorsController(IAccountService accountService, IMailService mailService, ITutorService tutorService, IComplaintService complaintService, ITutorAdService tutorAdService)
+        public ModeratorsController(IAccountService accountService, IMailService mailService, ITutorService tutorService, IComplaintService complaintService, ITutorAdService tutorAdService, IWalletService walletService)
         {
             _accountService = accountService;
             _mailService = mailService;
             _tutorService = tutorService;
             _complaintService = complaintService;
             _tutorAdService = tutorAdService;
+            _walletService = walletService;
         }
 
         [HttpGet("get_tutors")]
@@ -33,12 +35,19 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("create_email")]
-        public async Task<IActionResult> SendEmailInterTutor(string email, string content)
+        [HttpPut("create_email")]
+        public async Task<IActionResult> SendEmailInterTutor(HistoryTutorApplyVM models)
         {
-            if (await _accountService.CheckAccountByEmail(email))
+            if (await _accountService.CheckAccountByEmail(models.Email))
             {
-                _mailService.SendTutorInter(email, "Phỏng vấn On Demand Tutor", content);
+                models.HistoryTutorApplyId = Guid.NewGuid().ToString();
+                var chec = await _tutorService.CreateHistoryTutorApply(models);
+               if(chec == false)
+                {
+                    return BadRequest("Error Create HistoryTutorApply");
+                }
+                _mailService.SendTutorInter(models.Email, "Phỏng vấn On Demand Tutor", models.Content);
+
                 return Ok();
             }
             return BadRequest("No Account");
@@ -98,6 +107,24 @@ namespace API.Controllers
         public async Task<IActionResult> ShowListHistoryTuorApply()
         {
             var result = await _tutorService.GetAllStatusHistoryTutorApply();
+            return Ok(result);
+        }
+
+        [HttpGet("show_list_request_withdraw_money")]
+        public async Task<IActionResult> ShowRequestDraw()
+        {
+            var result = await _walletService.GetRequestWithdraw();
+            return Ok(result);
+        }
+
+        [HttpPost("change_IsVa_TransactionPay")]
+        public async Task<IActionResult> ChangeIsVaRequestDraw(RequestDrawVM model)
+        {
+            var result = await _walletService.ChangeStatusWallet(model.idTran, model.Status, model.Amount);
+            if (result == false)
+            {
+                return BadRequest();
+            }
             return Ok(result);
         }
     }

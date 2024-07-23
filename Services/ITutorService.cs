@@ -38,6 +38,10 @@ namespace Services
 
         Task<List<AccountTutorAdVM>> GetAccountHaveAd();
 
-        Task<List<HistoryTutorApply>> GetAllStatusHistoryTutorApply();
+        Task<List<HistoryTutorApplyVM>> GetAllStatusHistoryTutorApply();
+
+        Task<bool> CreateHistoryTutorApply(HistoryTutorApplyVM model);
+
+        Task<bool> Create2PaymentTransaction(string userId, float money);
     }
 }
