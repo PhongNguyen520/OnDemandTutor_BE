@@ -303,4 +303,10 @@ namespace BusinessObjects.Models
 
         public float Amount { get; set; }
     }
+
+    public class RefundStudentVM
+    {
+        public string UserId { get; set; }
+        public float Amount { get; set; }
+    }
 }

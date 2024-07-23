@@ -4,6 +4,7 @@ using BusinessObjects.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Services;
 
@@ -108,6 +109,13 @@ namespace API.Controllers
             var wit = _walletService.WithdrawMoney(userId, withdrawMoney);
            
             return Ok(wit);
+        }
+
+        [HttpPut("refund_money")]
+        public async Task<IActionResult> RefundStudent(RefundStudentVM model)
+        {
+            var result = await _walletService.Create2RefundPaymentTransaction(model.UserId, model.Amount);
+            return Ok(result);
         }
     }
 }

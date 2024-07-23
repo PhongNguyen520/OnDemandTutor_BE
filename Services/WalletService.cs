@@ -65,6 +65,11 @@ namespace Services
         {
             return await iWalletRepository.ChangeStatusWallet(id, status, amount);
         }
+
+        public async Task<bool> Create2RefundPaymentTransaction(string userId, float money)
+        {
+            return await iWalletRepository.Create2RefundPaymentTransaction(userId, money);
+        }
     }
 }
 
