@@ -224,5 +224,37 @@ namespace Repositories
             }
 
         }
+
+        public async Task<bool> Create2PaymentTransaction(string userId, float money)
+        {
+            var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.AccountId == userId);
+            PaymentTransaction tutorTransaction = new();
+            tutorTransaction.Id = Guid.NewGuid().ToString();
+            tutorTransaction.Description = "Tuition has been paid";
+            tutorTransaction.TranDate = DateTime.Now;
+            tutorTransaction.IsValid = true;
+            tutorTransaction.WalletId = wallet.WalletId;
+            tutorTransaction.Amount = money;
+            tutorTransaction.Type = 5;
+            tutorTransaction.PaymentDestinationId = null;
+
+            _dbContext.Add(tutorTransaction);
+            _dbContext.SaveChanges();
+
+            PaymentTransaction adminTransaction = new();
+            adminTransaction.Id = Guid.NewGuid().ToString();
+            adminTransaction.Description = "Payment for tutor";
+            adminTransaction.TranDate = DateTime.Now;
+            adminTransaction.IsValid = true;
+            adminTransaction.WalletId = "jfdskj-dfhs";
+            adminTransaction.Amount = (0 - money);
+            adminTransaction.Type = 4;
+            adminTransaction.PaymentDestinationId = null;
+
+            _dbContext.Add(adminTransaction);
+            _dbContext.SaveChanges();
+
+            return true;
+        }
     }
 }
