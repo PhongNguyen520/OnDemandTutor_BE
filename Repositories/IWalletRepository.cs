@@ -27,6 +27,6 @@ namespace Repositories
 
         Task<bool> ChangeStatusWallet(string id, bool status, float amount);
 
-        Task<bool> Create2RefundPaymentTransaction(string userId, float money);
+        Task<bool> Create2RefundPaymentTransaction(string StudentId, float money);
     }
 }

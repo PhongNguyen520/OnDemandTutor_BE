@@ -114,7 +114,7 @@ namespace API.Controllers
         [HttpPut("refund_money")]
         public async Task<IActionResult> RefundStudent(RefundStudentVM model)
         {
-            var result = await _walletService.Create2RefundPaymentTransaction(model.UserId, model.Amount);
+            var result = await _walletService.Create2RefundPaymentTransaction(model.StudentId, model.Amount);
             return Ok(result);
         }
     }

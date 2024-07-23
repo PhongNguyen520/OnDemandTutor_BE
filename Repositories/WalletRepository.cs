@@ -100,8 +100,11 @@ namespace Repositories
             return false;
         }
 
-        public async Task<bool> Create2RefundPaymentTransaction(string userId, float money)
+        public async Task<bool> Create2RefundPaymentTransaction(string StudentId, float money)
         {
+            var student = await _dbContext.Students.FirstOrDefaultAsync(_ => _.StudentId == StudentId);
+            var userId = student.AccountId;
+
             var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.AccountId == userId);
             PaymentTransaction studentTransaction = new();
             studentTransaction.Id = Guid.NewGuid().ToString();
