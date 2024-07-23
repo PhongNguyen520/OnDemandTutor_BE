@@ -31,6 +31,7 @@ namespace API.Controllers
             var resultList = _notificationService.GetNotifications()
                                                  .Where(s => s.AccountId == user && s.IsActive == true);
             var result = from item in resultList
+                         orderby item.CreateDay descending
                          select new NotiListVM()
                          {
                              NotificationId = item.NotificationId,
