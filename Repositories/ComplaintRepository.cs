@@ -113,6 +113,8 @@ namespace Repositories
             foreach (var x in listCom)
             {
                 var comcla = _mapper.Map<ComlaintClass>(x);
+                var user = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.FullName == comcla.Complainter);
+                comcla.NameAccount = user.FullName;
                 enList.Add(comcla);
             }
             return enList.AsQueryable();
