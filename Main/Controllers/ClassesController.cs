@@ -327,7 +327,7 @@ namespace API.Controllers
             return Ok("Cancel successful");
         }
 
-        [Authorize(Roles = AppRole.Tutor)]
+        
         [HttpPut("submit_class/{id}")]
         public IActionResult SubmitClass(string id)
         {
