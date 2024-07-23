@@ -13,13 +13,13 @@ namespace Services
     {
         private readonly IWalletRepository iWalletRepository;
 
-        public WalletService()
-        {
-            if (iWalletRepository == null)
-            {
-                iWalletRepository = new WalletRepository();
-            }
-        }
+        //public WalletService()
+        //{
+        //    if (iWalletRepository == null)
+        //    {
+        //        iWalletRepository = new WalletRepository();
+        //    }
+        //}
         public WalletService(IWalletRepository _iWalletRepository)
         {
             this.iWalletRepository = _iWalletRepository;

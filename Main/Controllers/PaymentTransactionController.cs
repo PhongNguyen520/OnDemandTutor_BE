@@ -16,11 +16,11 @@ namespace API.Controllers
         private readonly ICurrentUserService _currentUserService;
         private readonly IWalletService _walletService;
 
-        public PaymentTransactionController(ICurrentUserService currentUserService)
+        public PaymentTransactionController(ICurrentUserService currentUserService, IWalletService walletService)
         {
             _transactionService = new PaymentTransactionService();
             _currentUserService = currentUserService;
-            _walletService = new WalletService();
+            _walletService = walletService;
         }
 
         [HttpGet]

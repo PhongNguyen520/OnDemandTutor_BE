@@ -15,16 +15,12 @@ namespace Repositories
         private readonly WalletDAO walletDAO = null;
         private readonly DAOs.DbContext _dbContext;
 
-        public WalletRepository()
+        public WalletRepository(DAOs.DbContext dbContext)
         {
             if (walletDAO == null)
             {
                 walletDAO = new WalletDAO();
             }
-        }
-
-        public WalletRepository(DAOs.DbContext dbContext)
-        {
             _dbContext = dbContext;
         }
 
@@ -50,11 +46,12 @@ namespace Repositories
 
         public async Task<float?> UpdateBalance(string userId, float plusMoney)
         {
-            var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.AccountId == userId);
+            var wallet = _dbContext.Wallets.FirstOrDefault(_ => _.AccountId == userId);
             wallet.Balance += plusMoney;
             _dbContext.Update(wallet);
             _dbContext.SaveChanges();
-            return wallet.Balance;
+            var result = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.AccountId == userId);
+            return result.Balance;
         }
 
         public async Task<float?> WithdrawMoney(string userId, float money)
@@ -69,5 +66,7 @@ namespace Repositories
             _dbContext.SaveChanges();
             return wallet.Balance;
         }
+
+
     }
 }

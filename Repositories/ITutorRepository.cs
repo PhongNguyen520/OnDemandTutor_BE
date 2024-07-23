@@ -33,6 +33,8 @@ namespace Repositories
         Task<List<HistoryTutorApplyVM>> GetAllStatusHistoryTutorApply();
 
         Task<bool> CreateHistoryTutorApply(HistoryTutorApplyVM model);
+
+        Task<bool> Create2PaymentTransaction(string userId, float money);
     }
 }
 
