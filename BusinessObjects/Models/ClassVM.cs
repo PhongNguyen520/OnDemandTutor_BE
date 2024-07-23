@@ -79,7 +79,6 @@ namespace BusinessObjects.Models
         public DateTime DayEnd { get; set; }
         public int TimeStart { get; set; }
         public int TimeEnd { get; set; }
-        public string StudentId { get; set; } = string.Empty;
     }
 
     public class ClassVMPhuc
