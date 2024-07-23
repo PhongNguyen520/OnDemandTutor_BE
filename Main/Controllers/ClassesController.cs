@@ -45,6 +45,7 @@ namespace API.Controllers
         }
 
         // Class tự động tạo sau khi Student duyệt Tutor
+        [Authorize(Roles = AppRole.Tutor)]
         [HttpPost("create_class")]
         public async Task<IActionResult> CreateClass(CreateClassVM request)
         {
@@ -91,7 +92,7 @@ namespace API.Controllers
                 newClassCalender.DayOfWeek = day;
                 newClassCalender.TimeStart = form.TimeStart;
                 newClassCalender.TimeEnd = form.TimeEnd;
-                newClassCalender.IsActive = true;
+                newClassCalender.IsActive = false;
                 newClassCalender.ClassId = newClass.ClassId;
 
                 _classCalenderService.AddClassCalender(newClassCalender);
@@ -245,6 +246,7 @@ namespace API.Controllers
                                 BookDay = calender.DayOfWeek.ToString("yyyy-MM-dd"),
                                 Time = calender.TimeStart.ToString() + "h - " + calender.TimeEnd.ToString() + "h",
                                 ClassId = calender.ClassId,
+                                IsChecked = calender.IsActive,
                             };
             var result = new ClassDetail()
             {
@@ -278,6 +280,7 @@ namespace API.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = AppRole.Student)]
         //Student checking teaching day
         [HttpPut("student_checking-day")]
         public IActionResult Checking(string calenderId)
@@ -302,6 +305,26 @@ namespace API.Controllers
                 return Ok(list2);
             }
             return BadRequest("NoNo!!!");
+        }
+
+        [Authorize(Roles = AppRole.Moderator)]
+        [HttpDelete("delete_class/{id}")]
+        public IActionResult CancelClass(string id)
+        {
+            var classRoom = _classService.GetClasses().Where(s => s.ClassId == id).FirstOrDefault();
+            classRoom.IsCancel = true;
+            _classService.UpdateClasses(classRoom);
+            return Ok("Cancel successful");
+        }
+
+        [Authorize(Roles = AppRole.Tutor)]
+        [HttpPut("submit_class/{id}")]
+        public IActionResult SubmitClass(string id)
+        {
+            var classRoom = _classService.GetClasses().Where(s => s.ClassId == id).FirstOrDefault();
+            classRoom.Status = true;
+            _classService.UpdateClasses(classRoom);
+            return Ok("Cancel successful");
         }
     }
 }

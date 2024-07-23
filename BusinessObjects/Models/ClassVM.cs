@@ -48,6 +48,7 @@ namespace BusinessObjects.Models
         public string BookDay { get; set; } = string.Empty;
         public string Time { get; set; } = string.Empty;
         public string ClassId { get; set; } = string.Empty;
+        public bool? IsChecked { get; set; }
     }
 
     public class Form
