@@ -151,6 +151,8 @@ namespace API.Helper
 
             CreateMap<Feedback, FeedbackVMPhuc>().ReverseMap();
 
+            CreateMap<PaymentTransaction, PaymentTransactionVM>().ReverseMap();
+
             #endregion
         }
     }
