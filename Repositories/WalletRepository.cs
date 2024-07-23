@@ -113,7 +113,7 @@ namespace Repositories
             studentTransaction.IsValid = true;
             studentTransaction.WalletId = wallet.WalletId;
             studentTransaction.Amount = money;
-            studentTransaction.Type = 6;
+            studentTransaction.Type = 3;
             studentTransaction.PaymentDestinationId = null;
 
             _dbContext.Add(studentTransaction);
@@ -131,7 +131,7 @@ namespace Repositories
             adminTransaction.IsValid = true;
             adminTransaction.WalletId = "jfdskj-dfhs";
             adminTransaction.Amount = (0 - money);
-            adminTransaction.Type = 4;
+            adminTransaction.Type = 0;
             adminTransaction.PaymentDestinationId = null;
 
             _dbContext.Add(adminTransaction);
