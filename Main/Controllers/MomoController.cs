@@ -12,13 +12,13 @@ namespace API.Controllers
     public class MomoController : ControllerBase
     {
         private readonly MomoService _momoService;
-        private readonly IPaymentTransactionService _transactionService;
+        //private readonly IPaymentTransactionService _transactionService;
 
 
         public MomoController(MomoService momoService)
         {
             _momoService = momoService;
-            _transactionService = new PaymentTransactionService();
+            //_transactionService = paymentTran;
         }
 
         [HttpPost("create_url")]

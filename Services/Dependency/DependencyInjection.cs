@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Repositories;
+using Services.PaymentServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,10 @@ namespace Services.Dependency
 
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             services.AddScoped<IFeedbackService, FeedbackService>();
+
+            services.AddScoped<MomoService>();
+            services.AddScoped<IPaymentTransactionService, PaymentTransactionService>();
+            services.AddScoped<IPaymentTransactionRepository, PaymentTransactionRepository>();
 
             return services;
         }
