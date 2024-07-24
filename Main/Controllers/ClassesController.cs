@@ -196,6 +196,20 @@ namespace API.Controllers
             var classList = _classService.GetClasses()
                                            .Where(c => c.Status == status && c.IsApprove == isApprove && c.IsCancel == isCancel && c.StudentId == student.StudentId);
 
+            foreach (var item in classList)
+            {
+                if (item.IsApprove == null)
+                {
+                    if (item.DayStart < DateTime.Now)
+                    {
+                        item.IsApprove = false;
+                        item.IsCancel = true;
+                        item.CancelDay = DateTime.Now; 
+                        _classService.UpdateClasses(item);
+                    }
+                }
+            }
+
             if (isCancel == true)
             {
                 classList = _classService.GetClasses()
@@ -294,6 +308,11 @@ namespace API.Controllers
             {
                 var getClass = _classService.GetClasses().Where(s => s.ClassId == classId).First();
                 getClass.IsApprove = action;
+                if (action == false)
+                {
+                    getClass.IsCancel = true;
+                    getClass.CancelDay = DateTime.Now;
+                }
                 _classService.UpdateClasses(getClass);
             }
             else
