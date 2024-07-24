@@ -9,7 +9,7 @@ namespace Services
 {
     public interface IMessageService
     {
-        public bool AddMessage(Message message);
+        Task<bool> AddMessage(Message message);
 
         public bool DelMessages(int id);
 

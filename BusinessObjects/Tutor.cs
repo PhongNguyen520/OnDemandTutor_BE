@@ -7,13 +7,13 @@ public partial class Tutor
 {
     public string TutorId { get; set; } = null!;
 
-    public DateOnly Dob { get; set; }
+    public DateTime Dob { get; set; }
 
     public string Education { get; set; } = null!;
 
     public string TypeOfDegree { get; set; } = null!;
 
-    public int CardId { get; set; }
+    public string CardId { get; set; }
 
     public float HourlyRate { get; set; }
 
@@ -25,7 +25,7 @@ public partial class Tutor
 
     public string? Address { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
     public string AccountId { get; set; } = null!;
 
@@ -40,4 +40,10 @@ public partial class Tutor
     public virtual ICollection<TutorAd> TutorAds { get; set; } = new List<TutorAd>();
 
     public virtual ICollection<SubjectTutor> SubjectTutors { get; set; } = new List<SubjectTutor>();
+
+    public virtual ICollection<RequestTutorForm> RequestTutorForms { get; set; } = new List<RequestTutorForm>();
+
+    public virtual ICollection<TutorApply> TutorApplies { get; set; } = new List<TutorApply>();
+
+    public virtual ICollection<HistoryTutorApply> HistoryTutorApplies { get; set; } = new List<HistoryTutorApply>();
 }

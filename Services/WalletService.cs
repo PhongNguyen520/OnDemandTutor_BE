@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
 using Repositories;
 using System;
@@ -11,14 +12,18 @@ namespace Services
 {
     public class WalletService : IWalletService
     {
-        private readonly IWalletRepository iWalletRepository = null;
+        private readonly IWalletRepository iWalletRepository;
 
-        public WalletService()
+        //public WalletService()
+        //{
+        //    if (iWalletRepository == null)
+        //    {
+        //        iWalletRepository = new WalletRepository();
+        //    }
+        //}
+        public WalletService(IWalletRepository _iWalletRepository)
         {
-            if (iWalletRepository == null)
-            {
-                iWalletRepository = new WalletRepository();
-            }
+            this.iWalletRepository = _iWalletRepository;
         }
 
         public bool AddWallet(Wallet wallet)
@@ -39,6 +44,31 @@ namespace Services
         public bool UpdateWallets(Wallet wallet)
         {
             return iWalletRepository.UpdateWallets(wallet);
+        }
+
+        public async Task<float?> UpdateBalance(string userId, float plusMoney)
+        {
+            return await iWalletRepository.UpdateBalance(userId, plusMoney);
+        }
+
+        public async Task<float?> WithdrawMoney(string userId, float money)
+        {
+            return await iWalletRepository.WithdrawMoney(userId, money);
+        }
+
+        public async Task<List<PaymentTransactionVM>> GetRequestWithdraw()
+        {
+            return await iWalletRepository.GetRequestWithdraw();
+        }
+
+        public async Task<bool> ChangeStatusWallet(string id, bool status, float amount)
+        {
+            return await iWalletRepository.ChangeStatusWallet(id, status, amount);
+        }
+
+        public async Task<bool> Create2RefundPaymentTransaction(string StudentId, float money)
+        {
+            return await iWalletRepository.Create2RefundPaymentTransaction(StudentId, money);
         }
     }
 }

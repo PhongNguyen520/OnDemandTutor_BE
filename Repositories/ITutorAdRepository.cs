@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,13 @@ namespace Repositories
         public List<TutorAd> GetTutorAds();
 
         public bool UpdateTutorAds(TutorAd tutorAd);
+
+        Task<List<TutorIsActiveVM>> GetAllTutorAdIsActive();
+
+        Task<bool> CeateAd(TutorAd model);
+
+        Task<bool> UpdateIsActiveTutorAd(TutorAdIsAc model);
+
+        Task<List<AdsVMPl>> GetAllAds();
     }
 }

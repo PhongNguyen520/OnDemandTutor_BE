@@ -9,7 +9,7 @@ namespace Services
 {
     public interface ISubjectTutorService
     {
-        public bool AddSubjectTutor(SubjectTutor subjectTutor);
+        Task<bool> AddSubjectTutor(SubjectTutor subjectTutor);
 
         public bool DelSubjectTutors(int id);
 

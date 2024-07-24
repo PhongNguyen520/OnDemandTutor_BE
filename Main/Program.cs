@@ -1,4 +1,4 @@
-
+﻿using API.Hubs;
 using API.Services;
 using BusinessObjects;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,6 +18,20 @@ namespace Main
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Set up CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod()
+                               .AllowCredentials();
+                    });
+            });
+
+
             // Add services to the container.
             builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -28,6 +42,9 @@ namespace Main
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
+            builder.Services.AddSignalR();
+
+            builder.Services.AddSingleton<ShareDBService>();
 
             builder.Services.AddControllers();
 
@@ -43,7 +60,7 @@ namespace Main
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-
+            // Cấu hình đồng bộ LifeTime
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -55,10 +72,11 @@ namespace Main
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateLifetime = true,
                     
+                    ClockSkew = TimeSpan.Zero,
 
                     ValidAudience = builder.Configuration["JWT:ValidAudience"],
                     ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
@@ -111,8 +129,16 @@ namespace Main
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+                app.UseDeveloperExceptionPage();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
 
+
+                // Set up CORS
+               
+
+                
+            } 
+            app.UseCors("AllowReactApp");
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
@@ -120,6 +146,8 @@ namespace Main
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.MapHub<ChatHub>("/chatHub");
 
             app.Run();
         }

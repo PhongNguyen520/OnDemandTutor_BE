@@ -19,11 +19,27 @@ namespace Services
         public List<Account> GetAccounts();
 
         public Task<Account> GetAccountById(string id);
-        public bool UpdateAccounts(Account account);
 
-        Task<IdentityResult> SignUpAsync(AccountDTO model);
+        Task<String> GetAccountByEmail(string email);
+        public bool UpdateAccounts(Account account);
+        Task<string> TutorSignUpAsync(TutorDTO model);
+        Task<int> StudentSignUpAsync(StudentDTO model);
+        Task<String> SignUpAsync(AccountDTO model);
         Task<Account> SignInAsync(UserSignIn model);
         Task<IList<String>> GetRolesAsync(Account user);
+        Task<bool> ConfirmAccount(string email);
+        Task<int> EnalbleUser(String userId);
+        Task<String> SignUpModerator(SignUpModerator model);
+        Task<Account> SignInWithGG(string gmail);
+        Task<string> TokenForgetPassword(string email);
+        Task<int> ResetPasswordEmail(ResetPasswordModel model);
+        Task<IQueryable<TutorInterVM>> GetAccountTutorIsActiveFalse();
+        Task<bool> CheckAccountByEmail(string email);
+        Task<IQueryable<UserRolesVM>> ListAccountIsActive();
+        Task<List<Student10VM>> Get10StudentNew();
+        Task<List<TutorInterVM>> Get10TutorNew();
+        Task<float> CraeteRequestPaymentTransaction(string userId, float amount, int type);
+        Task<string> GetTutorIdByAccountId(string accountId);
         Task<bool> ConfirmAccount(string email);
         Task<int> EnalbleUser(String userId);
     }

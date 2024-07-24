@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using Repositories;
 using System;
 using System.Collections.Generic;
@@ -10,14 +11,12 @@ namespace Services
 {
     public class TutorAdService : ITutorAdService
     {
-        private readonly ITutorAdRepository iTutorAdRepository = null;
+        private readonly ITutorAdRepository iTutorAdRepository;
 
-        public TutorAdService()
+
+        public TutorAdService(ITutorAdRepository tutorAdRepository)
         {
-            if (iTutorAdRepository == null)
-            {
-                iTutorAdRepository = new TutorAdRepository();
-            }
+            iTutorAdRepository = tutorAdRepository;
         }
 
         public bool AddTutorAd(TutorAd tutorAd)
@@ -38,6 +37,26 @@ namespace Services
         public bool UpdateTutorAds(TutorAd tutorAd)
         {
             return iTutorAdRepository.UpdateTutorAds(tutorAd);
+        }
+
+        public async Task<List<TutorIsActiveVM>> GetAllTutorAdIsActive()
+        {
+            return await iTutorAdRepository.GetAllTutorAdIsActive();
+        }
+
+        public async Task<bool> CeateAd(TutorAd model)
+        {
+            return await iTutorAdRepository.CeateAd(model);
+        }
+
+        public async Task<bool> UpdateIsActiveTutorAd(TutorAdIsAc model)
+        {
+            return await iTutorAdRepository.UpdateIsActiveTutorAd(model);
+        }
+
+        public async Task<List<AdsVMPl>> GetAllAds()
+        {
+            return await iTutorAdRepository.GetAllAds();
         }
     }
 }

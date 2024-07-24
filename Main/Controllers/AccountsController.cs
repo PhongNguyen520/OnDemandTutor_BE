@@ -8,18 +8,28 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObjects;
 using DAOs;
 using Services;
+using Microsoft.AspNetCore.DataProtection.Internal;
+using API.Services;
+using BusinessObjects.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/account")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
         private readonly IAccountService iAccountService;
+        private readonly ITutorService _tutorService;
+        private ICurrentUserService _currentUserService;
+        private readonly UserManager<Account> _userManager;
 
-        public AccountsController(IAccountService accountService)
+        public AccountsController(IAccountService accountService, ITutorService tutorService, ICurrentUserService currentUserService, UserManager<Account> userManager)
         {
             iAccountService = accountService;
+            _tutorService = tutorService;
+            _currentUserService = currentUserService;
+            _userManager = userManager;
         }
 
         // GET: api/Accounts
@@ -119,5 +129,60 @@ namespace API.Controllers
         //{
         //    return _context.Accounts.Any(e => e.AccountId == id);
         //}
+
+        [HttpGet("show_10-tutor-new")]
+        public async Task<IActionResult> Show10TutorNew()
+        {
+            var list = await iAccountService.Get10TutorNew();
+            return Ok(list);
+        }
+
+        [HttpGet("show_10-student-new")]
+        public async Task<IActionResult> Show10StudentNew()
+        {
+            var list = await iAccountService.Get10StudentNew();
+            return Ok(list);
+        }
+
+        [HttpGet("show_tutor_have_ads")]
+        public async Task<IActionResult> ShowTutorHaveAds()
+        {
+            var result = await _tutorService.GetAccountHaveAd();
+            return Ok(result);
+        }
+
+        [HttpPut("create_request_withdraw_money")]
+        public async Task<IActionResult> CreateRequestWithdrawMoney(RequestWithdrawMoneyVM model)
+        {
+            var userId = _currentUserService.GetUserId().ToString();
+            Account user = await _userManager.FindByIdAsync(userId);
+            var modelSigin = new UserSignIn() { UserName = user.UserName, Password = model.Password };
+            var userAuhten = await iAccountService.SignInAsync(modelSigin);
+
+            if(userAuhten == null)
+            {
+                return BadRequest("Invalid!!!");
+            }
+            float result = await iAccountService.CraeteRequestPaymentTransaction(userId, model.Amount, model.Type);
+            if(result == 0) 
+            {
+                return BadRequest("Fail Request");
+            }
+            if(result == 1)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Invalid balance");
+            }
+        }
+
+        [HttpGet("tutorid_by_accountid")]
+        public async Task<IActionResult> GetTutorIdByAccountId(string accountId)
+        {
+            string id = await iAccountService.GetTutorIdByAccountId(accountId);
+            return Ok(id);
+        }
     }
 }

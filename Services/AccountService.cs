@@ -53,7 +53,7 @@ namespace Services
             return iAccountRepository.SignInAsync(model);
         }
 
-        public async Task<IdentityResult> SignUpAsync(AccountDTO model)
+        public async Task<String> SignUpAsync(AccountDTO model)
         {
             return await iAccountRepository.SignUpAsync(model);
         }
@@ -61,6 +61,84 @@ namespace Services
         public bool UpdateAccounts(Account account)
         {
             return iAccountRepository.UpdateAccounts(account);
+        }
+
+        public Task<bool> ConfirmAccount(string email)
+        {
+            return iAccountRepository.ConfirmAccount(email);    
+        }
+
+        public async Task<int> EnalbleUser(string userId)
+        {
+            return await iAccountRepository.EnalbleUser(userId);
+        }
+
+        public async Task<string> TutorSignUpAsync(TutorDTO model)
+        {
+            return await iAccountRepository.TutorSignUpAsync(model);
+        }
+
+        public async Task<String> GetAccountByEmail(string email)
+        {
+            return await iAccountRepository.GetAccountByEmail(email);
+        }
+        public async Task<int> StudentSignUpAsync(StudentDTO model)
+        {
+            return await iAccountRepository.StudentSignUpAsync(model);
+        }
+        public async Task<String> SignUpModerator(SignUpModerator model)
+        {
+            return await iAccountRepository.SignUpModerator(model);
+        }
+
+        public Task<Account> SignInWithGG(string gmail)
+        {
+            return iAccountRepository.SignInWithGG(gmail);
+        }
+
+        public async Task<string> TokenForgetPassword(string email)
+        {
+            return await iAccountRepository.TokenForgetPassword(email);
+        }
+
+        public async Task<int> ResetPasswordEmail(ResetPasswordModel model)
+        {
+            return await iAccountRepository.ResetPasswordEmail(model);
+        }
+
+        public Task<IQueryable<TutorInterVM>> GetAccountTutorIsActiveFalse()
+        {
+            return iAccountRepository.GetAccountTutorIsActiveFalse();
+        }
+
+        public Task<bool> CheckAccountByEmail(string email)
+        {
+            return iAccountRepository.CheckAccountByEmail(email);
+        }
+
+        public Task<IQueryable<UserRolesVM>> ListAccountIsActive()
+        {
+            return iAccountRepository.GetAllIsActive();
+        }
+
+        public async Task<List<Student10VM>> Get10StudentNew()
+        {
+            return await iAccountRepository.Get10StudentNew();
+        }
+
+        public async Task<List<TutorInterVM>> Get10TutorNew()
+        {
+            return await iAccountRepository.Get10TutorNew();
+        }
+
+        public async Task<float> CraeteRequestPaymentTransaction(string userId, float amount, int type)
+        {
+            return await iAccountRepository.CraeteRequestPaymentTransaction(userId, amount, type);
+        }
+
+        public async Task<string> GetTutorIdByAccountId(string accountId)
+        {
+            return await iAccountRepository.GetTutorIdByAccountId(accountId);
         }
 
         public Task<bool> ConfirmAccount(string email)

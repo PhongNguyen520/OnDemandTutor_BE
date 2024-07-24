@@ -20,10 +20,26 @@ namespace Repositories
         
         public bool UpdateAccounts(Account account);
         Task<Account> GetAccountById(string id);
-        Task<IdentityResult> SignUpAsync(AccountDTO model);
+        Task<String> GetAccountByEmail(string email);
+        Task<String> SignUpAsync(AccountDTO model);
+        Task<string> TutorSignUpAsync(TutorDTO model);
+        Task<int> StudentSignUpAsync(StudentDTO model);
         Task<Account> SignInAsync(UserSignIn model);
         Task<IList<String>> GetRolesAsync(Account user);
         Task<bool> ConfirmAccount(string email);
         Task<int> EnalbleUser(String userId);
+        Task<bool> ConfirmAccount(string email);
+        Task<int> EnalbleUser(String userId);
+        Task<String> SignUpModerator(SignUpModerator model);
+        Task<Account> SignInWithGG(string gmail);
+        Task<string> TokenForgetPassword(string email);
+        Task<int> ResetPasswordEmail(ResetPasswordModel model);
+        Task<IQueryable<TutorInterVM>> GetAccountTutorIsActiveFalse();
+        Task<bool> CheckAccountByEmail(string email);
+        Task<IQueryable<UserRolesVM>> GetAllIsActive();
+        Task<List<TutorInterVM>> Get10TutorNew();
+        Task<List<Student10VM>> Get10StudentNew();
+        Task<float> CraeteRequestPaymentTransaction(string userId, float amount, int type);
+        Task<string> GetTutorIdByAccountId(string accountId);
     }
 }

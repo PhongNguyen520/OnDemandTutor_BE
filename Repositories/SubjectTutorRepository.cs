@@ -20,9 +20,9 @@ namespace Repositories
             }
         }
 
-        public bool AddSubjectTutor(SubjectTutor subjectTutor)
-        {
-            return subjectTutorDAO.AddSubjectTutor(subjectTutor);
+        public async Task<bool> AddSubjectTutor(SubjectTutor subjectTutor)
+        {       
+            return await subjectTutorDAO.AddSubjectTutor(subjectTutor);
         }
 
         public bool DelSubjectTutors(int id)

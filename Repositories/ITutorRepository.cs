@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using BusinessObjects.Models.TutorModel;
 using System;
 using System.Collections.Generic;
@@ -18,16 +19,22 @@ namespace Repositories
 
         public bool UpdateTutors(Tutor tutor);
 
-        public List<Subject> GetTutor(string id);
-
         public IEnumerable<Tutor> Filter(RequestSearchTutorModel requestSearchTutorModel);
 
         public IEnumerable<ResponseSearchTutorModel> Sorting
             (IEnumerable<ResponseSearchTutorModel> query,
             string? sortBy,
-            string? sortType,
-            int pageIndex,
-            int pageSize);
+            string? sortType);
+
+        Task<TutorVM> UpdateTutor(string idAccount, TutorVM tutorVM);
+        Task<TutorVM> GetTutorCurrent(string idAccount);
+        Task<bool> UpdateIsActiveTutor(IsActiveTutor model);
+        Task<List<AccountTutorAdVM>> GetAccountHaveAd();
+        Task<List<HistoryTutorApplyVM>> GetAllStatusHistoryTutorApply();
+
+        Task<bool> CreateHistoryTutorApply(HistoryTutorApplyVM model);
+
+        Task<bool> Create2PaymentTransaction(string userId, float money);
     }
 }
 

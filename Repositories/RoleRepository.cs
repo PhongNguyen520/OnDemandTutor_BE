@@ -24,10 +24,48 @@ namespace Repositories
         public RoleRepository(UserManager<Account> userManager,
             SignInManager<Account> signInManager, IConfiguration configuration,
             RoleManager<IdentityRole> roleManager, IMapper mapper, DAOs.DbContext dbContext)
+        private UserManager<Account> _userManager;
+        private SignInManager<Account> _signInManager;
+        private RoleManager<IdentityRole> _roleManager;
+        private IMapper _mapper;
+        private DAOs.DbContext _dbContext;
+        public RoleRepository(UserManager<Account> userManager,
+            SignInManager<Account> signInManager, IConfiguration configuration,
+            RoleManager<IdentityRole> roleManager, IMapper mapper, DAOs.DbContext dbContext)
         {
-            if (roleDAO == null)
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
+            _mapper = mapper;
+            _dbContext = dbContext;
+        }
+
+        public async Task<List<IdentityRole>> GetRole()
+        {
+            return await _roleManager.Roles.OrderBy(_ => _.Name).ToListAsync();
+        }
+
+        public async Task<IdentityRole> GetRoleById(string id)
+        {
+            return await _roleManager.FindByIdAsync(id);
+
+        }
+
+        public async Task<IdentityResult> CreateRole(string roleName)
+        {
+            IdentityRole _roleName = new IdentityRole(roleName);
+            return await _roleManager.CreateAsync(_roleName);
+        }
+
+        public async Task<int> UpdateRole(string roleName, string id)
+        {
+
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role != null)
             {
-                roleDAO = new RoleDAO();
+                role.Name = roleName;
+                _dbContext.Roles.Update(role);
+                return await _dbContext.SaveChangesAsync();
             }
             _userManager = userManager;
             _signInManager = signInManager;
@@ -63,6 +101,8 @@ namespace Repositories
                 _dbContext.Roles.Update(role);
                 return await _dbContext.SaveChangesAsync();
             }
+            return 0;
+
             return 0;
 
         }

@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,13 @@ namespace Repositories
         public List<Complaint> GetComplaints();
 
         public bool UpdateComplaints(Complaint complaint);
+
+        Task<bool> CreateComplaint(ComplaintDTO model);
+
+        Task<IQueryable<ComplaintVM>> GetAllComplaintOfUser(string classId);
+
+        Task<ComplaintVM> UpdateProcessnoteStatus(string complaintId, string proce, bool sta);
+
+        Task<List<ComlaintClass>> GetAllComplaintStatusNull();
     }
 }

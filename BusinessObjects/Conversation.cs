@@ -7,7 +7,7 @@ public partial class Conversation
 {
     public string ConversationId { get; set; } = null!;
 
-    public DateOnly CreateDay { get; set; }
+    public DateTime CreateDay { get; set; }
 
     public bool IsActive { get; set; }
 

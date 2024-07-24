@@ -36,7 +36,7 @@ namespace DAOs
 
         public List<Wallet> GetWallets()
         {
-            return dbContext.Wallets.OrderByDescending(x => x.WalletId).ToList();
+            return dbContext.Wallets.ToList();
         }
 
         public bool UpdateWallets(Wallet wallet)

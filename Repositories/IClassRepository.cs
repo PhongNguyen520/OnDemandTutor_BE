@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,11 @@ namespace Repositories
         public List<Class> GetClasses();
 
         public bool UpdateClasses(Class @class);
+
+        Task<ReturnBalance> PaymentTutor(string userId);
+
+        Task<List<ListClassVMPhuc>> GetClassByDay();
+
+        Task<List<ListClassVMPhucMonthYear>> GetClassByMonth();
     }
 }

@@ -7,7 +7,7 @@ public partial class Feedback
 {
     public string FeedbackId { get; set; } = null!;
 
-    public DateOnly CreateDay { get; set; }
+    public DateTime CreateDay { get; set; }
 
     public string Description { get; set; } = null!;
 
@@ -26,4 +26,6 @@ public partial class Feedback
     public virtual Student Student { get; set; } = null!;
 
     public virtual Tutor Tutor { get; set; } = null!;
+
+    public string? Title { get; set; }
 }

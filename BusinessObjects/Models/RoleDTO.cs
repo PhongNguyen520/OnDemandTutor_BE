@@ -10,5 +10,13 @@ namespace BusinessObjects.Models
     {
         public String Id;
         public String Name;
+        public string Id;
+        public string Name;
+    }
+
+    public class ChangRoleVM
+    {
+        public string UserId { get; set; }
+        public List<string> ListRoleName { get; set; }
     }
 }

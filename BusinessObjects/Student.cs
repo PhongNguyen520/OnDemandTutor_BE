@@ -9,6 +9,12 @@ public partial class Student
 
     public string? SchoolName { get; set; }
 
+    public string? Address { get; set; }
+
+    public int? Age { get; set; }
+
+    public bool IsParent { get; set; }
+
     public string AccountId { get; set; } = null!;
 
     public virtual Account Account { get; set; } = null!;
@@ -20,4 +26,6 @@ public partial class Student
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
     public virtual ICollection<FindTutorForm> FindTutorForms { get; set; } = new List<FindTutorForm>();
+
+    public virtual ICollection<RequestTutorForm> RequestTutorForms { get; set; } = new List<RequestTutorForm>();
 }

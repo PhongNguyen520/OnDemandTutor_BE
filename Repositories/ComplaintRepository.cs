@@ -1,5 +1,8 @@
-﻿using BusinessObjects;
+﻿using AutoMapper;
+using BusinessObjects;
+using BusinessObjects.Models;
 using DAOs;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +14,17 @@ namespace Repositories
     public class ComplaintRepository : IComplaintRepository
     {
         private readonly ComplaintDAO complaintDAO = null;
+        private readonly DAOs.DbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public ComplaintRepository()
+        public ComplaintRepository(DAOs.DbContext dbContext, IMapper mapper)
         {
             if (complaintDAO == null)
             {
                 complaintDAO = new ComplaintDAO();
             }
+            _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         public bool AddComplaint(Complaint complaint)
@@ -38,6 +45,80 @@ namespace Repositories
         public bool UpdateComplaints(Complaint complaint)
         {
             return complaintDAO.UpdateComplaints(complaint);
+        }
+
+        public async Task<bool> CreateComplaint(ComplaintDTO model)
+        {
+            var complaintId = Guid.NewGuid().ToString();
+            var tutor = await _dbContext.Classes
+                                          .Include(_ => _.Tutor)
+                                          .FirstOrDefaultAsync(_ => _.ClassId == model.ClassId);
+            if (tutor == null)
+            {
+                return false;
+            }
+            var student = await _dbContext.Classes
+                                            .Include(_ => _.Student)
+                                            .FirstOrDefaultAsync(_ => _.ClassId == model.ClassId);
+            var complaintEn = _mapper.Map<Complaint>(model);
+            complaintEn.ComplaintId = complaintId;
+            complaintEn.Status = null;
+            complaintEn.TutorId = tutor.TutorId;
+            complaintEn.StudentId = student.StudentId;
+            complaintEn.Complainter = model.Complainter;
+            complaintEn.Processnote = null;
+            complaintEn.CreateDay = DateTime.Now;
+            complaintEn.ProcessDate = DateTime.Now;
+
+            _dbContext.Add(complaintEn);
+            _dbContext.SaveChanges();
+
+            return true;
+
+        }
+
+        public async Task<IQueryable<ComplaintVM>> GetAllComplaintOfUser(string classId)
+        {
+            var listComplaintOfUser = _dbContext.Complaints
+                                                .Where(_ => _.ClassId == classId);
+            var listVM = new List<ComplaintVM>();
+            foreach (var x in listComplaintOfUser)
+            {
+                var complaintVM = _mapper.Map<ComplaintVM>(x);
+                listVM.Add(complaintVM);
+            }
+
+            return listVM.AsQueryable();
+        }
+
+        public async Task<ComplaintVM> UpdateProcessnoteStatus (string complaintId, string proce, bool sta)
+        {
+            var complaintDb =await _dbContext.Complaints                                          
+                                            .FirstOrDefaultAsync(_ => _.ComplaintId == complaintId);
+            complaintDb.Status = sta;
+            complaintDb.Processnote = proce;
+
+            _dbContext.Update(complaintDb);
+            _dbContext.SaveChanges();
+
+            var result = _mapper.Map<ComplaintVM>(complaintDb);
+            return result;
+        }
+
+        public async Task<List<ComlaintClass>> GetAllComplaintStatusNull()
+        {
+            var listCom = _dbContext.Complaints.Where(_ => _.Status == null);
+            var enList = _mapper.Map<List<ComlaintClass>>(listCom);
+
+            foreach (var x in  enList)
+            {
+                x.NameAccount = await _dbContext.Accounts
+                                          .Where(a => a.Id == x.Complainter)
+                                          .Select(a => a.FullName)
+                                          .FirstOrDefaultAsync();
+            }
+
+            return enList;
         }
     }
 }

@@ -9,7 +9,7 @@ public partial class Message
 
     public string Description { get; set; } = null!;
 
-    public DateOnly Time { get; set; }
+    public DateTime Time { get; set; }
 
     public bool IsActive { get; set; }
 
@@ -20,4 +20,6 @@ public partial class Message
     public virtual Account Account { get; set; } = null!;
 
     public virtual Conversation Conversation { get; set; } = null!;
+
+    public bool IsRead { get; set; }
 }

@@ -8,25 +8,29 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObjects;
 using DAOs;
 using Services;
+using API.Services;
+using BusinessObjects.Models;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/complaint")]
     [ApiController]
     public class ComplaintsController : ControllerBase
     {
-        private readonly IComplaintService iComplaintService;
+        private readonly IComplaintService _iComplaintService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public ComplaintsController()
+        public ComplaintsController(IComplaintService complaintService, ICurrentUserService currentUserService)
         {
-            iComplaintService = new ComplaintService();
+            _iComplaintService = complaintService;
+            _currentUserService = currentUserService;
         }
 
         // GET: api/Complaints
         [HttpGet]
         public IActionResult GetComplaints()
         {
-            return Ok(iComplaintService.GetComplaints());
+            return Ok(_iComplaintService.GetComplaints());
         }
 
         // GET: api/Complaints/5
@@ -119,5 +123,24 @@ namespace API.Controllers
         //{
         //    return _context.Complaints.Any(e => e.ComplaintId == id);
         //}
+
+        [HttpPost("create_complaint")]
+        public async Task<IActionResult> CreateComplaint(ComplaintDTO complaintDTO)
+        {
+            complaintDTO.Complainter = _currentUserService.GetUserId().ToString();
+            var result = await _iComplaintService.CreateComplaint(complaintDTO);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("get_complaints-in-class/{classId}")]
+        public async Task<IActionResult> ViewComplaint(string classId)
+        {
+            var result = await _iComplaintService.ViewAllComplaintInClass(classId);
+            return Ok(result);
+        }
     }
 }

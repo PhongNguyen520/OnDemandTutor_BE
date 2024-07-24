@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using BusinessObjects.Models.FindFormModel;
 using Repositories;
 using System;
 using System.Collections.Generic;
@@ -10,33 +11,81 @@ namespace Services
 {
     public class FindTutorFormService : IFindTutorFormService
     {
-        private readonly IFindTutorFormRepository iFindTutorFormRepository = null;
-        
-        public FindTutorFormService(FindTutorFormRepository repository)
+        private readonly IFindTutorFormRepository _findTutorFormRepository = null;
+        private readonly IClassCalenderRepository _classCalenderRepository = new ClassCalenderRepository();
+        private readonly ISubjectRepository _subjectRepository = new SubjectRepository();
+
+        public FindTutorFormService()
         {
-            if (iFindTutorFormRepository == null)
+            if (_findTutorFormRepository == null)
             {
-                iFindTutorFormRepository = new FindTutorFormRepository();
+                _findTutorFormRepository = new FindTutorFormRepository();
             }
         }
         public bool AddFindTutorForm(FindTutorForm form)
         {
-            return iFindTutorFormRepository.AddFindTutorForm(form);
+            return _findTutorFormRepository.AddFindTutorForm(form);
         }
 
         public bool DelFindTutorForms(int id)
         {
-            return iFindTutorFormRepository.DelFindTutorForms(id);
+            return _findTutorFormRepository.DelFindTutorForms(id);
         }
 
         public List<FindTutorForm> GetFindTutorForms()
         {
-            return iFindTutorFormRepository.GetFindTutorForms();
+            return _findTutorFormRepository.GetFindTutorForms();
         }
 
         public bool UpdateFindTutorForms(FindTutorForm form)
         {
-            return iFindTutorFormRepository.UpdateFindTutorForms(form);
+            return _findTutorFormRepository.UpdateFindTutorForms(form);
+        }
+
+        public IEnumerable<FindTutorForm> Filter(RequestSearchPostModel requestSearchPostModel)
+        {
+            return _findTutorFormRepository.Filter(requestSearchPostModel);
+        }
+
+        public IEnumerable<FormFindTutorVM> Sorting(IEnumerable<FormFindTutorVM> query, string? sortBy, string? sortType)
+        {
+            return _findTutorFormRepository.Sorting(query, sortBy, sortType);
+        }
+
+        public IEnumerable<FormFindTutorVM> GetFormList(IEnumerable<FindTutorForm> allPosts, IEnumerable<Student> allStudents)
+        {
+            var query = from post in allPosts
+                        join student in allStudents
+                        on post.StudentId equals student.StudentId
+                        select new FormFindTutorVM
+                        {
+                            FormId = post.FormId,
+                            CreateDay = post.CreateDay.ToString("yyyy-MM-dd HH:mm"),
+                            FullName = student.Account.FullName,
+                            Avatar = student.Account.Avatar,
+                            Title = post.Title,
+                            DayStart = post.DayStart.ToString("yyyy-MM-dd"),
+                            DayEnd = post.DayEnd.ToString("yyyy-MM-dd"),
+                            DayOfWeek = _classCalenderRepository.ConvertToDaysOfWeeks(post.DayOfWeek),
+                            TimeStart = post.TimeStart,
+                            TimeEnd = post.TimeEnd,
+                            MinHourlyRate = post.MinHourlyRate,
+                            MaxHourlyRate = post.MaxHourlyRate,
+                            Description = post.DescribeTutor,
+                            SubjectName = post.Subject.Description,
+                            TutorGender = post.TutorGender,
+                            TypeOfDegree = post.TypeOfDegree,
+                            Status = post.Status,
+                            IsActived = post.IsActived,
+                            GradeId = post.Subject.GradeId,
+                            SubjectGroupId = post.Subject.SubjectGroupId,
+                            SubjectId = post.SubjectId,
+                            StudentId = post.StudentId,
+                            UserIdStudent = post.Student.AccountId,
+                            ReasonReject = post.RejectReason,
+                        };
+
+            return query;
         }
     }
 }
