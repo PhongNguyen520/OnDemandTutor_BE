@@ -90,7 +90,7 @@ namespace Repositories
                 if (wal.IsValid == true)
                 {
                     var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.WalletId == wal.WalletId);
-                    wallet.Balance += amount;
+                    wallet.Balance += (amount);
                     _dbContext.Update(wallet);
                     _dbContext.SaveChanges();
                 }

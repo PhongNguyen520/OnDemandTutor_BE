@@ -48,7 +48,7 @@ namespace Services.PaymentServices
 
         public string CreateSignature(string vnp_HashSecret, SortedDictionary<string, string> vnp_Params)
         {
-            var querystring = string.Join("&", vnp_Params.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+            var querystring = string.Join("&", vnp_Params.Select(kvp => $"{kvp.Key}={(kvp.Value)}"));
 
             var signData = HmacSHA512(vnp_HashSecret, querystring);
 
