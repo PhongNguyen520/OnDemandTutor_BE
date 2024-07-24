@@ -267,6 +267,7 @@ namespace API.Controllers
                 TutorId = classDetail.TutorId,
                 StudentId = classDetail.StudentId,
                 UrlClass = classDetail.UrlClass,
+                UserId = classDetail.Student.AccountId,
                 Calenders = calenders.ToList(),
             };
 
@@ -325,10 +326,6 @@ namespace API.Controllers
             return Ok("Cancel successful");
         }
 
-<<<<<<< HEAD
-=======
-        
->>>>>>> 46327c2ee706442c960958acda500ba5d876a213
         [HttpPut("submit_class/{id}")]
         public IActionResult SubmitClass(string id)
         {
