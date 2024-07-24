@@ -279,7 +279,7 @@ namespace API.Controllers
                 TutorId = classDetail.TutorId,
                 StudentId = classDetail.StudentId,
                 UrlClass = classDetail.UrlClass,
-                UserId = classDetail.Student.AccountId,
+                UserId = _studentService.GetStudents().Where(s => s.StudentId == classDetail.StudentId).Select(s => s.AccountId).ToString(),
                 Calenders = calenders.ToList(),
             };
 
