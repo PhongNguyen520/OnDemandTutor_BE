@@ -135,5 +135,10 @@ namespace Services
         {
             return await iAccountRepository.CraeteRequestPaymentTransaction(userId, amount, type);
         }
+
+        public async Task<string> GetTutorIdByAccountId(string accountId)
+        {
+            return await iAccountRepository.GetTutorIdByAccountId(accountId);
+        }
     }
 }

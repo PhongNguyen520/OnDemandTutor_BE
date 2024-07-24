@@ -12,6 +12,7 @@ namespace BusinessObjects.Models
         public string ClassName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string FormId { get; set; } = string.Empty;
+        public string? UrlClass { get; set; }
     }
 
     public class ClassVM
@@ -31,6 +32,7 @@ namespace BusinessObjects.Models
         public string? Avatar {  get; set; }
         public bool? IsCancel { get; set; }
         public DateTime? CancelDay { get; set; }
+        public string? UrlClass { get; set; }
     }
 
     public class ClassDetail
@@ -39,6 +41,13 @@ namespace BusinessObjects.Models
         public string? ClassName { get; set; }
         public string? Description { get; set; }
         public string? SubjectName { get; set; }
+        public double Price { get; set; }
+        public string Createday { get; set; } = string.Empty;
+        public string DayStart { get; set; } = string.Empty;
+        public string DayEnd { get; set; } = string.Empty;
+        public string? UrlClass { get; set; }
+        public string TutorId { get; set; } = string.Empty;
+        public string StudentId { get; set; } = string.Empty;
         public List<CalenderVM> Calenders { get; set; } = new List<CalenderVM>();
     }
 
@@ -48,6 +57,7 @@ namespace BusinessObjects.Models
         public string BookDay { get; set; } = string.Empty;
         public string Time { get; set; } = string.Empty;
         public string ClassId { get; set; } = string.Empty;
+        public bool? IsChecked { get; set; }
     }
 
     public class Form
@@ -69,7 +79,6 @@ namespace BusinessObjects.Models
         public DateTime DayEnd { get; set; }
         public int TimeStart { get; set; }
         public int TimeEnd { get; set; }
-        public string StudentId { get; set; } = string.Empty;
     }
 
     public class ClassVMPhuc

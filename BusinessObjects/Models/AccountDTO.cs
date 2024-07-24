@@ -289,7 +289,11 @@ namespace BusinessObjects.Models
         public int? Type { get; set; }
         public bool? IsValid { get; set; }
         public string? WalletId { get; set; } 
-        public string? PaymentDestinationId { get; set; } 
+        public string? PaymentDestinationId { get; set; }
+        public float? Balance { get; set; }
+        public string? BankName { get; set; }
+        public string? BankNumber { get; set; }
+        public string AccountId { get; set; }
     }
 
     public class RequestDrawVM
@@ -297,6 +301,12 @@ namespace BusinessObjects.Models
         public string idTran { get; set; }
         public bool Status { get; set; }
 
+        public float Amount { get; set; }
+    }
+
+    public class RefundStudentVM
+    {
+        public string StudentId { get; set; }
         public float Amount { get; set; }
     }
 }

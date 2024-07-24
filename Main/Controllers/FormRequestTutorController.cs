@@ -124,8 +124,8 @@ namespace API.Controllers
                             TimeStart = form.TimeStart.ToString() + "h",
                             TimeEnd = form.TimeEnd.ToString() + "h",
                             SubjectName = form.Subject.Description,
-                            FullName = memberForm.FullName,
-                            Avatar = memberForm.Avatar,
+                            FullName = _formService.GetUser(form, userId).FullName,
+                            Avatar = _formService.GetUser(form, userId).Avatar,
                             Description = form.Description,
                             Status = form.Status,
                             StudentId = form.StudentId,
@@ -226,8 +226,11 @@ namespace API.Controllers
         [HttpPost("handle_createform")]
         public async Task<IActionResult> HandleCreateForm(HandleCreateForm form)
         {
-            var checkForm = await _classCalenderService.HandleStudentCreateForm(form.DayOfWeek, form.DayStart, form.DayEnd, form.TimeStart, form.TimeEnd, form.StudentId);
-            var checkClass = await _classCalenderService.HandleAvoidConflictCalendar(form.DayOfWeek, form.DayStart, form.DayEnd, form.TimeStart, form.TimeEnd, form.StudentId, 2);
+            var userId = _currentUserService.GetUserId();
+            var student = _studentService.GetStudents().FirstOrDefault(s => s.AccountId == userId.ToString());
+
+            var checkForm = await _classCalenderService.HandleStudentCreateForm(form.DayOfWeek, form.DayStart, form.DayEnd, form.TimeStart, form.TimeEnd, student.StudentId);
+            var checkClass = await _classCalenderService.HandleAvoidConflictCalendar(form.DayOfWeek, form.DayStart, form.DayEnd, form.TimeStart, form.TimeEnd, student.StudentId, 2);
 
             if (checkForm == false && checkClass == false)
             {

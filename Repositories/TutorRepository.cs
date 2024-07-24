@@ -235,7 +235,7 @@ namespace Repositories
             tutorTransaction.IsValid = true;
             tutorTransaction.WalletId = wallet.WalletId;
             tutorTransaction.Amount = money;
-            tutorTransaction.Type = 5;
+            tutorTransaction.Type = 4;
             tutorTransaction.PaymentDestinationId = null;
 
             _dbContext.Add(tutorTransaction);
@@ -246,9 +246,9 @@ namespace Repositories
             adminTransaction.Description = "Payment for tutor";
             adminTransaction.TranDate = DateTime.Now;
             adminTransaction.IsValid = true;
-            adminTransaction.WalletId = "jfdskj-dfhs";
+            adminTransaction.WalletId = "fa99e03d-b5d2-4bb6-a4c9-41e9bf2914c6";
             adminTransaction.Amount = (0 - money);
-            adminTransaction.Type = 4;
+            adminTransaction.Type = 0;
             adminTransaction.PaymentDestinationId = null;
 
             _dbContext.Add(adminTransaction);

@@ -143,7 +143,12 @@ namespace API.Helper
 
             CreateMap<Complaint, ComplaintDTO>().ReverseMap();
             CreateMap<Complaint, ComplaintVM>().ReverseMap();
-            CreateMap<Complaint, ComlaintClass>().ReverseMap();
+            CreateMap<Complaint, ComlaintClass>()
+                .ForMember(dest => dest.ComplaintId, opt => opt.MapFrom(src => src.ComplaintId))
+                .ForMember(dest => dest.ClassId, opt => opt.MapFrom(src => src.ClassId))
+                .ForMember(dest => dest.Complainter, opt => opt.MapFrom(src => src.Complainter))
+                .ForMember(dest => dest.DateCreate, opt => opt.MapFrom(src => src.CreateDay))
+                .ReverseMap();
 
             CreateMap<Class, ClassVMPhuc>().ReverseMap();
 
@@ -151,7 +156,20 @@ namespace API.Helper
 
             CreateMap<Feedback, FeedbackVMPhuc>().ReverseMap();
 
-            CreateMap<PaymentTransaction, PaymentTransactionVM>().ReverseMap();
+            CreateMap<PaymentTransaction, PaymentTransactionVM>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.TranDate, opt => opt.MapFrom(src => src.TranDate))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
+                .ForMember(dest => dest.IsValid, opt => opt.MapFrom(src => src.IsValid))
+                .ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
+                .ForMember(dest => dest.PaymentDestinationId, opt => opt.MapFrom(src => src.PaymentDestinationId))  
+                .ForMember(dest => dest.Balance, opt => opt.MapFrom(src => src.Wallet.Balance))
+                .ForMember(dest => dest.BankName, opt => opt.MapFrom(src => src.Wallet.BankName))
+                .ForMember(dest => dest.BankNumber, opt => opt.MapFrom(src => src.Wallet.BankNumber))
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.Wallet.AccountId))
+                .ReverseMap();
 
             #endregion
         }

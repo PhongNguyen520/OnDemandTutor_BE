@@ -72,7 +72,8 @@ namespace Repositories
 
         public async Task<List<PaymentTransactionVM>> GetRequestWithdraw()
         {
-            var list = await _dbContext.PaymentTransactions.Where(_ => _.IsValid == null).ToListAsync();
+            var list = await _dbContext.PaymentTransactions.Include(_ => _.Wallet)
+                                       .Where(_ => _.IsValid == null).ToListAsync();
             var result = _mapper.Map<List<PaymentTransactionVM>>(list);
             return result;
         }
@@ -97,6 +98,50 @@ namespace Repositories
                 return true;
             }
             return false;
-        } 
+        }
+
+        public async Task<bool> Create2RefundPaymentTransaction(string StudentId, float money)
+        {
+            var student = await _dbContext.Students.FirstOrDefaultAsync(_ => _.StudentId == StudentId);
+            var userId = student.AccountId;
+
+            var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.AccountId == userId);
+            PaymentTransaction studentTransaction = new();
+            studentTransaction.Id = Guid.NewGuid().ToString();
+            studentTransaction.Description = "Refund to Student";
+            studentTransaction.TranDate = DateTime.Now;
+            studentTransaction.IsValid = true;
+            studentTransaction.WalletId = wallet.WalletId;
+            studentTransaction.Amount = money;
+            studentTransaction.Type = 3;
+            studentTransaction.PaymentDestinationId = null;
+
+            _dbContext.Add(studentTransaction);
+            _dbContext.SaveChanges();
+            
+            wallet.Balance += money;
+            _dbContext.Update(wallet);
+            _dbContext.SaveChanges();
+
+//---------------------------------------------------
+            PaymentTransaction adminTransaction = new();
+            adminTransaction.Id = Guid.NewGuid().ToString();
+            adminTransaction.Description = "Admin Refund to Student";
+            adminTransaction.TranDate = DateTime.Now;
+            adminTransaction.IsValid = true;
+            adminTransaction.WalletId = "fa99e03d-b5d2-4bb6-a4c9-41e9bf2914c6";
+            adminTransaction.Amount = (0 - money);
+            adminTransaction.Type = 0;
+            adminTransaction.PaymentDestinationId = null;
+
+            _dbContext.Add(adminTransaction);
+            _dbContext.SaveChanges();
+
+            var walletAdmin = await _dbContext.Wallets.FirstOrDefaultAsync(_ => _.WalletId == "fa99e03d-b5d2-4bb6-a4c9-41e9bf2914c6");
+            walletAdmin.Balance -= money;
+            _dbContext.Update(walletAdmin);
+            _dbContext.SaveChanges();
+            return true;
+        }
     }
 }

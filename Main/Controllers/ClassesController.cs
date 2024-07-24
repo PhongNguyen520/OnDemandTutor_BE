@@ -45,6 +45,7 @@ namespace API.Controllers
         }
 
         // Class tự động tạo sau khi Student duyệt Tutor
+        [Authorize(Roles = AppRole.Tutor)]
         [HttpPost("create_class")]
         public async Task<IActionResult> CreateClass(CreateClassVM request)
         {
@@ -79,6 +80,7 @@ namespace API.Controllers
                 StudentId = form.StudentId,
                 TutorId = tutor.TutorId,
                 SubjectId = form.SubjectId,
+                UrlClass = request.UrlClass,
                 IsCancel = false,
             };
 
@@ -91,7 +93,7 @@ namespace API.Controllers
                 newClassCalender.DayOfWeek = day;
                 newClassCalender.TimeStart = form.TimeStart;
                 newClassCalender.TimeEnd = form.TimeEnd;
-                newClassCalender.IsActive = true;
+                newClassCalender.IsActive = false;
                 newClassCalender.ClassId = newClass.ClassId;
 
                 _classCalenderService.AddClassCalender(newClassCalender);
@@ -121,13 +123,13 @@ namespace API.Controllers
 
         // Tutor view class List
         [HttpGet("get_tutor-classes")]
-        public IActionResult TutorViewClass(bool? status, bool? isApprove, int pageIndex)
+        public IActionResult TutorViewClass(bool? status, bool? isApprove, bool? isCancel, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
             var tutor = _tutorService.GetTutors().First(s => s.AccountId == user);
 
             var classList = _classService.GetClasses()
-                                           .Where(c => c.Status == status && c.IsApprove == isApprove && c.TutorId == tutor.TutorId);
+                                           .Where(c => c.Status == status && c.IsApprove == isApprove && c.IsCancel == isCancel && c.TutorId == tutor.TutorId);
 
             PagingResult<ClassVM> result = new PagingResult<ClassVM>();
             if (!classList.Any())
@@ -167,6 +169,7 @@ namespace API.Controllers
                                       select a.Avatar).FirstOrDefault(),
                             Status = c.Status,
                             IsApprove = c.IsApprove,
+                            UrlClass = c.UrlClass,
                             IsCancel = c.IsCancel,
                             CancelDay = c.CancelDay,
                         };
@@ -178,14 +181,14 @@ namespace API.Controllers
 
         // Student view class list
         [HttpGet("get_student-classes")]
-        public IActionResult StudentViewClass(bool? status, bool? isApprove, int pageIndex)
+        public IActionResult StudentViewClass(bool? status, bool? isApprove, bool? isCancel, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
             var student = _studentService.GetStudents().First(s => s.AccountId == user);
 
 
             var classList = _classService.GetClasses()
-                                           .Where(c => c.Status == status && c.IsApprove == isApprove && c.StudentId == student.StudentId);
+                                           .Where(c => c.Status == status && c.IsApprove == isApprove && c.IsCancel == isCancel && c.StudentId == student.StudentId);
 
             PagingResult<ClassVM> result = new PagingResult<ClassVM>();
             if (!classList.Any())
@@ -225,6 +228,7 @@ namespace API.Controllers
                                       select a.Avatar).FirstOrDefault(),
                             Status = c.Status,
                             IsApprove = c.IsApprove,
+                            UrlClass = c.UrlClass,
                             IsCancel = c.IsCancel,
                             CancelDay = c.CancelDay,
                         };
@@ -245,6 +249,7 @@ namespace API.Controllers
                                 BookDay = calender.DayOfWeek.ToString("yyyy-MM-dd"),
                                 Time = calender.TimeStart.ToString() + "h - " + calender.TimeEnd.ToString() + "h",
                                 ClassId = calender.ClassId,
+                                IsChecked = calender.IsActive,
                             };
             var result = new ClassDetail()
             {
@@ -255,6 +260,13 @@ namespace API.Controllers
                                          .Where(s => s.SubjectId == classDetail.SubjectId)
                                          .Select(s => s.Description)
                                          .FirstOrDefault(),
+                Createday = classDetail.CreateDay.ToString("yyyy-MM-dd"),
+                Price = classDetail.Price,
+                DayStart = classDetail.DayStart.ToString("yyyy-MM-dd"),
+                DayEnd = classDetail.DayEnd.ToString("yyyy-MM-dd"),
+                TutorId = classDetail.TutorId,
+                StudentId = classDetail.StudentId,
+                UrlClass = classDetail.UrlClass,
                 Calenders = calenders.ToList(),
             };
 
@@ -302,6 +314,37 @@ namespace API.Controllers
                 return Ok(list2);
             }
             return BadRequest("NoNo!!!");
+        }
+
+        [HttpDelete("delete_class/{id}")]
+        public IActionResult CancelClass(string id)
+        {
+            var classRoom = _classService.GetClasses().Where(s => s.ClassId == id).FirstOrDefault();
+            classRoom.IsCancel = true;
+            _classService.UpdateClasses(classRoom);
+            return Ok("Cancel successful");
+        }
+
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 46327c2ee706442c960958acda500ba5d876a213
+        [HttpPut("submit_class/{id}")]
+        public IActionResult SubmitClass(string id)
+        {
+            var classRoom = _classService.GetClasses().Where(s => s.ClassId == id).FirstOrDefault();
+            classRoom.Status = true;
+            _classService.UpdateClasses(classRoom);
+            return Ok("Submit successful");
+        }
+
+        [HttpPut("update_class-url/{id}")]
+        public IActionResult ChangeClassUrl(string id, string newUrl)
+        {
+            var classRoom = _classService.GetClasses().Where(s => s.ClassId == id).FirstOrDefault();
+            classRoom.UrlClass = newUrl;
+            _classService.UpdateClasses(classRoom);
+            return Ok("Change class url successful");
         }
     }
 }

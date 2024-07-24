@@ -25,6 +25,6 @@ namespace Services
 
         Task<ComplaintVM> ModeratorComplaint(string complaintId, string proce, bool sta);
 
-        Task<IQueryable<ComlaintClass>> ShowListComplaintClass();
+        Task<List<ComlaintClass>> ShowListComplaintClass();
     }
 }

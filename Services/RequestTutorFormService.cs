@@ -52,11 +52,8 @@ namespace Services
             var student = _studentRepository.GetStudents().Where(s => s.AccountId == id);
             if (student.Any())
             {
-                var account = _accountRepository.GetAccounts().Where(s => s.Id == student.First().AccountId).First();
                 result = new FormMember()
                 {
-                    Avatar = account.Avatar,
-                    FullName = account.FullName,
                     List = _requestTutorFormRepository.GetRequestTutorForms()
                             .Where(s => s.StudentId == student.First().StudentId && s.Status == status).ToList(),
                 };
@@ -65,13 +62,33 @@ namespace Services
             var tutor = _tutorRepository.GetTutors().Where(s => s.AccountId == id);
             if (tutor.Any())
             {
-                var account = _accountRepository.GetAccounts().Where(s => s.Id == tutor.First().AccountId).First();
                 result = new FormMember()
                 {
-                    Avatar = account.Avatar,
-                    FullName = account.FullName,
                     List = _requestTutorFormRepository.GetRequestTutorForms()
                             .Where(s => s.TutorId == tutor.First().TutorId && s.Status == status).ToList(),
+                };
+            }
+            return result;
+        }
+
+        public FormMember? GetUser(RequestTutorForm form, string id)
+        {
+            FormMember? result = null;
+            if (form.Tutor.AccountId == id)
+            {
+                var student = _accountRepository.GetAccounts().FirstOrDefault(s => s.Id == form.Student.AccountId);
+                result = new FormMember()
+                {
+                    Avatar = student.Avatar,
+                    FullName = student.FullName,
+                };
+            } else
+            {
+                var tutor = _accountRepository.GetAccounts().FirstOrDefault(s => s.Id == form.Tutor.AccountId);
+                result = new FormMember()
+                {
+                    Avatar = tutor.Avatar,
+                    FullName = tutor.FullName,
                 };
             }
             return result;

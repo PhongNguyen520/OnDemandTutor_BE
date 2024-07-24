@@ -41,4 +41,5 @@ public partial class Class
     public virtual ICollection<Complaint> Complaints { get; set; } = new List<Complaint>();
     public bool? IsCancel { get; set; }
     public DateTime? CancelDay { get; set; }
+    public string UrlClass { get; set; } = string.Empty;
 }
