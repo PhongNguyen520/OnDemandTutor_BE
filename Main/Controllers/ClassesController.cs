@@ -123,13 +123,13 @@ namespace API.Controllers
 
         // Tutor view class List
         [HttpGet("get_tutor-classes")]
-        public IActionResult TutorViewClass(bool? status, bool? isApprove, int pageIndex)
+        public IActionResult TutorViewClass(bool? status, bool? isApprove, bool? isCancel, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
             var tutor = _tutorService.GetTutors().First(s => s.AccountId == user);
 
             var classList = _classService.GetClasses()
-                                           .Where(c => c.Status == status && c.IsApprove == isApprove && c.TutorId == tutor.TutorId);
+                                           .Where(c => c.Status == status && c.IsApprove == isApprove && c.IsCancel == isCancel && c.TutorId == tutor.TutorId);
 
             PagingResult<ClassVM> result = new PagingResult<ClassVM>();
             if (!classList.Any())
@@ -181,14 +181,14 @@ namespace API.Controllers
 
         // Student view class list
         [HttpGet("get_student-classes")]
-        public IActionResult StudentViewClass(bool? status, bool? isApprove, int pageIndex)
+        public IActionResult StudentViewClass(bool? status, bool? isApprove, bool? isCancel, int pageIndex)
         {
             var user = _currentUserService.GetUserId().ToString();
             var student = _studentService.GetStudents().First(s => s.AccountId == user);
 
 
             var classList = _classService.GetClasses()
-                                           .Where(c => c.Status == status && c.IsApprove == isApprove && c.StudentId == student.StudentId);
+                                           .Where(c => c.Status == status && c.IsApprove == isApprove && c.IsCancel == isCancel && c.StudentId == student.StudentId);
 
             PagingResult<ClassVM> result = new PagingResult<ClassVM>();
             if (!classList.Any())
@@ -290,7 +290,6 @@ namespace API.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = AppRole.Student)]
         //Student checking teaching day
         [HttpPut("student_checking-day")]
         public IActionResult Checking(string calenderId)
@@ -317,7 +316,6 @@ namespace API.Controllers
             return BadRequest("NoNo!!!");
         }
 
-        [Authorize(Roles = AppRole.Moderator)]
         [HttpDelete("delete_class/{id}")]
         public IActionResult CancelClass(string id)
         {
@@ -327,7 +325,6 @@ namespace API.Controllers
             return Ok("Cancel successful");
         }
 
-        [Authorize(Roles = AppRole.Tutor)]
         [HttpPut("submit_class/{id}")]
         public IActionResult SubmitClass(string id)
         {
@@ -337,7 +334,6 @@ namespace API.Controllers
             return Ok("Submit successful");
         }
 
-        [Authorize(Roles = AppRole.Tutor)]
         [HttpPut("update_class-url/{id}")]
         public IActionResult ChangeClassUrl(string id, string newUrl)
         {
