@@ -59,7 +59,7 @@ namespace Services
             return iComplaintRepository.UpdateProcessnoteStatus(complaintId, proce, sta);
         }
 
-        public Task<IQueryable<ComlaintClass>> ShowListComplaintClass()
+        public Task<List<ComlaintClass>> ShowListComplaintClass()
         {
             return iComplaintRepository.GetAllComplaintStatusNull();
         }

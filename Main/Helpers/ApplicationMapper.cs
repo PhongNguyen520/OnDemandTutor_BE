@@ -143,7 +143,12 @@ namespace API.Helper
 
             CreateMap<Complaint, ComplaintDTO>().ReverseMap();
             CreateMap<Complaint, ComplaintVM>().ReverseMap();
-            CreateMap<Complaint, ComlaintClass>().ReverseMap();
+            CreateMap<Complaint, ComlaintClass>()
+                .ForMember(dest => dest.ComplaintId, opt => opt.MapFrom(src => src.ComplaintId))
+                .ForMember(dest => dest.ClassId, opt => opt.MapFrom(src => src.ClassId))
+                .ForMember(dest => dest.Complainter, opt => opt.MapFrom(src => src.Complainter))
+                .ForMember(dest => dest.DateCreate, opt => opt.MapFrom(src => src.CreateDay))
+                .ReverseMap();
 
             CreateMap<Class, ClassVMPhuc>().ReverseMap();
 

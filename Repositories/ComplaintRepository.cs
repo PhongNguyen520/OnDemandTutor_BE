@@ -105,19 +105,20 @@ namespace Repositories
             return result;
         }
 
-        public async Task<IQueryable<ComlaintClass>> GetAllComplaintStatusNull()
+        public async Task<List<ComlaintClass>> GetAllComplaintStatusNull()
         {
             var listCom = _dbContext.Complaints.Where(_ => _.Status == null);
-            var enList = new List<ComlaintClass>();
+            var enList = _mapper.Map<List<ComlaintClass>>(listCom);
 
-            foreach (var x in listCom)
+            foreach (var x in  enList)
             {
-                var comcla = _mapper.Map<ComlaintClass>(x);
-                var user = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.FullName == comcla.Complainter);
-                comcla.NameAccount = user.FullName;
-                enList.Add(comcla);
+                x.NameAccount = await _dbContext.Accounts
+                                          .Where(a => a.Id == x.Complainter)
+                                          .Select(a => a.FullName)
+                                          .FirstOrDefaultAsync();
             }
-            return enList.AsQueryable();
+
+            return enList;
         }
     }
 }
