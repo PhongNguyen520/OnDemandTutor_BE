@@ -23,6 +23,7 @@ namespace BusinessObjects.Models
         public bool Gender { get; set; }
         public int isActive { get; set; } = 1;
         public bool isAdmin { get; set; }
+    
         public string? Avatar { get; set; }
 
     }

@@ -4,6 +4,7 @@ using BusinessObjects.Constrant;
 using BusinessObjects.Models;
 using DAOs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -25,12 +26,19 @@ namespace Repositories
         private IMapper _mapper;
         private readonly DAOs.DbContext _dbContext;
 
-        public AccountRepository()
+        public AccountRepository(UserManager<Account> userManager,
+            SignInManager<Account> signInManager, IConfiguration configuration,
+            RoleManager<IdentityRole> roleManager, IMapper mapper, DAOs.DbContext dbContext)
         {
             if (accountDAO == null)
             {
                 accountDAO = new AccountDAO();
             }
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
+            _mapper = mapper;
+            _dbContext = dbContext;
         }
 
         public AccountRepository(UserManager<Account> userManager,
@@ -208,6 +216,27 @@ namespace Repositories
         public async Task<Account> GetAccountById(string id)
         {
             return await _userManager.FindByIdAsync(id);
+        }
+
+        public async Task<bool> ConfirmAccount(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) return false;
+            user.EmailConfirmed = true;
+            var result = accountDAO.UpdateAccounts(user);
+            return result;
+        }
+
+        public async Task<int> EnalbleUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                user.IsActive = !(user.IsActive);
+                _dbContext.Update(user);
+                return await _dbContext.SaveChangesAsync();
+            }
+            return 0;
         }
 
         public async Task<String> GetAccountByEmail(string email)

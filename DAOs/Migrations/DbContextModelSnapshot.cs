@@ -122,6 +122,10 @@ namespace DAOs.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("ClassID");
 
+                    b.Property<string>("ClassName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("CancelDay")
                         .HasColumnType("datetime2");
 

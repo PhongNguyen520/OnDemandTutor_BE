@@ -8,6 +8,8 @@ namespace BusinessObjects.Models
 {
     public class RoleDTO
     {
+        public String Id;
+        public String Name;
         public string Id;
         public string Name;
     }

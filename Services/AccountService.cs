@@ -140,5 +140,15 @@ namespace Services
         {
             return await iAccountRepository.GetTutorIdByAccountId(accountId);
         }
+
+        public Task<bool> ConfirmAccount(string email)
+        {
+            return iAccountRepository.ConfirmAccount(email);    
+        }
+
+        public async Task<int> EnalbleUser(string userId)
+        {
+            return await iAccountRepository.EnalbleUser(userId);
+        }
     }
 }

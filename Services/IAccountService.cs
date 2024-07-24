@@ -40,5 +40,7 @@ namespace Services
         Task<List<TutorInterVM>> Get10TutorNew();
         Task<float> CraeteRequestPaymentTransaction(string userId, float amount, int type);
         Task<string> GetTutorIdByAccountId(string accountId);
+        Task<bool> ConfirmAccount(string email);
+        Task<int> EnalbleUser(String userId);
     }
 }

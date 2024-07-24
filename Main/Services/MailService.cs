@@ -4,6 +4,7 @@ using MailKit.Security;
 using MimeKit;
 using MimeKit.Text;
 
+namespace API.Services{
 namespace API.Services
 {
     public interface IMailService
@@ -26,9 +27,12 @@ namespace API.Services
             emailToSend.To.Add(MailboxAddress.Parse(email));
             emailToSend.Subject = subject;
 
+            string htmlBody =
+            @"<!DOCTYPE html>
             string htmlBody = @"
 <!DOCTYPE html>
 <html lang=""en"">
+
 <head>
     <meta charset=""UTF-8"">
     <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
@@ -123,12 +127,26 @@ namespace API.Services
 </head>
 
 <body>
+    <div id=""wrapper"" style=""display: flex; max-width:600px; margin: 0 auto;"">
+        <div class=""form"" style=""
+        width: 600px;
+        height: 800px;
+        background-color: #efc15f5c;"">
+            <div class=""header"" style=""margin-top: 50px;"">
+                <div class=""logo""
+                    style=""height: 90px; width: 100%;  margin: 10px auto; border-radius: 10px; display: flex; align-items: center; justify-content: center;"">
+                    <img src=""https://d226aj4ao1t61q.cloudfront.net/ai2shais_blog_confirmationmail.png""
+                        alt=""Logo"" srcset="""" style=""width: 100%; height: 100%; margin: 10px 5px 15px 60px;"">
     <div class=""wrapper"">
         <div class=""form"">
             <div class=""header"">
                 <div class=""logo"">
                     <img src=""https://d226aj4ao1t61q.cloudfront.net/ai2shais_blog_confirmationmail.png"" alt=""Logo"">
                 </div>
+                <div class=""text"" style=""text-align: center;"">
+                    <h1>On Demand Tutor</h1>
+                    <a href=" + htmlMessage + @" 
+                    style=""border: 1px solid #039a21;
                 <h1>On Demand Tutor <span class=""emoji"">🎉</span></h1>
                 <div class=""headertext"">
                     <span>(Chúng tôi cần xác thực địa chỉ email của bạn để kích hoạt tài khoản)</span>
@@ -220,16 +238,24 @@ namespace API.Services
         }
         .confirm-button {
             border: 1px solid #039a21;
-            background-color: #039a21;
-            color: #FFFFFF;
+                    background-color: #039a21;
+                    color: #FFFFFF;
+                    font-size: 12px;
             font-size: 16px;
-            font-weight: bold;
-            padding: 12px 45px;
-            text-transform: uppercase;
-            transition: transform 80ms ease-in;
-            width: 200px;
-            margin: 0 auto;
-            display: block;
+                    font-weight: bold;
+                    padding: 12px 45px;
+                    letter-spacing: 1px;
+                    text-transform: uppercase;
+                    transition: transform 80ms ease-in;
+                    width: 200px;
+                    margin: 0 auto;
+                    display: block;
+                    font-size: 24px;
+                    text-decoration: none;"">
+                    Xác nhận
+                    </a>
+                    <div class=""headertext"" style=""margin-top: 25px; margin-bottom: 10px;"">
+                        <span>(Chúng tôi cần xác thực địa chỉ email của bạn để kích hoạt tài khoản)</span>
             text-decoration: none;
             border-radius: 5px;
         }
@@ -262,22 +288,29 @@ namespace API.Services
             <div class=""header"">
                 <div class=""logo"">
                     <img src=""https://d226aj4ao1t61q.cloudfront.net/ai2shais_blog_confirmationmail.png"" alt=""Logo"">
-                </div>
+                    </div>
                 <h1>On Demand Tutor</h1>
                 <div class=""headertext"">
                     <span>(Click Xác Nhận để thay đổi mật khẩu của bạn)</span>
                 </div>
                 <a href=""" + htmlMessage + @""" class=""confirm-button"">Xác nhận</a>
             </div>
+
+            <div class=""footer"" style=""display: flex;  margin-top: 200px;"">
+                <div class=""footercontent"" style=""width: 480px; text-align: center; margin: 0px auto;"">
+                    <div class=""span1"" style=""margin-top: 10px; margin-bottom: 10px;"">
             <div class=""footer"">
-                <span>FPT University.</span>
+                        <span>FPT University.</span>
                 <b>Địa chỉ của chúng tôi:</b>
                 <span>Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh.</span>
                 <span>ondemandtutor1809@gmail.com</span>
                 <span>Hotline: 0337523349</span>
             </div>
         </div>
-    </div>
+                    </div>
+                    <div><b>Địa chỉ của chúng tôi:</b></div>
+                    <div class=""span2"" style=""margin-top: 10px;"">
+                        <span>Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh.</span>
 </body>
 
 </html>";
@@ -374,12 +407,15 @@ namespace API.Services
             <div class=""header"">
                 <div class=""logo"">
                     <img src=""https://d226aj4ao1t61q.cloudfront.net/ai2shais_blog_confirmationmail.png"" alt=""Logo"">
-                </div>
+                    </div>
+                    <div class=""span3"" style=""margin-top: 10px;"">
+                        <span>ondemandtutor1809@gmail.com</span>
                 <h1>On Demand Tutor</h1>
                 <div class=""headertext"">
                     <span>" + content + @"</span>
+                    </div>
+                    <div class=""span4"" style=""margin-top: 10px;""><span>Hotline: 0337523349</span></div>
                 </div>
-            </div>
             <div class=""footer"">
                 <span>FPT University.</span>
                 <b>Địa chỉ của chúng tôi:</b>

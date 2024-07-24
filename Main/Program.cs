@@ -75,6 +75,7 @@ namespace Main
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
+                    
                     ClockSkew = TimeSpan.Zero,
 
                     ValidAudience = builder.Configuration["JWT:ValidAudience"],

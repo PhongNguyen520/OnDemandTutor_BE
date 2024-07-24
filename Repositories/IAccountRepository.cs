@@ -28,6 +28,8 @@ namespace Repositories
         Task<IList<String>> GetRolesAsync(Account user);
         Task<bool> ConfirmAccount(string email);
         Task<int> EnalbleUser(String userId);
+        Task<bool> ConfirmAccount(string email);
+        Task<int> EnalbleUser(String userId);
         Task<String> SignUpModerator(SignUpModerator model);
         Task<Account> SignInWithGG(string gmail);
         Task<string> TokenForgetPassword(string email);

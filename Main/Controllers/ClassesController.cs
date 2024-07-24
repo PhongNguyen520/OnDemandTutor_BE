@@ -10,6 +10,8 @@ using DAOs;
 using Services;
 using Microsoft.AspNetCore.Authorization;
 using BusinessObjects.Constrant;
+using Microsoft.AspNetCore.Authorization;
+using BusinessObjects.Constrant;
 using BusinessObjects.Models;
 using API.Services;
 using System.Threading.Tasks.Dataflow;
@@ -21,6 +23,7 @@ namespace API.Controllers
 {
     [Route("api/class")]
     [ApiController]
+    [Authorize(Roles = AppRole.Admin)]
     public class ClassesController : ControllerBase
     {
         private readonly IClassService _classService;

@@ -7,6 +7,7 @@ using Services;
 using API.Services;
 using Repositories;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
 
@@ -14,6 +15,7 @@ namespace API.Controller
 {
     [Route("api/auth")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
 
     public class AuthenticateController : ControllerBase
     {
@@ -22,6 +24,8 @@ namespace API.Controller
         private readonly ICurrentUserService _currentUserService;
         private readonly IJwtTokenService _jwtTokenService;
 
+        public AuthenticateController(IJwtTokenService jwtTokenService, IAccountService accountService, 
+            ICurrentUserService currentUserService, IMailService mailService)
         public AuthenticateController(IJwtTokenService jwtTokenService, IAccountService accountService,
             ICurrentUserService currentUserService, IMailService mailService)
         {
@@ -83,6 +87,11 @@ namespace API.Controller
             {
                 var scheme = HttpContext.Request.Scheme;
                 var host = HttpContext.Request.Host.Value;
+                var url = $"{scheme}://{host}/api/auth/confirm-email?email={signUpModel.Email}";
+                await _mailService.SendEmailAsync(signUpModel.Email, "Xác thực tài khoản của bạn", url);
+                return Ok(result.Succeeded);
+                var scheme = HttpContext.Request.Scheme;
+                var host = HttpContext.Request.Host.Value;
                 var url = $"{scheme}://{host}/api/auth/confirm_email?email={signUpModer.Email}";
                 await _mailService.SendEmailAsync(signUpModer.Email, "Xác thực tài khoản của bạn", url);
                 return Ok(new { userId = userIdSignUpId });
@@ -99,6 +108,9 @@ namespace API.Controller
             if (user == null || !(user.IsActive))
             {
                 return Unauthorized();
+            } else if (!user.EmailConfirmed)
+            {
+                return BadRequest("Cần phải xác thực tài khoản của bạn qua email đăng kí");
             }
             else if (!user.EmailConfirmed)
             {
@@ -173,6 +185,16 @@ namespace API.Controller
             _accountService.UpdateAccounts(user);
             return Ok(new { token = token, refreshToken = newRefreshToken });
         }
+
+        [AllowAnonymous]
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmAccount(string email)
+        {
+            var result = await _accountService.ConfirmAccount(email);
+            if (result) return Ok(result);
+            else return BadRequest("Cannot confirm your email");
+        }
+
 
         [AllowAnonymous]
         [HttpGet("confirm_email")]
