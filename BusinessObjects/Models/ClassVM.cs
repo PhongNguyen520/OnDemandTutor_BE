@@ -48,6 +48,7 @@ namespace BusinessObjects.Models
         public string? UrlClass { get; set; }
         public string TutorId { get; set; } = string.Empty;
         public string StudentId { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
         public List<CalenderVM> Calenders { get; set; } = new List<CalenderVM>();
     }
 

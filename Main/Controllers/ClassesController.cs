@@ -131,6 +131,12 @@ namespace API.Controllers
             var classList = _classService.GetClasses()
                                            .Where(c => c.Status == status && c.IsApprove == isApprove && c.IsCancel == isCancel && c.TutorId == tutor.TutorId);
 
+            if (isCancel == true)
+            {
+                classList = _classService.GetClasses()
+                                           .Where(c => c.IsCancel == isCancel && c.TutorId == tutor.TutorId);
+            }
+
             PagingResult<ClassVM> result = new PagingResult<ClassVM>();
             if (!classList.Any())
             {
@@ -189,6 +195,12 @@ namespace API.Controllers
 
             var classList = _classService.GetClasses()
                                            .Where(c => c.Status == status && c.IsApprove == isApprove && c.IsCancel == isCancel && c.StudentId == student.StudentId);
+
+            if (isCancel == true)
+            {
+                classList = _classService.GetClasses()
+                                           .Where(c => c.IsCancel == isCancel && c.StudentId == student.StudentId);
+            }
 
             PagingResult<ClassVM> result = new PagingResult<ClassVM>();
             if (!classList.Any())
@@ -267,6 +279,7 @@ namespace API.Controllers
                 TutorId = classDetail.TutorId,
                 StudentId = classDetail.StudentId,
                 UrlClass = classDetail.UrlClass,
+                UserId = classDetail.Student.AccountId,
                 Calenders = calenders.ToList(),
             };
 
