@@ -25,6 +25,6 @@ namespace Repositories
 
         Task<ComplaintVM> UpdateProcessnoteStatus(string complaintId, string proce, bool sta);
 
-        Task<IQueryable<ComlaintClass>> GetAllComplaintStatusNull();
+        Task<List<ComlaintClass>> GetAllComplaintStatusNull();
     }
 }
